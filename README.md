@@ -1,0 +1,22 @@
+# Barista
+
+[![Code Style][code-style-image]][code-style-url]
+[![License][license-image]][license-url]
+
+Mocha test running/reporting application and API
+
+## What?
+1. Downloads test repo based on settings passed to UI
+1. Tests run using [Barback][barback-url] on [Google Compute Engine][compute-engine-url]
+1. Shows you the results
+
+## Why?
+* Running tests at the click of a button requires "contained" running sessions (Compute Engine provides the ability to set specific resources)
+* Tests are always updating and are contained in another repo
+
+[license-image]: https://img.shields.io/npm/l/barista.svg?style=flat-square
+[license-url]: https://github.com/prescottprue/barista/blob/master/LICENSE
+[code-style-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square
+[code-style-url]: http://standardjs.com/
+[barback-url]: https://github.com/prescottprue/barback
+[compute-engine-url]: https://console.cloud.google.com/compute

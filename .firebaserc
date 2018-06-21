@@ -1,0 +1,41 @@
+{
+  "projects": {
+    "default": "barista-836b4",
+    "master": "barista-836b4",
+    "prod": "barista-836b4"
+  },
+  "ci": {
+    "createConfig": {
+      "master": {
+        "env": "production",
+        "firebase": {
+          "apiKey": "AIzaSyCiaUr9jIU_FdTKArOE0UsZq3K-ftChbLg",
+          "authDomain": "barista-836b4.firebaseapp.com",
+          "databaseURL": "https://barista-836b4.firebaseio.com",
+          "projectId": "barista-836b4",
+          "storageBucket": "barista-836b4.appspot.com"
+        },
+        "reduxFirebase": {
+          "userProfile": "users",
+          "enableLogging": false,
+          "updateProfileOnLogin": false
+        }
+      },
+      "prod": {
+        "env": "production",
+        "firebase": {
+          "apiKey": "AIzaSyCiaUr9jIU_FdTKArOE0UsZq3K-ftChbLg",
+          "authDomain": "barista-836b4.firebaseapp.com",
+          "databaseURL": "https://barista-836b4.firebaseio.com",
+          "projectId": "barista-836b4",
+          "storageBucket": "barista-836b4.appspot.com"
+        },
+        "reduxFirebase": {
+          "userProfile": "users",
+          "enableLogging": false,
+          "updateProfileOnLogin": false
+        }
+      }
+    }
+  }
+}
