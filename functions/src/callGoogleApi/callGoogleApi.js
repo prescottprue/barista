@@ -75,11 +75,15 @@ export async function googleApisRequest(serviceAccount, requestSettings) {
   )
   try {
     const response = await request(requestSettingsWithAuth)
-    console.log(`Google API Request completed successfully`, response)
+    console.log(`Google API Request completed successfully`, response.body)
     return response
   } catch (err) {
-    console.error(`Google API Responded with an error: \n`, err.message || err)
-    throw err
+    console.error(
+      `Google API Responded with an error code: ${err.statusCode} \n ${
+        err.error ? err.error.message : ''
+      }`
+    )
+    throw err.error || err
   }
 }
 
@@ -97,7 +101,6 @@ export default async function callGoogleApi(snap, context) {
     body,
     apiVersion = 'v1',
     suffix = `b/${eventVal.storageBucket}`,
-    storageBucket,
     projectId,
     environment
   } = eventVal
@@ -106,9 +109,8 @@ export default async function callGoogleApi(snap, context) {
     .ref(`responses/${eventPathName}/${eventId}`)
 
   // Handle missing parameters
-  if (!projectId || !environment || !storageBucket) {
-    const missingMsg =
-      'projectId, environment, and storageBucket are required parameters'
+  if (!projectId || !environment) {
+    const missingMsg = 'projectId and environment are required parameters'
     console.error(missingMsg)
     const missingParamsErr = new Error(missingMsg)
     await responseRef.set({
@@ -145,7 +147,9 @@ export default async function callGoogleApi(snap, context) {
     throw missingParamsErr
   }
 
-  const uri = `https://www.googleapis.com/${api}/${apiVersion}/${suffix}?cors`
+  const uri = `https://www.googleapis.com/${api}/${apiVersion}/${suffix}${
+    api === 'storage' ? '?cors' : ''
+  }`
   // Call Google API with service account
   const [err, response] = await to(
     googleApisRequest(serviceAccount, {
@@ -161,13 +165,19 @@ export default async function callGoogleApi(snap, context) {
 
   // Handle errors calling Google API
   if (err) {
+    const errorMessage = get(err, 'error.message', JSON.stringify(err))
+    const errorCode = get(err, 'error.code', 500)
     console.error(`Error calling Google API: ${uri}`, err.message || err)
     await responseRef.set({
       completed: true,
-      error: err.message || JSON.stringify(err),
+      successful: false,
+      error: {
+        message: errorMessage,
+        code: errorCode
+      },
       completedAt: admin.database.ServerValue.TIMESTAMP
     })
-    throw err
+    throw new Error(errorMessage)
   }
 
   console.log('Google API responsed successfully. Writing response to RTDB...')

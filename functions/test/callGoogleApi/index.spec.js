@@ -38,7 +38,7 @@ describe('callGoogleApi RTDB Cloud Function (onCreate)', () => {
       params: { filePath: 'testing', userId: 1 }
     }
 
-    const res = await callGoogleApi(snap , fakeContext)
+    const res = await callGoogleApi(snap, fakeContext)
     expect(res).to.be.null
   })
 })

@@ -1,8 +1,10 @@
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firestoreConnect, getVal } from 'react-redux-firebase'
+import { withHandlers, withStateHandlers } from 'recompose'
+import { firestoreConnect, withFirebase, getVal } from 'react-redux-firebase'
 import { spinnerWhileLoading } from 'utils/components'
 import { UserIsAuthenticated } from 'utils/router'
+import * as handlers from './ProjectPage.handlers'
 
 export default compose(
   // redirect to /login if user is not logged in
@@ -19,11 +21,13 @@ export default compose(
       where: ['createdBy', '==', uid]
     }
   ]),
-  spinnerWhileLoading(['firestore']),
   // Map projects from state to props
   connect(({ firestore: { data } }, { params }) => ({
     project: getVal(data, `projects/${params.projectname}`)
   })),
+  withFirebase,
   // Show loading spinner while project is loading
-  spinnerWhileLoading(['project'])
+  spinnerWhileLoading(['project']),
+  withStateHandlers({}, {}),
+  withHandlers(handlers)
 )
