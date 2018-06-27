@@ -2,6 +2,12 @@ import express from 'express'
 import admin from 'firebase-admin'
 const router = express.Router()
 
+/**
+ * Create body of request to create a VM on Google Compute Engine
+ * @param  {[type]} cloudProjectId [description]
+ * @param  {[type]} cloudZone      [description]
+ * @return {[type]}                [description]
+ */
 function createRequestBody({ cloudProjectId, cloudZone }) {
   return {
     kind: 'compute#instance',
@@ -32,7 +38,7 @@ function createRequestBody({ cloudProjectId, cloudZone }) {
         initializeParams: {
           sourceImage:
             'projects/cos-cloud/global/images/cos-stable-67-10575-55-0',
-          diskType: `projects/${cloudProjectId}/zones/us-west1-b/diskTypes/pd-standard`,
+          diskType: `projects/${cloudProjectId}/zones/${cloudZone}/diskTypes/pd-standard`,
           diskSizeGb: '10'
         }
       }
@@ -41,8 +47,8 @@ function createRequestBody({ cloudProjectId, cloudZone }) {
     networkInterfaces: [
       {
         kind: 'compute#networkInterface',
-        subnetwork:
-          'projects/barista-836b4/regions/us-west1/subnetworks/default',
+        // DO NOT ADD ZONE HERE - IT IS DIFFERENT
+        subnetwork: `projects/${cloudProjectId}/regions/us-west1/subnetworks/default`,
         accessConfigs: [
           {
             kind: 'compute#accessConfig',
@@ -81,17 +87,20 @@ function createRequestBody({ cloudProjectId, cloudZone }) {
 }
 
 /**
- * @param req - Request
- * @param res - Response
+ * Run tests by invoking mocha programatically
+ * @param req - Express HTTP Request
+ * @param res - Express HTTP Response
  */
 async function runTests(req, res) {
   const instanceTemplateName = 'barback-template'
   const cloudProjectId = process.env.GCLOUD_PROJECT || 'barista-836b4'
   const cloudZone = 'us-west1-b'
   const {
-    environment: baristaEnvironment,
-    projectId: baristaProjectId
+    environment: baristaEnvironment = 'B2rKSXXOtyF5JBzXeI6k',
+    projectId: baristaProjectId = 'EJrWyFiygj6y3g2FfZh7'
   } = req.body
+  // TODO: Fallback to local auth and call google API directly instead of
+  // getting service account stored in Firestore
   await admin
     .database()
     .ref('requests/callGoogleApi')

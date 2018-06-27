@@ -3,12 +3,15 @@
 [![Code Style][code-style-image]][code-style-url]
 [![License][license-image]][license-url]
 
-Mocha test running/reporting application and API
+Mocha test running/reporting UI and API
 
 ## What?
 1. Downloads test repo based on settings passed to UI
 1. Tests run using [Barback][barback-url] on [Google Compute Engine][compute-engine-url]
-1. Shows you the results
+1. Shows results (also available through API)
+
+![BaristaArchitecture](https://user-images.githubusercontent.com/2992224/41957582-492d69ac-799c-11e8-87e2-e83547422a7a.png)
+
 
 ## Why?
 * Running tests at the click of a button requires "contained" running sessions (Compute Engine provides the ability to set specific resources)
