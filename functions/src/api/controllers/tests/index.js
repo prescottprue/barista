@@ -20,7 +20,7 @@ function createRequestBody({ cloudProjectId, cloudZone }) {
         {
           key: 'gce-container-declaration',
           value:
-            'spec:\n  containers:\n    - name: barback-template\n      image: gcr.io/barista-836b4/barback\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.'
+            'spec:\n  containers:\n    - name: barback-template\n      image: gcr.io/barista-836b4/github-prescottprue-barback\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.'
         }
       ]
     },

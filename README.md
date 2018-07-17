@@ -23,3 +23,10 @@ Mocha test running/reporting UI and API
 [code-style-url]: http://standardjs.com/
 [barback-url]: https://github.com/prescottprue/barback
 [compute-engine-url]: https://console.cloud.google.com/compute
+
+## Special Thanks
+
+Though [@prescottprue](https://github.com/prescottprue) came up with the original idea and prototype, it took tons of work from other folks to go from idea phase into a real project:
+
+* [@urbantumbleweed](https://github.com/urbantumbleweed) - idea sharing, ticket/feature planning, and support on early prototyping
+* [@reside-eng](https://github.com/reside-eng) - Providing a supportive environment for growth of open source tools
