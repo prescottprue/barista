@@ -10,6 +10,7 @@
     "test:cov": "istanbul cover .$(npm bin)/_mocha ./test/unit/**",
     "lint": "eslint -c .eslintrc ./src",
     "build": "npm run clean && babel src -d --out-dir dist",
+    "watch": "npm run build -- --watch",
     "clean": "rimraf dist etc",
     "serve": "npm run build && firebase serve --only functions",
     "shell": "npm run build && firebase experimental:functions:shell",
@@ -19,10 +20,21 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
+    "@google-cloud/storage": "^1.7.0",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
     "firebase-admin": "^5.12.1",
     "firebase-functions": "^1.0.4",
-    "glob": "7.1.2",
-    "lodash": "^4.17.10"
+    "fs-extra": "^4.0.2",
+    "glob": "^7.1.2",
+    "googleapis": "^23.0.0",
+    "lodash": "^4.17.10",
+    "mkdirp": "^0.5.1",
+    "mkdirp-promise": "^5.0.1",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "rimraf": "^2.6.2"
   },
   "private": true,
   "devDependencies": {

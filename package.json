@@ -19,6 +19,11 @@
     "functions:build": "npm run build --prefix functions",
     "functions:test": "npm run test --prefix functions",
     "format": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\"",
+    "test": "cross-env CYPRESS_baseUrl=http://localhost:3000 cypress run",
+    "test:stage": "cross-env CYPRESS_baseUrl=https://fireadmin-stage.firebaseapp.com cypress run",
+    "test:ui:stage": "cross-env CYPRESS_baseUrl=https://fireadmin-stage.firebaseapp.com $(npm bin)/cypress open",
+    "test:ui": "cross-env CYPRESS_baseUrl=http://localhost:3000 $(npm bin)/cypress open -- --browser chrome",
+    "test:ui:debug": "cross-env CYPRESS_baseUrl=http://localhost:3000 DEBUG=cypress:* cypress open",
     "prepush": "npm run lint"
   },
   "repository": {
@@ -76,6 +81,7 @@
     "connect-history-api-fallback": "^1.3.0",
     "cross-env": "^5.0.0",
     "css-loader": "^0.28.1",
+    "cypress": "^3.0.2",
     "eslint": "^3.19.0",
     "eslint-config-prettier": "^2.3.0",
     "eslint-config-standard": "^10.2.1",
