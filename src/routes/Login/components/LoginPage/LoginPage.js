@@ -14,11 +14,14 @@ export const LoginPage = ({ emailLogin, googleLogin, onSubmitFail }) => (
     </Paper>
     <div className={classes.or}>or</div>
     <div className={classes.providers}>
-      <GoogleButton onClick={googleLogin} />
+      <GoogleButton onClick={googleLogin} data-test="google-auth-button" />
     </div>
     <div className={classes.signup}>
       <span className={classes.signupLabel}>Need an account?</span>
-      <Link className={classes.signupLink} to={SIGNUP_PATH}>
+      <Link
+        className={classes.signupLink}
+        to={SIGNUP_PATH}
+        data-test="sign-up-link">
         Sign Up
       </Link>
     </div>

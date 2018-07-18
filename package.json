@@ -21,8 +21,8 @@
     "functions:test": "npm run test --prefix functions",
     "format": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\"",
     "test": "cross-env CYPRESS_baseUrl=http://localhost:3000 cypress run",
-    "test:stage": "cross-env CYPRESS_baseUrl=https://fireadmin-stage.firebaseapp.com cypress run",
-    "test:ui:stage": "cross-env CYPRESS_baseUrl=https://fireadmin-stage.firebaseapp.com $(npm bin)/cypress open",
+    "test:stage": "cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com cypress run",
+    "test:ui:stage": "cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com $(npm bin)/cypress open",
     "test:ui": "cross-env CYPRESS_baseUrl=http://localhost:3000 $(npm bin)/cypress open -- --browser chrome",
     "test:ui:debug": "cross-env CYPRESS_baseUrl=http://localhost:3000 DEBUG=cypress:* cypress open",
     "prepush": "npm run lint"
@@ -39,7 +39,7 @@
   "dependencies": {
     "@material-ui/core": "^1.4.0",
     "@material-ui/icons": "^1.1.0",
-    "firebase": "^5.0.4",
+    "firebase": "^5.2.0",
     "lodash": "^4.17.10",
     "normalize.css": "^7.0.0",
     "object-assign": "^4.1.1",
