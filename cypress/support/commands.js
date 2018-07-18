@@ -1,3 +1,5 @@
+const TOKEN_STORAGE_KEY = 'fbToken'
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -10,7 +12,18 @@
 //
 //
 // -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
+Cypress.Commands.add('login', (email, password) => {
+  if (!Cypress.env('FIREBASE_AUTH_JWT')) {
+    cy.log(
+      'FIREBASE_AUTH_JWT must be set to cypress environment in order to login'
+    )
+    return
+  }
+  window.sessionStorage.setItem(
+    TOKEN_STORAGE_KEY,
+    Cypress.env('FIREBASE_AUTH_JWT')
+  )
+})
 //
 //
 // -- This is a child command --
