@@ -36,7 +36,7 @@
   "author": "prescottprue (https://github.com/prescottprue)",
   "license": "MIT",
   "dependencies": {
-    "@material-ui/core": "^1.2.1",
+    "@material-ui/core": "^1.4.0",
     "@material-ui/icons": "^1.1.0",
     "firebase": "^5.0.4",
     "lodash": "^4.17.10",
@@ -59,7 +59,6 @@
     "redux-form": "^7.4.0",
     "redux-form-material-ui": "next",
     "redux-thunk": "^2.2.0",
-    "stackdriver-errors-js": "^0.4.0",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
@@ -87,6 +86,8 @@
     "eslint-config-standard": "^10.2.1",
     "eslint-config-standard-react": "^5.0.0",
     "eslint-plugin-babel": "^4.1.1",
+    "eslint-plugin-chai-friendly": "^0.4.1",
+    "eslint-plugin-cypress": "^2.0.1",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-prettier": "^2.1.2",
