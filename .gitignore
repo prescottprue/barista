@@ -22,3 +22,5 @@ cypress/videos
 cypress/screenshots
 cypress.env.json
 cypress/serviceAccount.json
+cypress/config.json
+serviceAccount.json

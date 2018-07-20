@@ -25,7 +25,8 @@
     "test:ui:stage": "cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com $(npm bin)/cypress open",
     "test:ui": "cross-env CYPRESS_baseUrl=http://localhost:3000 $(npm bin)/cypress open -- --browser chrome",
     "test:ui:debug": "cross-env CYPRESS_baseUrl=http://localhost:3000 DEBUG=cypress:* cypress open",
-    "prepush": "npm run lint"
+    "prepush": "npm run lint",
+    "createTestConfig": "babel-node build/ci/createTestEnvFile"
   },
   "repository": {
     "type": "git",
@@ -63,6 +64,7 @@
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.0.0",
@@ -100,10 +102,13 @@
     "favicons-webpack-plugin": "0.0.7",
     "figures": "^2.0.0",
     "file-loader": "^0.11.1",
+    "firebase-admin": "^5.13.0",
     "fs-extra": "^3.0.1",
     "html-webpack-plugin": "^2.29.0",
     "husky": "^0.14.3",
     "ip": "^1.1.5",
+    "mocha": "^5.2.0",
+    "mochawesome": "^3.0.2",
     "node-sass": "^4.5.3",
     "prettier": "^1.12.1",
     "rimraf": "^2.6.1",
