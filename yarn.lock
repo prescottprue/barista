@@ -193,7 +193,7 @@
     stream-events "^1.0.4"
     through2 "^2.0.3"
 
-"@google-cloud/firestore@^0.15.2":
+"@google-cloud/firestore@^0.15.4":
   version "0.15.4"
   resolved "https://registry.yarnpkg.com/@google-cloud/firestore/-/firestore-0.15.4.tgz#5a23cc7d0c516d0e019e0a8554749b518a0f6723"
   dependencies:
@@ -2518,7 +2518,7 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-date-fns@^1.27.2:
+date-fns@^1.27.2, date-fns@^1.29.0:
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
 
@@ -3581,13 +3581,13 @@ find-up@^2.0.0, find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
-firebase-admin@^5.13.0:
-  version "5.13.0"
-  resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-5.13.0.tgz#c3f3955cd94092d206e544e527fc0737303ab1b3"
+firebase-admin@^5.13.1:
+  version "5.13.1"
+  resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-5.13.1.tgz#79cfa2ce20c90061ae09176e33b7767c1eb02f96"
   dependencies:
     "@firebase/app" "^0.3.1"
     "@firebase/database" "^0.3.1"
-    "@google-cloud/firestore" "^0.15.2"
+    "@google-cloud/firestore" "^0.15.4"
     "@google-cloud/storage" "^1.6.0"
     "@types/google-cloud__storage" "^1.1.7"
     "@types/node" "^8.0.53"
@@ -6929,9 +6929,9 @@ react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
-react-redux-firebase@^2.1.3:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/react-redux-firebase/-/react-redux-firebase-2.1.5.tgz#99d1929f309b3b47252baee7feb7eb054ad3c711"
+react-redux-firebase@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/react-redux-firebase/-/react-redux-firebase-2.1.6.tgz#c8ccf6f8cc5b2b520162b47c900434eeda88228a"
   dependencies:
     hoist-non-react-statics "^2.3.1"
     lodash "^4.17.10"

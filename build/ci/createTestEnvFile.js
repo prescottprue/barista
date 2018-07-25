@@ -1,38 +1,92 @@
+/* eslint-disable no-console */
 import * as admin from 'firebase-admin'
-import { pickBy, isUndefined, size, keys } from 'lodash'
+import { pickBy, isUndefined, size, keys, isString } from 'lodash'
 import fs from 'fs'
 import path from 'path'
 
+const testEnvFilePath = path.join(process.cwd(), 'cypress.env.json')
+const localTestConfigPath = path.join(process.cwd(), 'cypress', 'config.json')
+const serviceAccountPath = path.join(process.cwd(), 'serviceAccount.json')
 const prefixesByCiEnv = {
   staging: 'STAGE_',
   production: 'PROD_'
 }
 
 /**
+ * Get prefix for current environment based on environment vars available
+ * within CI. Falls back to staging (i.e. STAGE)
+ * @return {String} Environment prefix string
+ */
+function getEnvPrefix() {
+  return (
+    prefixesByCiEnv[process.env.CI_ENVIRONMENT_SLUG] || prefixesByCiEnv.staging
+  )
+}
+
+/**
  * Get environment variable based on the current CI environment
- * @param  {String} varNameSuffix - Name of the variable after the environment
- * prefix
+ * @param  {String} varNameRoot - variable name without the environment prefix
  * @return {Any} Value of the environment variable
  * @example
  * envVarBasedOnCIEnv('FIREBASE_PROJECT_ID')
- * // => 'barista-stage' (value of 'STAGE_FIREBASE_PROJECT_ID' environment var)
+ * // => 'fireadmin-stage' (value of 'STAGE_FIREBASE_PROJECT_ID' environment var)
  */
-function envVarBasedOnCIEnv(varNameSuffix) {
-  const prefix =
-    prefixesByCiEnv[process.env.CI_ENVIRONMENT_SLUG] || prefixesByCiEnv.staging
-  return process.env[`${prefix}${varNameSuffix}`]
+function envVarBasedOnCIEnv(varNameRoot) {
+  if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
+    console.log(
+      `Not within valid CI environment, ${varNameRoot} is being loaded from cypress/config.json`
+    )
+    const configObj = require(localTestConfigPath)
+    return configObj[`STAGE_${varNameRoot}`] || configObj[varNameRoot]
+  }
+  const prefix = getEnvPrefix()
+  return process.env[`${prefix}${varNameRoot}`] || process.env[varNameRoot]
 }
 
+/**
+ * Get parsed value of environment variable. Useful for environment variables
+ * which have characters that need to be escaped.
+ * @param  {String} varNameRoot - variable name without the environment prefix
+ * @return {Any} Value of the environment variable
+ * @example
+ * getParsedEnvVar('FIREBASE_PRIVATE_KEY_ID')
+ * // => 'fireadmin-stage' (parsed value of 'STAGE_FIREBASE_PRIVATE_KEY_ID' environment var)
+ */
+function getParsedEnvVar(varNameRoot) {
+  const val = envVarBasedOnCIEnv(varNameRoot)
+  const prefix = getEnvPrefix()
+  const combinedVar = `${prefix}${varNameRoot}`
+  if (!val) {
+    console.error(
+      `${combinedVar} not found, make sure it is set within environment vars`
+    )
+  }
+  try {
+    if (isString(val)) {
+      return JSON.parse(val)
+    }
+    return val
+  } catch (err) {
+    console.error(`Error parsing ${combinedVar}`)
+    return val
+  }
+}
+
+/**
+ * Get service account from either local file or environment variables
+ * @return {Object} Service account object
+ */
 function getServiceAccount() {
-  const serviceAccountPath = path.join(process.cwd(), './serviceAccount.json')
+  // Check for local service account file (Local dev)
   if (fs.existsSync(serviceAccountPath)) {
     return require(serviceAccountPath)
   }
+  // Use environment variables (CI)
   return {
     type: 'service_account',
     project_id: envVarBasedOnCIEnv('FIREBASE_PROJECT_ID'),
     private_key_id: envVarBasedOnCIEnv('FIREBASE_PRIVATE_KEY_ID'),
-    private_key: envVarBasedOnCIEnv('FIREBASE_PRIVATE_KEY'),
+    private_key: getParsedEnvVar('FIREBASE_PRIVATE_KEY'),
     client_email: envVarBasedOnCIEnv('FIREBASE_CLIENT_EMAIL'),
     client_id: envVarBasedOnCIEnv('FIREBASE_CLIENT_ID'),
     auth_uri: 'https://accounts.google.com/o/oauth2/auth',
@@ -47,11 +101,20 @@ function getServiceAccount() {
  * @param {functions.Context} context - Functions context
  * @return {Promise}
  */
-async function createAuthToken() {
-  // Get UID from environment
+async function createTestConfig() {
+  const envPrefix = getEnvPrefix()
+  // Get UID from environment (falls back to cypress/config.json for local)
   const uid = envVarBasedOnCIEnv('TEST_UID')
+  // Throw if UID is missing in environment
+  if (!uid) {
+    throw new Error(
+      `${envPrefix}TEST_UID is missing from environment. Confirm that cypress/config.json contains either ${envPrefix}TEST_UID or TEST_UID.`
+    )
+  }
+
   // Get service account from local file falling back to environment variables
   const serviceAccount = getServiceAccount()
+
   // Confirm service account has all parameters
   const serviceAccountMissingParams = pickBy(serviceAccount, isUndefined)
   if (size(serviceAccountMissingParams)) {
@@ -60,6 +123,7 @@ async function createAuthToken() {
     ).join(', ')}`
     throw new Error(errMsg)
   }
+
   // Get project ID from environment variable
   const projectId =
     process.env.GCLOUD_PROJECT || envVarBasedOnCIEnv('FIREBASE_PROJECT_ID')
@@ -76,18 +140,17 @@ async function createAuthToken() {
     const customToken = await appFromSA
       .auth()
       .createCustomToken(uid, { isTesting: true })
+    // Remove firebase app
     appFromSA.delete()
+    // Create config object to be written into test env file
     const newCypressConfig = {
-      TEST_UID: '$STAGE_TEST_UID',
-      TEST_PASSWORD: '$STAGE_TEST_PASSWORD',
-      FIREBASE_API_KEY: '$STAGE_FIREBASE_API_KEY',
-      FIREBASE_PROJECT_ID: '$STAGE_FIREBASE_PROJECT_ID',
+      TEST_UID: envVarBasedOnCIEnv('TEST_UID'),
+      FIREBASE_API_KEY: envVarBasedOnCIEnv('FIREBASE_API_KEY'),
+      FIREBASE_PROJECT_ID: envVarBasedOnCIEnv('FIREBASE_PROJECT_ID'),
       FIREBASE_AUTH_JWT: customToken
     }
-    fs.writeFileSync(
-      newCypressConfig,
-      JSON.stringify(newCypressConfig, null, 2)
-    )
+    // Write config file as string
+    fs.writeFileSync(testEnvFilePath, JSON.stringify(newCypressConfig, null, 2))
     return customToken
   } catch (err) {
     /* eslint-disable no-console */
@@ -102,7 +165,7 @@ async function createAuthToken() {
 
 ;(async function() {
   try {
-    await createAuthToken()
+    await createTestConfig()
     process.exit()
   } catch (err) {
     /* eslint-disable no-console */
