@@ -2,7 +2,7 @@ import { UserAuthWrapper } from 'redux-auth-wrapper'
 import { browserHistory } from 'react-router'
 import { LIST_PATH } from 'constants'
 import LoadingSpinner from 'components/LoadingSpinner'
-
+import { showSuccess, showError } from 'modules/notification/actions'
 const AUTHED_REDIRECT = 'AUTHED_REDIRECT'
 const UNAUTHED_REDIRECT = 'UNAUTHED_REDIRECT'
 
@@ -61,12 +61,37 @@ export const createOnEnter = store => (
   { location: { query, pathname }, auth },
   replace
 ) => {
-  const currentItem = localStorage.getItem('fbToken')
+  const currentItem = sessionStorage.getItem('fbToken')
+  function loginWithToken(token) {
+    return store.firebase
+      .login({ token: currentItem })
+      .then(() => {
+        /* eslint-disable no-console */
+        console.debug('Auth through fbToken successful!')
+        showSuccess('Login through token successful')(store.dispatch)
+      })
+      .catch(err => {
+        console.debug(
+          `Error logging in through auth token: ${err.message || ''}`,
+          err
+        )
+        showError((err && err.message) || 'Error logging in through token')(
+          store.dispatch
+        )
+        Raven.captureException('Error authenticating with Auth token', err)
+        return Promise.reject(err)
+      })
+  }
   if (currentItem) {
-    return store.firebase.login({ token: currentItem }).catch(err => {
-      Raven.captureException('Error authenticating with Auth token', err)
-      return '/'
-    })
+    const reduxState = store.getState()
+    // Logout if already logged in
+    if (reduxState.firebase.auth && reduxState.firebase.auth.uid) {
+      return store.firebase.logout().then(loginWithToken())
+    }
+    // Otherwise login
+    console.debug('fbToken found in session storage, logging in...')
+    /* eslint-enable no-console */
+    return loginWithToken()
   }
 
   return null

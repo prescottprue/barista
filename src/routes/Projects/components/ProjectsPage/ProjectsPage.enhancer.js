@@ -52,6 +52,7 @@ export default compose(
       if (!uid) {
         return showError('You must be logged in to create a project')
       }
+      toggleDialog()
       return firestore
         .add(
           { collection: 'projects' },
@@ -62,7 +63,6 @@ export default compose(
           }
         )
         .then(() => {
-          toggleDialog()
           showSuccess('Project added successfully')
         })
         .catch(err => {
