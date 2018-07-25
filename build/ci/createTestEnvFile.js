@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin'
 import { pickBy, isUndefined, size, keys, isString } from 'lodash'
 import fs from 'fs'
 import path from 'path'
-
+import rp from 'request-promise'
 const testEnvFilePath = path.join(process.cwd(), 'cypress.env.json')
 const localTestConfigPath = path.join(process.cwd(), 'cypress', 'config.json')
 const serviceAccountPath = path.join(process.cwd(), 'serviceAccount.json')
@@ -140,6 +140,15 @@ async function createTestConfig() {
     const customToken = await appFromSA
       .auth()
       .createCustomToken(uid, { isTesting: true })
+    const googleApiBaseUri =
+      'https://www.googleapis.com/identitytoolkit/v3/relyingparty'
+    const queryParams = `key=${envVarBasedOnCIEnv('FIREBASE_API_KEY')}`
+    const getAccountInfoUri = `${googleApiBaseUri}/getAccountInfo?${queryParams}`
+    const verifyCustomTokenUri = `${googleApiBaseUri}/verifyCustomToken?${queryParams}`
+    const verifyCustomTokenUri = `${googleApiBaseUri}/verifyCustomToken?${queryParams}`
+    await rp({ method: 'POST', uri: verifyCustomTokenUri })
+    // TODO: Call Google's verifyCustomToken endpoint and write the results to cypress.env.json
+    // TODO: Call Google's getAccountInfo endpoint and write the results to cypress.env.json
     // Remove firebase app
     appFromSA.delete()
     // Create config object to be written into test env file
