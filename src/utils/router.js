@@ -2,7 +2,7 @@ import { UserAuthWrapper } from 'redux-auth-wrapper'
 import { browserHistory } from 'react-router'
 import { LIST_PATH } from 'constants'
 import LoadingSpinner from 'components/LoadingSpinner'
-
+import { showSuccess, showError } from 'modules/notification/actions'
 const AUTHED_REDIRECT = 'AUTHED_REDIRECT'
 const UNAUTHED_REDIRECT = 'UNAUTHED_REDIRECT'
 
@@ -67,15 +67,16 @@ export const createOnEnter = store => (
       .login({ token: currentItem })
       .then(() => {
         /* eslint-disable no-console */
-        console.debug(
-          'Auth through fbToken successful! Removing token from session storage'
-        )
-        window.MAIN_READY = true
+        console.debug('Auth through fbToken successful!')
+        showSuccess('Login through token successful')(store.dispatch)
       })
       .catch(err => {
         console.debug(
           `Error logging in through auth token: ${err.message || ''}`,
           err
+        )
+        showError((err && err.message) || 'Error logging in through token')(
+          store.dispatch
         )
         Raven.captureException('Error authenticating with Auth token', err)
         return Promise.reject(err)

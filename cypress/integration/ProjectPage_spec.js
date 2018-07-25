@@ -3,11 +3,12 @@ import { createSelector } from '../utils'
 describe('Projects Page', () => {
   let open // eslint-disable-line no-unused-vars
   before(() => {
+    // Create a server to listen to requests sent out to Google Auth and Firestore
     cy.server()
       .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo\//)
-      .as('getAccountInfo')
+      .as('getGoogleAccountInfo')
       .route('POST', /identitytoolkit\/v3\/relyingparty\/verifyCustomToken\//)
-      .as('verifyCustomToken')
+      .as('verifyCustomFirebaseToken')
       .route('POST', /google.firestore.v1beta1.Firestore\/Write\//)
       .as('addProject')
       .route('POST', /google.firestore.v1beta1.Firestore\/Listen\//)
@@ -19,11 +20,20 @@ describe('Projects Page', () => {
         open = cy.spy(cy.state('server').options, 'onOpen')
         return null
       })
+    // Go to home page
     cy.visit('/')
+    // Login using custom token
     cy.login()
-    // by default will wait 4sec for APP_READY prop to exist on
-    cy.visit('/projects')
-    cy.wait('@listenForProjects')
+    cy.visit('/projects').then(() =>
+      // Wait for all data requests to complete before proceeding
+      // we use promise all because responses can return at different times
+      Promise.all([
+        cy.wait('@verifyCustomFirebaseToken'),
+        cy.wait('@getGoogleAccountInfo'),
+        cy.wait('@listenForProjects'),
+        cy.wait('@getProjectData')
+      ])
+    )
   })
 
   describe('Add Project', () => {

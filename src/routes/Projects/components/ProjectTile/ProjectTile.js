@@ -15,24 +15,24 @@ import classes from './ProjectTile.scss'
 
 export const ProjectTile = ({
   open,
-  project,
-  onSelect,
-  onDelete,
-  displayNames,
+  name,
+  projectId,
   menuClick,
   closeMenu,
   anchorEl,
   sharingDialogOpen,
   formattedCreatedAt,
-  toggleSharingDialog
+  toggleSharingDialog,
+  clickProjectDelete,
+  clickSelectProject
 }) => (
   <Paper className={classes.container} open={open} data-test="project-tile">
     <div className={classes.top}>
       <span
         className={classes.name}
-        onClick={() => onSelect(project)}
+        onClick={clickSelectProject}
         data-test="project-tile-name">
-        {project.name}
+        {name}
       </span>
       <div>
         <IconButton onClick={menuClick} data-test="project-tile-more">
@@ -43,15 +43,15 @@ export const ProjectTile = ({
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={closeMenu}>
-          <MenuItem
-            onClick={() => onSelect(project)}
-            data-test="project-tile-edit">
+          <MenuItem onClick={clickSelectProject} data-test="project-tile-edit">
             <ListItemIcon className={classes.icon}>
               <EditIcon />
             </ListItemIcon>
             <ListItemText inset primary="Edit" />
           </MenuItem>
-          <MenuItem onClick={onDelete} data-test="project-tile-delete">
+          <MenuItem
+            onClick={clickProjectDelete}
+            data-test="project-tile-delete">
             <ListItemIcon className={classes.icon}>
               <DeleteIcon />
             </ListItemIcon>
@@ -60,29 +60,31 @@ export const ProjectTile = ({
         </Menu>
       </div>
     </div>
-    {project.formattedCreatedAt ? (
+    {formattedCreatedAt ? (
       <span className={classes.createdAt}>{formattedCreatedAt}</span>
     ) : null}
     <div className="flex-column">
-      <Tooltip title="Add Collaborators" placement="bottom">
-        <IconButton onClick={toggleSharingDialog}>
-          <PersonIcon />
-        </IconButton>
+      <Tooltip title="Sharing - Coming Soon" placement="bottom">
+        <div>
+          <IconButton onClick={toggleSharingDialog} disabled>
+            <PersonIcon />
+          </IconButton>
+        </div>
       </Tooltip>
     </div>
   </Paper>
 )
 
 ProjectTile.propTypes = {
-  project: PropTypes.object.isRequired,
-  displayNames: PropTypes.object,
-  onSelect: PropTypes.func.isRequired,
-  menuClick: PropTypes.func.isRequired,
-  closeMenu: PropTypes.func.isRequired,
-  formattedCreatedAt: PropTypes.number,
-  onDelete: PropTypes.func,
-  anchorEl: PropTypes.object,
-  toggleSharingDialog: PropTypes.func,
+  name: PropTypes.string.isRequired,
+  projectId: PropTypes.string.isRequired,
+  formattedCreatedAt: PropTypes.string, // from enhancer (withProps)
+  anchorEl: PropTypes.object, // from enhancer (withStateHandlers)
+  menuClick: PropTypes.func.isRequired, // from enhancer (withStateHandlers)
+  closeMenu: PropTypes.func.isRequired, // from enhancer (withStateHandlers)
+  toggleSharingDialog: PropTypes.func, // from enhancer (withStateHandlers)
+  clickProjectDelete: PropTypes.func.isRequired, // from enhancer (withHandlers)
+  clickSelectProject: PropTypes.func.isRequired, // from enhancer (withHandlers)
   sharingDialogOpen: PropTypes.bool,
   open: PropTypes.bool
 }
