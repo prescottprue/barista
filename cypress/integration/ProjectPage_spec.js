@@ -28,10 +28,10 @@ describe('Projects Page', () => {
       // Wait for all data requests to complete before proceeding
       // we use promise all because responses can return at different times
       Promise.all([
-        cy.wait('@verifyCustomFirebaseToken'),
-        cy.wait('@getGoogleAccountInfo'),
-        cy.wait('@listenForProjects'),
-        cy.wait('@getProjectData')
+        // cy.wait('@verifyCustomFirebaseToken', { timeout: 10000 }),
+        // cy.wait('@getGoogleAccountInfo'),
+        cy.wait('@listenForProjects')
+        // cy.wait('@getProjectData')
       ])
     )
   })

@@ -15,7 +15,7 @@ stages:
 # 5. Preserve build results and dependencies for future jobs in the pipeline
 Build:
   stage: build
-  image: node:6.14.0
+  image: node:8
   when: always
   except:
     variables:
@@ -48,7 +48,7 @@ Build:
 # NOTE: Cache was not used for node_modules since function deps were not perserving
 Unit Tests:
   stage: unit_tests
-  image: node:6.14.0
+  image: node:8
   when: on_success
   allow_failure: true
   except:
@@ -75,7 +75,7 @@ Unit Tests:
 # Deploy React App and Cloud Functions
 Deploy Staging:
   stage: deploy_staging
-  image: node:6.14.0
+  image: node:8
   environment:
     name: staging
     url: https://barista-stage.firebaseapp.com
@@ -134,7 +134,7 @@ E2E Tests:
 # 2. Deploy React App and Cloud Functions to production environment (https://fireadmin.io)
 Deploy Production:
   stage: deploy_production
-  image: node:6.14.0
+  image: node:8
   environment:
     name: production
     url: https://barista-836b4.firebaseapp.com
