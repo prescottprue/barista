@@ -11,6 +11,11 @@ before_script:
   - npm i --prefix functions
   - npm i firebase-ci
 
+cache:
+  paths:
+    - node_modules
+    - functions/node_modules
+
 # Build Stage
 # Installs dependencies, builds app, and saves results for later (artifacts).
 # 1. Install dependencies for React App and Cloud Functions. Installing of
@@ -49,9 +54,6 @@ Build Functions:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-build/
       - $CI_COMMIT_MESSAGE =~ /skip-functions-build/
-  cache:
-    paths:
-      - functions/node_modules
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -71,8 +73,6 @@ Unit Tests:
   when: on_success
   allow_failure: true
   except:
-    refs:
-      - prod
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-tests/
       - $CI_COMMIT_MESSAGE =~ /skip-unit-tests/
