@@ -7,7 +7,7 @@
   "ci": {
     "createConfig": {
       "master": {
-        "env": "production",
+        "env": "staging",
         "firebase": {
           "apiKey": "$STAGE_FIREBASE_API_KEY",
           "authDomain": "barista-stage.firebaseapp.com",
@@ -15,10 +15,10 @@
           "projectId": "barista-stage",
           "storageBucket": "barista-stage.appspot.com"
         },
-        "reduxFirebase": {
-          "userProfile": "users",
-          "enableLogging": false,
-          "updateProfileOnLogin": false
+        "segmentId": "${STAGE_SEGMENT_ID}",
+        "sentryDsn": "${SENTRY_DSN}",
+        "googleApis": {
+          "apiKey": "${STAGE_GOOGLE_API_KEY}"
         }
       },
       "prod": {
@@ -30,10 +30,10 @@
           "projectId": "barista-836b4",
           "storageBucket": "barista-836b4.appspot.com"
         },
-        "reduxFirebase": {
-          "userProfile": "users",
-          "enableLogging": false,
-          "updateProfileOnLogin": false
+        "segmentId": "${PROD_SEGMENT_ID}",
+        "sentryDsn": "${SENTRY_DSN}",
+        "googleApis": {
+          "apiKey": "${PROD_GOOGLE_API_KEY}"
         }
       }
     }

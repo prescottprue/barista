@@ -50,6 +50,10 @@ export default (initialState = {}) => {
     presence: 'presence',
     sessions: null
   }
+
+  const combinedConfig = rrfConfig
+    ? { ...defaultRRFConfig, ...rrfConfig }
+    : defaultRRFConfig
   // ======================================================
   // Store Instantiation and HMR Setup
   // ======================================================
@@ -58,7 +62,7 @@ export default (initialState = {}) => {
     initialState,
     compose(
       applyMiddleware(...middleware),
-      reactReduxFirebase(firebase, { ...defaultRRFConfig, ...rrfConfig }),
+      reactReduxFirebase(firebase, combinedConfig),
       reduxFirestore(firebase),
       ...enhancers
     )
