@@ -6,15 +6,18 @@ stages:
   - build_production
   - deploy_production
 
+cache:
+  untracked: true
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - functions/node_modules/
+    - .cache/Cypress
+
 before_script:
   - npm i
   - npm i --prefix functions
   - npm i firebase-ci
-
-cache:
-  paths:
-    - node_modules
-    - functions/node_modules
 
 # Build Stage
 # Installs dependencies, builds app, and saves results for later (artifacts).
@@ -32,9 +35,6 @@ Build:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-build/
       - $CI_COMMIT_MESSAGE =~ /skip-app-build/
-  cache:
-    paths:
-      - node_modules # NPM packages
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -61,7 +61,6 @@ Build Functions:
   variables:
     CYPRESS_INSTALL_BINARY: 0 # skip installing cypress binary
   script:
-    - npm run lint --prefix functions
     - npm run build:functions
 
 # Unit Testing Stage
@@ -76,10 +75,6 @@ Unit Tests:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-tests/
       - $CI_COMMIT_MESSAGE =~ /skip-unit-tests/
-  cache:
-    policy: pull # only pull cache, skip uploading
-    paths:
-      - functions/node_modules
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -103,11 +98,6 @@ Deploy Staging:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-deploy/
       - $CI_COMMIT_MESSAGE =~ /skip-stage-deploy/
-  cache:
-    policy: pull # only pull cache, skip uploading
-    paths:
-      - node_modules
-      - functions/node_modules
   variables:
     TRAVIS_BRANCH: master # workaround to get firebase-ci to use config for stage from .firebaserc
   script:
@@ -118,19 +108,12 @@ Deploy Staging:
 E2E Tests:
   stage: e2e_tests
   image: cypress/base
-  environment:
-    name: staging
-    url: https://barista-stage.firebaseapp.com
   when: on_success
   allow_failure: true
   only:
     - master
     - web
     - schedules
-  cache:
-    paths:
-      - node_modules
-      - .cache/Cypress
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-tests/
@@ -153,12 +136,10 @@ E2E Tests:
 Build Production:
   stage: build_production
   image: node:8
-  environment:
-    name: production
-    url: https://barista-836b4.firebaseapp.com
   when: on_success
   only:
     - master
+    - prod
     - web
   except:
     variables:
@@ -189,6 +170,7 @@ Deploy Production:
   when: manual
   only:
     - master
+    - prod
     - web
   except:
     variables:
