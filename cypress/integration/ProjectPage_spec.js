@@ -5,9 +5,17 @@ describe('Projects Page', () => {
   before(() => {
     // Create a server to listen to requests sent out to Google Auth and Firestore
     cy.server()
-      .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo\//)
+      .route(
+        'POST',
+        /identitytoolkit\/v3\/relyingparty\/getAccountInfo\//,
+        Cypress.env('ACCOUNT_INFO_RESPONSE')
+      )
       .as('getGoogleAccountInfo')
-      .route('POST', /identitytoolkit\/v3\/relyingparty\/verifyCustomToken\//)
+      .route(
+        'POST',
+        /identitytoolkit\/v3\/relyingparty\/verifyCustomToken\//,
+        Cypress.env('VERIFY_TOKEN_RESPONSE')
+      )
       .as('verifyCustomFirebaseToken')
       .route('POST', /google.firestore.v1beta1.Firestore\/Write\//)
       .as('addProject')
@@ -24,16 +32,8 @@ describe('Projects Page', () => {
     cy.visit('/')
     // Login using custom token
     cy.login()
-    cy.visit('/projects').then(() =>
-      // Wait for all data requests to complete before proceeding
-      // we use promise all because responses can return at different times
-      Promise.all([
-        // cy.wait('@verifyCustomFirebaseToken', { timeout: 10000 }),
-        // cy.wait('@getGoogleAccountInfo'),
-        cy.wait('@listenForProjects')
-        // cy.wait('@getProjectData')
-      ])
-    )
+    cy.visit('/projects')
+    cy.wait('@listenForProjects')
   })
 
   describe('Add Project', () => {

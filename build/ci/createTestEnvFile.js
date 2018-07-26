@@ -96,6 +96,39 @@ function getServiceAccount() {
   }
 }
 
+function identityToolkitUrl(resource = 'verifyCustomToken') {
+  const fbClientApiKey = envVarBasedOnCIEnv('FIREBASE_API_KEY')
+  if (!fbClientApiKey) {
+    throw new Error(
+      'FIREBASE_API_KEY not set within environment. Check cypress/config.json'
+    )
+  }
+  const googleApiBaseUri =
+    'https://www.googleapis.com/identitytoolkit/v3/relyingparty'
+  return `${googleApiBaseUri}/${resource}?key=${fbClientApiKey}`
+}
+
+async function identitytoolkitRequest({ token, resource, body }) {
+  const fbClientApiKey = envVarBasedOnCIEnv('FIREBASE_API_KEY')
+  const queryParams = { key: fbClientApiKey }
+  try {
+    const res = await rp({
+      method: 'POST',
+      uri: identityToolkitUrl(resource),
+      json: true,
+      qs: queryParams,
+      body: body || { token }
+    })
+    return res
+  } catch (err) {
+    console.error(
+      `Error in identity toolkit request for ${resource}: ${err.message || ''}`,
+      err
+    )
+    throw err
+  }
+}
+
 /**
  * @param  {functions.Event} event - Function event
  * @param {functions.Context} context - Functions context
@@ -140,13 +173,16 @@ async function createTestConfig() {
     const customToken = await appFromSA
       .auth()
       .createCustomToken(uid, { isTesting: true })
-    const googleApiBaseUri =
-      'https://www.googleapis.com/identitytoolkit/v3/relyingparty'
-    const queryParams = `key=${envVarBasedOnCIEnv('FIREBASE_API_KEY')}`
-    const getAccountInfoUri = `${googleApiBaseUri}/getAccountInfo?${queryParams}`
-    const verifyCustomTokenUri = `${googleApiBaseUri}/verifyCustomToken?${queryParams}`
-    const verifyCustomTokenUri = `${googleApiBaseUri}/verifyCustomToken?${queryParams}`
-    await rp({ method: 'POST', uri: verifyCustomTokenUri })
+
+    console.log('Requesting to verify new custom token')
+    const VERIFY_TOKEN_RESPONSE = await identitytoolkitRequest({
+      token: customToken
+    })
+    const ACCOUNT_INFO_RESPONSE = await identitytoolkitRequest({
+      token: customToken,
+      body: { idToken: VERIFY_TOKEN_RESPONSE.idToken },
+      resource: 'getAccountInfo'
+    })
     // TODO: Call Google's verifyCustomToken endpoint and write the results to cypress.env.json
     // TODO: Call Google's getAccountInfo endpoint and write the results to cypress.env.json
     // Remove firebase app
@@ -156,7 +192,9 @@ async function createTestConfig() {
       TEST_UID: envVarBasedOnCIEnv('TEST_UID'),
       FIREBASE_API_KEY: envVarBasedOnCIEnv('FIREBASE_API_KEY'),
       FIREBASE_PROJECT_ID: envVarBasedOnCIEnv('FIREBASE_PROJECT_ID'),
-      FIREBASE_AUTH_JWT: customToken
+      FIREBASE_AUTH_JWT: customToken,
+      VERIFY_TOKEN_RESPONSE,
+      ACCOUNT_INFO_RESPONSE
     }
     // Write config file as string
     fs.writeFileSync(testEnvFilePath, JSON.stringify(newCypressConfig, null, 2))

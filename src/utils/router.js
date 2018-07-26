@@ -18,7 +18,7 @@ export const UserIsAuthenticated = UserAuthWrapper({
   authSelector: ({ firebase: { auth } }) => auth,
   authenticatingSelector: ({ firebase: { auth, isInitializing } }) =>
     !auth.isLoaded || isInitializing,
-  predicate: auth => !auth.isEmpty,
+  predicate: auth => !auth.isEmpty && auth.uid,
   redirectAction: newLoc => dispatch => {
     browserHistory.replace(newLoc)
     dispatch({

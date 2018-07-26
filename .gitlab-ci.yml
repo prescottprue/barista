@@ -122,12 +122,11 @@ E2E Tests:
      # Install Cypress so that binary is grabbed (skipped in build stage)
      # npm is used since yarn automatically saves any deps installed
     - npm i cypress
-    - $(npm bin)/cypress verify # Confirm Cypress is ready to use
-     # Create environment specific test config including auth token (saved to cypress.env.json)
-    - echo "Creating cypress.env.json..."
-    - npm run build:testConfig
-    - echo "cypress.env.json created successfully. Calling test run..."
-    - npm run test:stage # Run E2E Tests through Cypress
+     # Confirm Cypress is ready to use
+    - $(npm bin)/cypress verify
+     # Create environment specific test config including auth token
+     # (saved to cypress.env.json) then run E2E Tests through Cypress
+    - npm run test:stage
 
 # Deploy Production
 # 1. Commit
@@ -153,8 +152,6 @@ Deploy Production:
   variables:
     TRAVIS_BRANCH: prod # workaround to get firebase-ci to use config for stage from .firebaserc
   script:
-    - git checkout prod
-    - git merge --no-ff master
     - npm run clean # remove existing dist folder
     - npm run build:config # create env specific src/config.js
     - npm run build # rebuild bundle with new config

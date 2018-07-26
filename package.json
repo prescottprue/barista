@@ -20,11 +20,11 @@
     "functions:build": "npm run build --prefix functions",
     "functions:test": "npm run test --prefix functions",
     "format": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\"",
-    "test": "cross-env CYPRESS_baseUrl=http://localhost:3000 cypress run",
-    "test:stage": "cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com cypress run",
-    "test:ui:stage": "cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com $(npm bin)/cypress open",
-    "test:ui": "cross-env CYPRESS_baseUrl=http://localhost:3000 $(npm bin)/cypress open -- --browser chrome",
-    "test:ui:debug": "cross-env CYPRESS_baseUrl=http://localhost:3000 DEBUG=cypress:* cypress open",
+    "test": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3000 cypress run",
+    "test:stage": "npm run build:testConfig && cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com cypress run",
+    "test:ui:stage": "npm run build:testConfig && cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com $(npm bin)/cypress open",
+    "test:ui": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3000 $(npm bin)/cypress open -- --browser chrome",
+    "test:ui:debug": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3000 DEBUG=cypress:* cypress open",
     "prepush": "npm run lint"
   },
   "repository": {
