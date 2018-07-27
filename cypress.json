@@ -1,7 +1,4 @@
 {
   "projectId": "6my6ku",
-  "chromeWebSecurity": false,
-  "blacklistHosts": [
-    "cdn.ravenjs.com"
-  ]
+  "chromeWebSecurity": false
 }

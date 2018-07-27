@@ -123,6 +123,7 @@ E2E Tests:
     paths:
       - cypress/videos
       - cypress/screenshots
+      - cypress.env.json
   script:
      # Install Cypress so that binary is grabbed (skipped in build stage)
     - npm i cypress
@@ -130,7 +131,7 @@ E2E Tests:
     - $(npm bin)/cypress verify
      # Create environment specific test config including auth token
      # (saved to cypress.env.json) then run E2E Tests through Cypress
-    - npm run test:stage
+    - npm run test:stage -- --record --key $CYPRESS_KEY
 
 # Build Production version of bundle (has different config)
 Build Production:
