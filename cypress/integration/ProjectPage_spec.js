@@ -1,27 +1,33 @@
 import { createSelector } from '../utils'
 
+Cypress.on('uncaught:exception', hackToNotFailOnCancelledXHR)
+Cypress.on('fail', hackToNotFailOnCancelledXHR)
+
+function hackToNotFailOnCancelledXHR(err) {
+  const realError =
+    err.message.indexOf("Cannot set property 'aborted' of undefined") === -1
+  if (realError) throw err
+  else console.error(err) // eslint-disable-line no-console
+}
+
 describe('Projects Page', () => {
   let open // eslint-disable-line no-unused-vars
   before(() => {
     // Create a server to listen to requests sent out to Google Auth and Firestore
     cy.server()
-      .route(
-        'POST',
-        /identitytoolkit\/v3\/relyingparty\/getAccountInfo\//,
-        Cypress.env('ACCOUNT_INFO_RESPONSE')
-      )
+      // Google get account info (stubbed)
+      .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo/)
+      // .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo/, Cypress.env('ACCOUNT_INFO_RESPONSE'))
       .as('getGoogleAccountInfo')
-      .route(
-        'POST',
-        /identitytoolkit\/v3\/relyingparty\/verifyCustomToken\//,
-        Cypress.env('VERIFY_TOKEN_RESPONSE')
-      )
+      // Google verify token request (stubbed)
+      .route('POST', /identitytoolkit\/v3\/relyingparty\/verifyCustomToken/)
+      // .route('POST', /identitytoolkit\/v3\/relyingparty\/verifyCustomToken/, Cypress.env('VERIFY_TOKEN_RESPONSE'))
       .as('verifyCustomFirebaseToken')
-      .route('POST', /google.firestore.v1beta1.Firestore\/Write\//)
+      .route('POST', /google.firestore.v1beta1.Firestore\/Write/)
       .as('addProject')
-      .route('POST', /google.firestore.v1beta1.Firestore\/Listen\//)
+      .route('POST', /google.firestore.v1beta1.Firestore\/Listen/)
       .as('listenForProjects')
-      .route('GET', /google.firestore.v1beta1.Firestore\/Listen\//)
+      .route('GET', /google.firestore.v1beta1.Firestore\/Listen/)
       .as('getProjectData')
       .window()
       .then(win => {
@@ -32,7 +38,9 @@ describe('Projects Page', () => {
     cy.visit('/')
     // Login using custom token
     cy.login()
+    // Go to projects page
     cy.visit('/projects')
+    // wait for responses to requests (Promise.all used since responses cancome back in different order)
     cy.wait('@listenForProjects')
   })
 

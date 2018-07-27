@@ -32,15 +32,18 @@ function getEnvPrefix() {
  * // => 'fireadmin-stage' (value of 'STAGE_FIREBASE_PROJECT_ID' environment var)
  */
 function envVarBasedOnCIEnv(varNameRoot) {
-  if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
-    console.log(
-      `Not within valid CI environment, ${varNameRoot} is being loaded from cypress/config.json`
-    )
-    const configObj = require(localTestConfigPath)
-    return configObj[`STAGE_${varNameRoot}`] || configObj[varNameRoot]
-  }
   const prefix = getEnvPrefix()
-  return process.env[`${prefix}${varNameRoot}`] || process.env[varNameRoot]
+  const combined = `${prefix}${varNameRoot}`
+  if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
+    const configObj = require(localTestConfigPath)
+    console.log(
+      `Running in local environment, ${
+        configObj[combined] ? combined : varNameRoot
+      } is being loaded from cypress/config.json`
+    )
+    return configObj[combined] || configObj[varNameRoot]
+  }
+  return process.env[combined] || process.env[varNameRoot]
 }
 
 /**
@@ -144,7 +147,8 @@ async function createTestConfig() {
       `${envPrefix}TEST_UID is missing from environment. Confirm that cypress/config.json contains either ${envPrefix}TEST_UID or TEST_UID.`
     )
   }
-
+  const FIREBASE_API_KEY = envVarBasedOnCIEnv('FIREBASE_API_KEY')
+  const FIREBASE_PROJECT_ID = envVarBasedOnCIEnv('FIREBASE_PROJECT_ID')
   // Get service account from local file falling back to environment variables
   const serviceAccount = getServiceAccount()
 
@@ -155,6 +159,12 @@ async function createTestConfig() {
       serviceAccountMissingParams
     ).join(', ')}`
     throw new Error(errMsg)
+  }
+
+  if (serviceAccount.project_id !== FIREBASE_PROJECT_ID) {
+    throw new Error(
+      'Service account project_id does not match provided FIREBASE_PROJECT_ID'
+    )
   }
 
   // Get project ID from environment variable
@@ -190,8 +200,8 @@ async function createTestConfig() {
     // Create config object to be written into test env file
     const newCypressConfig = {
       TEST_UID: envVarBasedOnCIEnv('TEST_UID'),
-      FIREBASE_API_KEY: envVarBasedOnCIEnv('FIREBASE_API_KEY'),
-      FIREBASE_PROJECT_ID: envVarBasedOnCIEnv('FIREBASE_PROJECT_ID'),
+      FIREBASE_API_KEY,
+      FIREBASE_PROJECT_ID,
       FIREBASE_AUTH_JWT: customToken,
       VERIFY_TOKEN_RESPONSE,
       ACCOUNT_INFO_RESPONSE
@@ -202,7 +212,7 @@ async function createTestConfig() {
   } catch (err) {
     /* eslint-disable no-console */
     console.error(
-      `Error generating custom token for uid: ${uid}`,
+      `Error generating custom token for uid: ${uid} and apiKey: ${FIREBASE_API_KEY}`,
       err.message || err
     )
     /* eslint-enable no-console */
