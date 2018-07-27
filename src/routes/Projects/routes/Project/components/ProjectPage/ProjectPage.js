@@ -14,7 +14,7 @@ const ProjectPage = ({ params, project, startTestRun }) => (
           {project.name || 'Project'}
         </Typography>
         <Typography className={classes.subtitle}>
-          {params.projectname}
+          {params.projectId}
         </Typography>
         <Button onClick={startTestRun}>Run Tests</Button>
         <div>

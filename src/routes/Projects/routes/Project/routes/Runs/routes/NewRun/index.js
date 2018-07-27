@@ -1,5 +1,7 @@
+import { NEWRUN_PATH as path } from 'constants'
+
 export default store => ({
-  path: ':projectId',
+  path,
   /*  Async getComponent is only invoked when route matches   */
   getComponent(nextState, cb) {
     /*  Webpack - use 'require.ensure' to create a split point
@@ -9,24 +11,14 @@ export default store => ({
       require => {
         /*  Webpack - use require callback to define
           dependencies for bundling   */
-        const Project = require('./components/ProjectPage').default
+        const NewRun = require('./components/NewRun').default
 
         /*  Return getComponent   */
-        cb(null, Project)
+        cb(null, NewRun)
 
         /* Webpack named bundle   */
       },
-      'Project'
+      'NewRun'
     )
-  },
-  getChildRoutes(partialNextState, cb) {
-    require.ensure([], require => {
-      /*  Webpack - use require callback to define
-          dependencies for bundling   */
-      const Runs = require('./routes/Runs').default
-
-      /*  Return getComponent   */
-      cb(null, [Runs(store)])
-    })
   }
 })

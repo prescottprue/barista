@@ -20,5 +20,16 @@ export default store => ({
       },
       'Runs'
     )
+  },
+  getChildRoutes(partialNextState, cb) {
+    require.ensure([], require => {
+      /*  Webpack - use require callback to define
+          dependencies for bundling   */
+      const Run = require('./routes/Run').default
+      const NewRun = require('./routes/NewRun').default
+
+      /*  Return getComponent   */
+      cb(null, [Run(store), NewRun(store)])
+    })
   }
 })

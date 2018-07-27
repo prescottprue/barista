@@ -6,6 +6,7 @@ import { firestoreConnect } from 'react-redux-firebase'
 import { withNotifications } from 'modules/notification'
 import { withRouter, spinnerWhileLoading } from 'utils/components'
 import { UserIsAuthenticated } from 'utils/router'
+import { withChildren } from 'enhancers'
 
 export default compose(
   // redirect to /login if user is not logged in
@@ -14,6 +15,7 @@ export default compose(
   connect(({ firebase: { auth: { uid } } }) => ({ uid })),
   // Wait for uid to exist before going further
   spinnerWhileLoading(['uid']),
+  withChildren,
   // Create listeners based on current users UID
   firestoreConnect(({ params, uid }) => [
     // Listener for projects the current user created
