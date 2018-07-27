@@ -11,10 +11,10 @@ export default store => ({
       require => {
         /*  Webpack - use require callback to define
           dependencies for bundling   */
-        const Run = require('./components/Run').default
+        const RunPage = require('./components/RunPage').default
 
         /*  Return getComponent   */
-        cb(null, Run)
+        cb(null, RunPage)
 
         /* Webpack named bundle   */
       },
