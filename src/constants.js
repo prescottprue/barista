@@ -6,6 +6,7 @@ export const ACCOUNT_FORM_NAME = 'account'
 export const LOGIN_FORM_NAME = 'login'
 export const SIGNUP_FORM_NAME = 'signup'
 export const NEW_PROJECT_FORM_NAME = 'newProject'
+export const RUNS_PATH = 'runs'
 
 export const formNames = {
   account: ACCOUNT_FORM_NAME,
@@ -17,7 +18,8 @@ export const paths = {
   list: LIST_PATH,
   account: ACCOUNT_PATH,
   login: LOGIN_PATH,
-  signup: SIGNUP_PATH
+  signup: SIGNUP_PATH,
+  runs: RUNS_PATH
 }
 
 export default { ...paths, ...formNames }

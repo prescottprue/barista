@@ -1,6 +1,6 @@
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { LIST_PATH } from 'constants'
+import { LIST_PATH, RUNS_PATH } from 'constants'
 import { withHandlers, withStateHandlers, pure } from 'recompose'
 import { firestoreConnect } from 'react-redux-firebase'
 import { withNotifications } from 'modules/notification'
@@ -83,7 +83,7 @@ export default compose(
         })
     },
     goToProject: ({ router }) => projectId => {
-      router.push(`${LIST_PATH}/${projectId}`)
+      router.push(`${LIST_PATH}/${projectId}/${RUNS_PATH}`)
     }
   }),
   pure // shallow equals comparison on props (prevent unessesary re-renders)
