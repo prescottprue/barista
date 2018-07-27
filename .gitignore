@@ -14,6 +14,7 @@ src/config.js
 # Functions
 functions/etc
 functions/dist
+functions/coverage
 functions/.runtimeconfig.json
 functions/serviceAccount.json
 
@@ -21,6 +22,5 @@ functions/serviceAccount.json
 cypress/videos
 cypress/screenshots
 cypress.env.json
-cypress/serviceAccount.json
 cypress/config.json
 serviceAccount.json

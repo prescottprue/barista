@@ -1,5 +1,6 @@
 {
-  "projectId": "6my6ku",
+  "projectId": "bvnbxp",
   "chromeWebSecurity": false,
+  "requestTimeout": 10000,
   "reporter": "../reporters/resideReporter"
 }

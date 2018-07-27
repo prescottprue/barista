@@ -1,12 +1,11 @@
-describe('api HTTPS Cloud Function', () => {
-  let myFunctions
+describe.skip('api HTTPS Cloud Function', () => {
   let configStub
   let adminInitStub
   let functions
+  let apiFunc
   let admin
 
   before(() => {
-    /* eslint-disable global-require */
     admin = require('firebase-admin')
     // Stub Firebase's admin.initializeApp
     adminInitStub = sinon.stub(admin, 'initializeApp')
@@ -21,7 +20,7 @@ describe('api HTTPS Cloud Function', () => {
       }
       // You can stub any other config values needed by your functions here
     })
-    myFunctions = require(`../../index`)
+    apiFunc = require(`${__dirname}/../../../index`).api
     /* eslint-enable global-require */
   })
 
@@ -30,6 +29,7 @@ describe('api HTTPS Cloud Function', () => {
     configStub.restore()
     adminInitStub.restore()
   })
+
   describe('missing parameters in request', () => {
     it('responds with environmentId is missing', done => {
       // A fake request object, with req.query.text set to 'input'
@@ -43,11 +43,11 @@ describe('api HTTPS Cloud Function', () => {
         }
       }
       // Invoke https function with fake request + response objects
-      myFunctions.indexUser(req, res)
+      apiFunc(req, res)
     })
   })
 
-  it('responds with success message if provided valid request', done => {
+  it.skip('responds with success message if provided valid request', done => {
     const req = { body: { environmentId: '123', projectId: '123' } }
     const res = {
       end: msg => {
@@ -56,6 +56,6 @@ describe('api HTTPS Cloud Function', () => {
       }
     }
     // Invoke https function with fake request + response objects
-    myFunctions.indexUser(req, res)
+    apiFunc(req, res)
   })
 })

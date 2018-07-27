@@ -36,8 +36,10 @@ export const ProjectsPage = ({
             <ProjectTile
               key={`Project-${project.id}-${ind}`}
               name={project.name}
-              onSelect={() => goToProject(project.id)}
-              onDelete={() => deleteProject(project.id)}
+              createdAt={project.createdAt}
+              projectId={project.id}
+              onSelectClick={goToProject}
+              onDeleteClick={deleteProject}
             />
           ))}
       </div>

@@ -42,7 +42,18 @@ export default (initialState = {}) => {
   firebase.initializeApp(fbConfig)
   // Initialize Firestore
   firebase.firestore().settings({ timestampsInSnapshots: true })
+  const defaultRRFConfig = {
+    userProfile: 'users', // root that user profiles are written to
+    updateProfileOnLogin: false, // enable/disable updating of profile on login
+    useFirestoreForProfile: true,
+    useFirestoreForStorageMeta: true,
+    presence: 'presence',
+    sessions: null
+  }
 
+  const combinedConfig = rrfConfig
+    ? { ...defaultRRFConfig, ...rrfConfig }
+    : defaultRRFConfig
   // ======================================================
   // Store Instantiation and HMR Setup
   // ======================================================
@@ -51,7 +62,7 @@ export default (initialState = {}) => {
     initialState,
     compose(
       applyMiddleware(...middleware),
-      reactReduxFirebase(firebase, rrfConfig),
+      reactReduxFirebase(firebase, combinedConfig),
       reduxFirestore(firebase),
       ...enhancers
     )
