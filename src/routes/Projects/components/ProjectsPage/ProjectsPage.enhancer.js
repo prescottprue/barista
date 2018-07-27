@@ -1,11 +1,12 @@
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { LIST_PATH } from 'constants'
+import { LIST_PATH, RUNS_PATH } from 'constants'
 import { withHandlers, withStateHandlers, pure } from 'recompose'
 import { firestoreConnect } from 'react-redux-firebase'
 import { withNotifications } from 'modules/notification'
 import { withRouter, spinnerWhileLoading } from 'utils/components'
 import { UserIsAuthenticated } from 'utils/router'
+import { withChildren } from 'enhancers'
 
 export default compose(
   // redirect to /login if user is not logged in
@@ -14,6 +15,7 @@ export default compose(
   connect(({ firebase: { auth: { uid } } }) => ({ uid })),
   // Wait for uid to exist before going further
   spinnerWhileLoading(['uid']),
+  withChildren,
   // Create listeners based on current users UID
   firestoreConnect(({ params, uid }) => [
     // Listener for projects the current user created
@@ -83,7 +85,7 @@ export default compose(
         })
     },
     goToProject: ({ router }) => projectId => {
-      router.push(`${LIST_PATH}/${projectId}`)
+      router.push(`${LIST_PATH}/${projectId}/${RUNS_PATH}`)
     }
   }),
   pure // shallow equals comparison on props (prevent unessesary re-renders)

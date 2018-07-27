@@ -1,4 +1,4 @@
-import React, { cloneElement } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { isEmpty } from 'react-redux-firebase'
 import ProjectTile from '../ProjectTile'
@@ -16,35 +16,29 @@ export const ProjectsPage = ({
   deleteProject,
   addProject,
   goToProject
-}) =>
-  children ? (
-    cloneElement(children, { auth })
-  ) : (
-    <div className={classes.container}>
-      <NewProjectDialog
-        onSubmit={addProject}
-        open={newDialogOpen}
-        onRequestClose={toggleDialog}
-      />
-      <div className={classes.tiles}>
-        <NewProjectTile
-          data-test="create-project-tile"
-          onClick={toggleDialog}
-        />
-        {!isEmpty(projects) &&
-          projects.map((project, ind) => (
-            <ProjectTile
-              key={`Project-${project.id}-${ind}`}
-              name={project.name}
-              createdAt={project.createdAt}
-              projectId={project.id}
-              onSelectClick={goToProject}
-              onDeleteClick={deleteProject}
-            />
-          ))}
-      </div>
+}) => (
+  <div className={classes.container}>
+    <NewProjectDialog
+      onSubmit={addProject}
+      open={newDialogOpen}
+      onRequestClose={toggleDialog}
+    />
+    <div className={classes.tiles}>
+      <NewProjectTile data-test="create-project-tile" onClick={toggleDialog} />
+      {!isEmpty(projects) &&
+        projects.map((project, ind) => (
+          <ProjectTile
+            key={`Project-${project.id}-${ind}`}
+            name={project.name}
+            createdAt={project.createdAt}
+            projectId={project.id}
+            onSelectClick={goToProject}
+            onDeleteClick={deleteProject}
+          />
+        ))}
     </div>
-  )
+  </div>
+)
 
 ProjectsPage.propTypes = {
   children: PropTypes.object, // from react-router
