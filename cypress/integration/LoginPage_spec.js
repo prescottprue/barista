@@ -12,6 +12,6 @@ describe('Login Page', () => {
 
   it('Shows Login Through Google Button', () => {
     cy.url().should('include', '/login')
-    cy.get(createSelector('google-auth-buttn')).click()
+    cy.get(createSelector('google-auth-button')).click()
   })
 })

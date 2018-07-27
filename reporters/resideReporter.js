@@ -67,7 +67,9 @@ function envVarBasedOnCIEnv(varNameRoot) {
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: envVarBasedOnCIEnv('FIREBASE_PROJECT_ID')
+  databaseURL: `https://${envVarBasedOnCIEnv(
+    'FIREBASE_PROJECT_ID'
+  )}.firebaseio.com`
 })
 
 function sanitizeTest(test, propList) {
