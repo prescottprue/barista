@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const mocha = require('mocha')
 const path = require('path')
 const serviceAccountPath = path.join(process.cwd(), 'serviceAccount.json')
@@ -23,9 +24,50 @@ const omitList = [
   'parent'
 ]
 
+const localTestConfigPath = path.join(process.cwd(), 'cypress', 'config.json')
+
+const prefixesByCiEnv = {
+  staging: 'STAGE_',
+  production: 'PROD_'
+}
+
+/**
+ * Get prefix for current environment based on environment vars available
+ * within CI. Falls back to staging (i.e. STAGE)
+ * @return {String} Environment prefix string
+ */
+function getEnvPrefix() {
+  return (
+    prefixesByCiEnv[process.env.CI_ENVIRONMENT_SLUG] || prefixesByCiEnv.staging
+  )
+}
+
+/**
+ * Get environment variable based on the current CI environment
+ * @param  {String} varNameRoot - variable name without the environment prefix
+ * @return {Any} Value of the environment variable
+ * @example
+ * envVarBasedOnCIEnv('FIREBASE_PROJECT_ID')
+ * // => 'fireadmin-stage' (value of 'STAGE_FIREBASE_PROJECT_ID' environment var)
+ */
+function envVarBasedOnCIEnv(varNameRoot) {
+  const prefix = getEnvPrefix()
+  const combined = `${prefix}${varNameRoot}`
+  if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
+    const configObj = require(localTestConfigPath)
+    console.log(
+      `Running in local environment, ${
+        configObj[combined] ? combined : varNameRoot
+      } is being loaded from cypress/config.json`
+    )
+    return configObj[combined] || configObj[varNameRoot]
+  }
+  return process.env[combined] || process.env[varNameRoot]
+}
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://reside-dev-saunders.firebaseio.com`
+  databaseURL: envVarBasedOnCIEnv('FIREBASE_PROJECT_ID')
 })
 
 function sanitizeTest(test, propList) {
