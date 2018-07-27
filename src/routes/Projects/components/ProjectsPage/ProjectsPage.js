@@ -27,7 +27,10 @@ export const ProjectsPage = ({
         onRequestClose={toggleDialog}
       />
       <div className={classes.tiles}>
-        <NewProjectTile onClick={toggleDialog} />
+        <NewProjectTile
+          data-test="create-project-tile"
+          onClick={toggleDialog}
+        />
         {!isEmpty(projects) &&
           projects.map((project, ind) => (
             <ProjectTile

@@ -3,7 +3,6 @@ const path = require('path')
 const serviceAccountPath = path.join(process.cwd(), 'serviceAccount.json')
 const serviceAccount = require(serviceAccountPath)
 const admin = require('firebase-admin')
-const moment = require('moment');
 const { reduce, set, isFunction, isUndefined, forEach, get } = require('lodash')
 
 const passed = 'passed'
@@ -49,7 +48,7 @@ function sanitizeTest(test, propList) {
 }
 function writeToDatabase(dbRef, data) {
   return dbRef.update(data).catch(err => {
-    console.log(`error writing data to Firebase at path: ${dbRef.path}`)
+    console.log(`error writing data to Firebase at path: ${dbRef.path}`) // eslint-disable-line no-console
     return Promise.reject(err)
   })
 }
@@ -81,7 +80,7 @@ function MyReporter(runner) {
   })
   runner.on('end', async function() {
     const { passes, failures, end } = this.stats
-    console.log('Test run end: %d/%d', passes, passes + failures)
+    console.log('Test run end: %d/%d', passes, passes + failures) // eslint-disable-line no-console
     await metaRef
       .child('stats')
       .once('value')
@@ -101,17 +100,17 @@ function MyReporter(runner) {
           },
           {}
         )
-        writeToDatabase(metaRef.child('stats'), newStats)
-          .then(function() {
-            const hasFailures = failures > 0 || get(existingStats, failures, 0) > 0
-            console.log('hasFailures', hasFailures);
-            if (hasFailures) {
-              return writeToDatabase(metaRef, { status: failed, pending: false })
-            } else {
-              return writeToDatabase(metaRef, { status: passed, pending: false })
-            }
-          })
+        writeToDatabase(metaRef.child('stats'), newStats).then(function() {
+          const hasFailures =
+            failures > 0 || get(existingStats, failures, 0) > 0
+          console.log('hasFailures', hasFailures)
+          if (hasFailures) {
+            return writeToDatabase(metaRef, { status: failed, pending: false })
+          } else {
+            return writeToDatabase(metaRef, { status: passed, pending: false })
+          }
         })
+      })
   })
 
   // when the new test file is loaded
