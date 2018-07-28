@@ -41,7 +41,7 @@ describe('Projects Page', () => {
     // Go to projects page
     cy.visit('/projects')
     // wait for responses to requests (Promise.all used since responses cancome back in different order)
-    cy.wait('@listenForProjects')
+    // cy.wait('@listenForProjects')
   })
 
   describe('Add Project', () => {

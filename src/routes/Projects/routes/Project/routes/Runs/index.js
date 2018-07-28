@@ -11,7 +11,7 @@ export default store => ({
       require => {
         /*  Webpack - use require callback to define
           dependencies for bundling   */
-        const Runs = require('./components/Runs').default
+        const Runs = require('./components/RunsPage').default
 
         /*  Return getComponent   */
         cb(null, Runs)
