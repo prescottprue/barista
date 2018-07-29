@@ -19,7 +19,7 @@ export default theme => ({
   },
   buttons: {
     display: 'flex',
-    justifyContent: 'flex-end',
-    alignSelf: 'flex-end'
+    justifyContent: 'space-between',
+    width: '100%'
   }
 })

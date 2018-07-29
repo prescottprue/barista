@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import { withHandlers } from 'recompose'
 import { firebaseConnect } from 'react-redux-firebase'
 import { withChildren } from 'enhancers'
+import { withStyles } from '@material-ui/core'
 import { LIST_PATH, RUNS_PATH, NEWRUN_PATH } from 'constants'
+import styles from './RunsPage.styles'
 
 export default compose(
   // create listener for runs, results go into redux
@@ -17,5 +19,6 @@ export default compose(
     createNewRun: ({ router, params: { projectId } }) => () => {
       router.push(`${LIST_PATH}/${projectId}/${RUNS_PATH}/${NEWRUN_PATH}`)
     }
-  })
+  }),
+  withStyles(styles)
 )
