@@ -18,3 +18,14 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Fix for aborted/canceled XHR requests causing tests to fail
+Cypress.on('uncaught:exception', hackToNotFailOnCancelledXHR)
+Cypress.on('fail', hackToNotFailOnCancelledXHR)
+
+function hackToNotFailOnCancelledXHR(err) {
+  const realError =
+    err.message.indexOf("Cannot set property 'aborted' of undefined") === -1
+  if (realError) throw err
+  else console.error(err) // eslint-disable-line no-console
+}

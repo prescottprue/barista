@@ -38,7 +38,6 @@ Cypress.Commands.add('login', (email, password) => {
   if (firebase.auth().currentUser) {
     cy.log('Current user already exists, login complete.')
   } else {
-    cy.log('Current user does not already exist, logging in...')
     return new Promise((resolve, reject) => {
       firebase.auth().onAuthStateChanged(auth => {
         if (auth) {

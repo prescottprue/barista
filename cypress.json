@@ -1,6 +1,7 @@
 {
   "projectId": "bvnbxp",
   "chromeWebSecurity": false,
-  "requestTimeout": 10000,
+  "requestTimeout": 50000,
+  "responseTimeout": 50000,
   "reporter": "../reporters/resideReporter"
 }
