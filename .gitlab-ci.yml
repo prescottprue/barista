@@ -17,7 +17,7 @@ cache:
 before_script:
   - npm i
   - npm i --prefix functions
-  - npm i firebase-ci
+  - npm i firebase-ci@next
 
 # Build Stage
 # Installs dependencies, builds app, and saves results for later (artifacts).
