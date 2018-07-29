@@ -1,36 +1,25 @@
 import { createSelector } from '../utils'
 
-Cypress.on('uncaught:exception', hackToNotFailOnCancelledXHR)
-Cypress.on('fail', hackToNotFailOnCancelledXHR)
-
-function hackToNotFailOnCancelledXHR(err) {
-  const realError =
-    err.message.indexOf("Cannot set property 'aborted' of undefined") === -1
-  if (realError) throw err
-  else console.error(err) // eslint-disable-line no-console
-}
-
 describe('Projects Page', () => {
   let open // eslint-disable-line no-unused-vars
   before(() => {
     // Create a server to listen to requests sent out to Google Auth and Firestore
     cy.server()
-      // Google get account info (stubbed)
+      // Google get google account info (periodically called by Firebase JS SDK)
       .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo/)
-      // .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo/, Cypress.env('ACCOUNT_INFO_RESPONSE'))
       .as('getGoogleAccountInfo')
-      // Google verify token request (stubbed)
-      .route('POST', /identitytoolkit\/v3\/relyingparty\/verifyCustomToken/)
-      // .route('POST', /identitytoolkit\/v3\/relyingparty\/verifyCustomToken/, Cypress.env('VERIFY_TOKEN_RESPONSE'))
-      .as('verifyCustomFirebaseToken')
-      .route('POST', /google.firestore.v1beta1.Firestore\/Write/)
-      .as('addProject')
+      // Firebase JS SDK request - Called when listener attached
       .route('POST', /google.firestore.v1beta1.Firestore\/Listen/)
       .as('listenForProjects')
+      // Firebase JS SDK request - Called when data is returned
       .route('GET', /google.firestore.v1beta1.Firestore\/Listen/)
       .as('getProjectData')
+      // Firebase JS SDK request - Called when project data is written
+      .route('POST', /google.firestore.v1beta1.Firestore\/Write/)
+      .as('addProject')
       .window()
       .then(win => {
+        // Spy on server onOpen (called when requests)
         open = cy.spy(cy.state('server').options, 'onOpen')
         return null
       })
@@ -40,14 +29,17 @@ describe('Projects Page', () => {
     cy.login()
     // Go to projects page
     cy.visit('/projects')
-    // wait for responses to requests (Promise.all used since responses cancome back in different order)
-    cy.wait('@listenForProjects')
+    // Reload to start fresh (only auth state preserved from previous
+    // navigation or tests)
+    cy.reload()
+    // wait for response of project data
+    cy.wait('@getProjectData')
   })
 
   describe('Add Project', () => {
     it('creates project when provided a valid name', () => {
       const newProjectTitle = 'Test project'
-      cy.get(createSelector('new-project-tile'), { timeout: 8000 }).click()
+      cy.get(createSelector('new-project-tile')).click()
       // Type name of new project into input
       cy.get(createSelector('new-project-name'))
         .find('input')
