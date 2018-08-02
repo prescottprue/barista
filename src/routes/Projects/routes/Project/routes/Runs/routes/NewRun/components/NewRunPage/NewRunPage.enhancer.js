@@ -5,7 +5,7 @@ import { firebaseConnect } from 'react-redux-firebase'
 import { withHandlers, setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core'
 import { withRouter } from 'utils/components'
-import { paths } from 'constants'
+import * as handlers from './NewRunPage.handlers'
 import styles from './NewRunPage.styles'
 
 export default compose(
@@ -24,13 +24,6 @@ export default compose(
       push: PropTypes.func.isRequired
     })
   }),
-  withHandlers({
-    goBack: ({ router, params: { projectId } }) => () => {
-      router.push(`${paths.list}/${projectId}/${paths.runs}`)
-    },
-    startTestRun: props => () => {
-      // console.log('props:', props)
-    }
-  }),
+  withHandlers(handlers),
   withStyles(styles)
 )
