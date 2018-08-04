@@ -15,7 +15,6 @@ cache:
   paths:
     - node_modules/
     - functions/node_modules/
-    - .cache/Cypress
 
 # Script run before all stages unless otherwise overriden
 before_script:
@@ -49,9 +48,8 @@ Build:
     untracked: true
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-      - node_modules
-      - functions/node_modules
-      - .cache/Cypress
+      - node_modules/
+      - functions/node_modules/
   script:
     - npm run build:config # create env specific src/config.js
     - npm run lint
@@ -60,7 +58,6 @@ Build:
 
 # Unit Testing Stage
 # Run unit tests for Cloud Functions
-# NOTE: Cache was not used for node_modules since function deps were not perserving
 Unit Tests:
   stage: unit_tests
   image: node:8
@@ -74,9 +71,12 @@ Unit Tests:
     expire_in: 2 weeks
     paths:
       - functions/dist
+      - functions/coverage # Test coverage report
+      - functions/mochawesome-report # Test results in JSON and HTML
   before_script:
     - npm i --prefix functions
   script:
+    - npm run test --prefix functions
     - npm run test:cov --prefix functions
 
 # Deploy Staging
@@ -113,6 +113,14 @@ E2E Tests:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-tests/
       - $CI_COMMIT_MESSAGE =~ /skip-e2e-tests/
+  # Cache dependencies across jobs only pulling not uploading
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - functions/node_modules/
+      - .cache/Cypress/
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -139,6 +147,8 @@ Build Production:
     - master
     - prod
     - web
+  variables:
+    FIREBASE_CI_PROJECT: "prod" # deploy using prod project in .firebaserc
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-deploy/
@@ -167,6 +177,8 @@ Deploy Production:
     - master
     - prod
     - web
+  variables:
+    FIREBASE_CI_PROJECT: "prod" # deploy using prod project in .firebaserc
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-deploy/
