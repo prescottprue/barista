@@ -14,7 +14,7 @@ const fbConfig = {
   storageBucket: `${projectId}.appspot.com`
 }
 
-firebase.initializeApp(fbConfig)
+window.fbInstance = firebase.initializeApp(fbConfig)
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -52,6 +52,16 @@ Cypress.Commands.add('login', (email, password) => {
         })
         .catch(reject)
     })
+  }
+})
+
+Cypress.Commands.add('logout', (email, password) => {
+  cy.log('Confirming use is logged out...')
+  if (!firebase.auth().currentUser) {
+    cy.log('Current user already logged out.')
+  } else {
+    cy.log('Current user exists, logging out...')
+    return firebase.auth().signOut()
   }
 })
 // -- This is a child command --
