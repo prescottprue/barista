@@ -7,19 +7,29 @@ function rtdbRef(refPath) {
   return admin.database().ref(refPath)
 }
 
+function contextToAuthUid(functionContext) {
+  if (functionContext.authType === 'ADMIN') {
+    return 'admin'
+  }
+  if (functionContext.authType === 'USER') {
+    return functionContext.auth.uid
+  }
+  return 'Unknown'
+}
+
 /**
  * @param  {functions.Event} event - Function event
  * @param {functions.Context} context - Functions context
  * @return {Promise}
  */
 async function callRunnerEvent(snap, context) {
+  const uid = contextToAuthUid(context)
   const {
     params: { pushId },
-    auth,
     timestamp
   } = context
   const eventData = snap.val()
-  const { projectId, environment } = eventData
+  const { projectId, environment, createdBy = uid } = eventData
   const responseRef = rtdbRef(`responses/callRunner/${pushId}`)
 
   // Handle request missing required params
@@ -48,9 +58,9 @@ async function callRunnerEvent(snap, context) {
   const [metaAddErr] = await to(
     admin
       .firestore()
-      .collection(`test_runs`)
+      .collection('test_runs')
       .add({
-        createdBy: auth.uid,
+        createdBy,
         createdAt: timestamp,
         meta: { callRunnerRequestId: pushId, projectId, environment }
       })
@@ -67,7 +77,7 @@ async function callRunnerEvent(snap, context) {
 
   // Call to start test run (calls callGoogleApi function)
   const [runErr] = await to(
-    startTestRun({ environment, projectId, resultsId: pushId })
+    startTestRun({ environment, projectId, resultsId: pushId, createdBy })
   )
 
   // Handle errors starting test run

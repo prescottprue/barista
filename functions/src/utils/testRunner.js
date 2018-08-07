@@ -7,7 +7,9 @@ import admin from 'firebase-admin'
  * @return {Object}                [description]
  */
 function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
-  const name = `barback-instance-${resultsId}`
+  const name = `barback-instance-${resultsId || 'from-client'}`
+  const serviceAccountEmail =
+    'functions-dev-2@barista-836b4.iam.gserviceaccount.com'
   return {
     kind: 'compute#instance',
     name,
@@ -18,7 +20,7 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: barback-template\n      image: gcr.io/${cloudProjectId}/github-prescottprue-barback\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: barback-template\n      image: gcr.io/${cloudProjectId}/barback\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },
@@ -70,7 +72,7 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
     deletionProtection: false,
     serviceAccounts: [
       {
-        email: 'functions-dev-2@barista-836b4.iam.gserviceaccount.com',
+        email: serviceAccountEmail,
         scopes: [
           'https://www.googleapis.com/auth/devstorage.read_only',
           'https://www.googleapis.com/auth/logging.write',
@@ -92,7 +94,8 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
 export async function startTestRun({
   environment: baristaEnvironment,
   projectId: baristaProjectId,
-  resultsId
+  resultsId,
+  createdBy
 }) {
   const instanceTemplateName = 'barback-template'
   const cloudProjectId = process.env.GCLOUD_PROJECT || 'barista-836b4'
@@ -104,6 +107,7 @@ export async function startTestRun({
     .ref('requests/callGoogleApi')
     .push({
       api: 'compute',
+      createdBy,
       method: 'POST',
       suffix: `projects/${cloudProjectId}/zones/${cloudZone}/instances?souceInstanceTemplate=global/instanceTemplates/${instanceTemplateName}`,
       projectId: baristaProjectId,

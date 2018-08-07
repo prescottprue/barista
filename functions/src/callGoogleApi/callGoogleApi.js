@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
 import { get, uniqueId } from 'lodash'
 import request from 'request-promise'
 import google from 'googleapis'
@@ -125,26 +126,36 @@ export default async function callGoogleApi(snap, context) {
     'Searching for service account from: ',
     `projects/${projectId}/environments/${environment}`
   )
+  let serviceAccount
 
-  // Get Service Account object by decryping string from Firestore
-  const [getSAErr, serviceAccount] = await to(
-    serviceAccountFromFirestorePath(
-      `projects/${projectId}/environments/${environment}`,
-      appName,
-      { returnData: true }
+  // Set to application default credentials when using compute api
+  if (api === 'compute') {
+    if (!functions.config().service_account) {
+      throw new Error('service_account functions config variable not set')
+    }
+    serviceAccount = functions.config().service_account
+  } else {
+    let getSAErr
+    // Get Service Account object by decryping string from Firestore
+    ;[getSAErr, serviceAccount] = await to(
+      serviceAccountFromFirestorePath(
+        `projects/${projectId}/environments/${environment}`,
+        appName,
+        { returnData: true }
+      )
     )
-  )
 
-  // Handle errors getting service account
-  if (getSAErr || !serviceAccount) {
-    console.error('Error getting service account:', getSAErr)
-    const missingParamsErr = getSAErr
-    await responseRef.set({
-      completed: true,
-      error: getSAErr.message || getSAErr,
-      completedAt: admin.database.ServerValue.TIMESTAMP
-    })
-    throw missingParamsErr
+    // Handle errors getting service account
+    if (getSAErr || !serviceAccount) {
+      console.error('Error getting service account:', getSAErr)
+      const missingParamsErr = getSAErr
+      await responseRef.set({
+        completed: true,
+        error: getSAErr.message || getSAErr,
+        completedAt: admin.database.ServerValue.TIMESTAMP
+      })
+      throw missingParamsErr
+    }
   }
 
   const uri = `https://www.googleapis.com/${api}/${apiVersion}/${suffix}${
