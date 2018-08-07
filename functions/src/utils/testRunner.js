@@ -1,4 +1,6 @@
-import admin from 'firebase-admin'
+import { rtdbRef, waitForValue } from './rtdb'
+import { getLocalServiceAccount } from './firebaseFunctions'
+import { to } from './async'
 
 /**
  * Create body of request to create a VM on Google Compute Engine
@@ -6,10 +8,14 @@ import admin from 'firebase-admin'
  * @param  {String} cloudZone      [description]
  * @return {Object}                [description]
  */
-function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
-  const name = `barback-instance-${resultsId || 'from-client'}`
-  const serviceAccountEmail =
-    'functions-dev-2@barista-836b4.iam.gserviceaccount.com'
+function createRequestBody({ cloudProjectId, cloudZone, requestId }) {
+  // NOTE: requestId can not be used in name since it does not conform to
+  // name field standards with Compute's API. Instead the requestId is used
+  // as a tag. Error caused looked like so:
+  // 'Invalid value for field \'resource.name\':
+  // 'Must be a match of regex \'(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)\'' }
+  const name = `barback-instance-${Date.now()}`
+  const { client_email: serviceAccountEmail } = getLocalServiceAccount()
   return {
     kind: 'compute#instance',
     name,
@@ -34,7 +40,7 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
         boot: true,
         mode: 'READ_WRITE',
         autoDelete: true,
-        deviceName: 'barback-template-1',
+        deviceName: `${name}-storage`,
         initializeParams: {
           sourceImage:
             'projects/cos-cloud/global/images/cos-stable-67-10575-55-0',
@@ -94,24 +100,45 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
 export async function startTestRun({
   environment: baristaEnvironment,
   projectId: baristaProjectId,
-  resultsId,
+  requestId,
   createdBy
 }) {
   const instanceTemplateName = 'barback-template'
   const cloudProjectId = process.env.GCLOUD_PROJECT || 'barista-836b4'
   const cloudZone = 'us-west1-b'
-  // TODO: Fallback to local auth and call google API directly instead of
-  // getting service account stored in Firestore
-  await admin
-    .database()
-    .ref('requests/callGoogleApi')
-    .push({
+  const body = createRequestBody({ cloudProjectId, cloudZone, requestId })
+  console.log('Calling with body:', body)
+  const requestRef = rtdbRef(`requests/callGoogleApi`).push()
+  const responseRef = rtdbRef(`responses/callGoogleApi/${requestRef.key}`)
+  // Push request to call google api function
+  const [requestErr] = await to(
+    requestRef.set({
       api: 'compute',
       createdBy,
       method: 'POST',
       suffix: `projects/${cloudProjectId}/zones/${cloudZone}/instances?souceInstanceTemplate=global/instanceTemplates/${instanceTemplateName}`,
       projectId: baristaProjectId,
       environment: baristaEnvironment,
-      body: createRequestBody({ cloudProjectId, cloudZone })
+      body
     })
+  )
+  // Handle errors writing request to RTDB
+  if (requestErr) {
+    console.error(
+      `Error writing request to RTDB: ${requestErr.message || ''}`,
+      requestErr
+    )
+    throw requestErr
+  }
+  const [responseErr, responseSnap] = await to(waitForValue(responseRef))
+  // Handle errors waiting for response from RTDB
+  if (responseErr) {
+    console.error(
+      `Error waiting for response from test run start: ${responseErr.message ||
+        ''}`,
+      responseErr
+    )
+    throw responseErr
+  }
+  return responseSnap
 }

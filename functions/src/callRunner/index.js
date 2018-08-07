@@ -2,20 +2,10 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import { to } from 'utils/async'
 import { startTestRun } from 'utils/testRunner'
+import { contextToAuthUid } from 'utils/firebaseFunctions'
+import { rtdbRef } from 'utils/rtdb'
 
-function rtdbRef(refPath) {
-  return admin.database().ref(refPath)
-}
-
-function contextToAuthUid(functionContext) {
-  if (functionContext.authType === 'ADMIN') {
-    return 'admin'
-  }
-  if (functionContext.authType === 'USER') {
-    return functionContext.auth.uid
-  }
-  return 'Unknown'
-}
+const CALL_RUNNER_PATH = 'callRunner'
 
 /**
  * @param  {functions.Event} event - Function event
@@ -30,7 +20,7 @@ async function callRunnerEvent(snap, context) {
   } = context
   const eventData = snap.val()
   const { projectId, environment, createdBy = uid } = eventData
-  const responseRef = rtdbRef(`responses/callRunner/${pushId}`)
+  const responseRef = rtdbRef(`responses/${CALL_RUNNER_PATH}/${pushId}`)
 
   // Handle request missing required params
   if (!projectId || !environment) {
@@ -76,8 +66,8 @@ async function callRunnerEvent(snap, context) {
   }
 
   // Call to start test run (calls callGoogleApi function)
-  const [runErr] = await to(
-    startTestRun({ environment, projectId, resultsId: pushId, createdBy })
+  const [runErr, testRunResponseSnap] = await to(
+    startTestRun({ environment, projectId, requestId: pushId, createdBy })
   )
 
   // Handle errors starting test run
@@ -103,7 +93,12 @@ async function callRunnerEvent(snap, context) {
   }
 
   // Write success response to RTDB
-  const [writeErr, response] = await to(responseRef.push({ status: 'success' }))
+  const [writeErr] = await to(
+    responseRef.push({
+      status: 'success',
+      runStartResponse: testRunResponseSnap.val()
+    })
+  )
 
   // Handle errors writing response to RTDB
   if (writeErr) {
@@ -111,7 +106,9 @@ async function callRunnerEvent(snap, context) {
     throw writeErr
   }
 
-  return response
+  console.log('Request completed successfully, exiting.')
+
+  return null
 }
 
 /**
