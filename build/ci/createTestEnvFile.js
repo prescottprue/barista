@@ -3,9 +3,14 @@ import * as admin from 'firebase-admin'
 import { pickBy, isUndefined, size, keys, isString } from 'lodash'
 import fs from 'fs'
 import path from 'path'
-const testEnvFilePath = path.join(process.cwd(), 'cypress.env.json')
-const localTestConfigPath = path.join(process.cwd(), 'cypress', 'config.json')
-const serviceAccountPath = path.join(process.cwd(), 'serviceAccount.json')
+const testEnvFilePath = path.join(__dirname, '../..', 'cypress.env.json')
+const localTestConfigPath = path.join(
+  __dirname,
+  '../..',
+  'cypress',
+  'config.json'
+)
+const serviceAccountPath = path.join(__dirname, '../..', 'serviceAccount.json')
 const prefixesByCiEnv = {
   staging: 'STAGE_',
   production: 'PROD_'
@@ -81,8 +86,12 @@ function getParsedEnvVar(varNameRoot) {
 function getServiceAccount() {
   // Check for local service account file (Local dev)
   if (fs.existsSync(serviceAccountPath)) {
+    console.log('local service account being loaded from ./serviceAccount.json')
     return require(serviceAccountPath)
   }
+  console.log(
+    'Service Account file does not exist locally, falling back to environment variables'
+  )
   // Use environment variables (CI)
   return {
     type: 'service_account',
@@ -171,6 +180,8 @@ async function createTestConfig() {
 
     // Write config file to cypress.env.json
     fs.writeFileSync(testEnvFilePath, JSON.stringify(newCypressConfig, null, 2))
+
+    console.log(`${testEnvFilePath} created successfully`)
 
     // Create service account file if it does not already exist (for use in reporter)
     if (!fs.existsSync(serviceAccountPath)) {
