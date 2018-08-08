@@ -11,9 +11,6 @@ ENV TERM xterm
 # avoid million NPM install messages
 ENV npm_config_loglevel warn
 
-# Create app directory
-WORKDIR /usr/src/app
-
 # Copy code into container
 ### Files
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
