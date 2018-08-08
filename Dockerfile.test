@@ -4,6 +4,7 @@ FROM cypress/base:6
 ARG test_url=https://barista-stage.firebaseapp.com
 ENV CYPRESS_baseUrl=$test_url
 RUN echo $CYPRESS_baseUrl
+RUN echo $STAGE_FIREBASE_CERT_URL
 
 # Environment Variables
 # good colors for most applications
@@ -19,9 +20,8 @@ COPY package*.json .babelrc cypress.json serviceAccount.json.enc ./
 
 ### Directories
 # TODO: Look into Copying all in previous (cypress/* and build/* did not work)
-# COPY ./build/ ./build/
-# COPY ./cypress/ ./cypress/
-COPY . .
+COPY build/ /build/
+COPY cypress/ /cypress/
 
 # Install Dependencies (only those used to build config files)
 RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin

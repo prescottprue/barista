@@ -1,3 +1,4 @@
-functions
-server
-node_modules
+/functions/
+/server/
+/node_modules/
+/cypress/videos

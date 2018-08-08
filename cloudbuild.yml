@@ -8,6 +8,15 @@ steps:
   - --location=global
   - --keyring=first
   - --key=keyOne
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=serviceAccount.json.enc
+  - --plaintext-file=serviceAccount.json
+  - --location=global
+  - --keyring=first
+  - --key=keyOne
 # - name: gcr.io/cloud-builders/gcloud
 #   args:
 #   - kms
@@ -26,25 +35,9 @@ steps:
     'STAGE_FIREBASE_PROJECT_ID=barista-stage',
     'PROD_FIREBASE_PROJECT_ID=barista-836b4'
   ]
-  secretEnv: [
-    'STAGE_FIREBASE_PRIVATE_KEY_ID',
-    'STAGE_FIREBASE_PRIVATE_KEY',
-    'STAGE_FIREBASE_CLIENT_EMAIL',
-    'STAGE_FIREBASE_CLIENT_ID',
-    'STAGE_FIREBASE_CERT_URL'
-  ]
   timeout: 500s
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/test-barista']
   timeout: 500s
 # images: ['gcr.io/$PROJECT_ID/barista', 'gcr.io/$PROJECT_ID/test-barista']
 images: ['gcr.io/$PROJECT_ID/test-barista']
-
-secrets:
-- kmsKeyName: projects/barista-stage/locations/global/keyRings/first/cryptoKeys/keyOne
-  secretEnv:
-    STAGE_FIREBASE_PRIVATE_KEY_ID: "CiQAirkf8/q2fo7Ne5XzrW7mf/thokRhtFQ/rkiulMKckbXQ9jQSUQD48WtAMuRTpqnqIEoZ+8D8igUc1XPwIlGMChXAqrRb8o3Mo0zLnmr8MGq/arCBNkp7hqppCgHNhYAg0AKhZVFkwtuxtKVtqOc2glUAZb4LTQ=="
-    STAGE_FIREBASE_PRIVATE_KEY: "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"
-    STAGE_FIREBASE_CLIENT_EMAIL: "CiQAirkf836of24YM5FGvLmlLBqqV1NKeGsui8SHf/OzOT6h/eASZgD48WtAwk6MT2dv7BvooT6EmhQIk6uPhMXNWCBBGNLjFnA/k4f2WWQhZif+GHRDIFyd7brYtGpM19893RO/MjXfY5zrSkpXSNcPot9HnbhewtwfZdhy2esQK0kKFPVuNyKc3QuKbA=="
-    STAGE_FIREBASE_CLIENT_ID: "CiQAirkf8/uRUS9iDQ5SOauwZQnFA49wnbTubJYw9bScVOIhe7ESPgD48WtAjdxQM/g8BuoZK6VC1q7woaGWJNLLXDj2Gqclslobv4SGq8yhGOVIe9DPciArs2WHQjX+ZhV0miGM"
-    STAGE_FIREBASE_CERT_URL: "CiQAirkf856vR+g2wuQyMt9jlWbUhERrNsNXp53koFRDBdRQdLsSmgEA+PFrQP7nwYBx0EDwBrv7TRYeCUWZvjhMUySxI9kSTg/93/Ha+wF24pfSVewqBKFfqtU/EbhkrfzZNfzBAR0z2YEdZcmMLX6j9Eu4dBgXYUibFP9ltWqmuPk/7OYgt1p15natTIuzZwAUeVnpyGLmADR3Fx31sM9GXAuZHkPFaCYRRn46b0KS0h8F4SGY5HkoJRae83F2w1h6"
