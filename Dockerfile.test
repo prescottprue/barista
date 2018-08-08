@@ -14,18 +14,12 @@ ENV npm_config_loglevel warn
 # Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Copy code from repo into container
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY package*.json ./
+COPY package*.json .babelrc cypress.json cypress/* build/* ./
 
-# Bundle app source
-# COPY . . # TODO: Uncomment when all of source needs to be copied
-COPY ./cypress/ ./cypress/
-COPY ./build/ ./build/
-
-# TODO: Only install dependencies used in building config files
-# Install Dependencies
+# Install Dependencies (only those used to build config files)
 RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin
 
 # Install Cypress
