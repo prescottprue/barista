@@ -1,13 +1,13 @@
 steps:
-# - name: gcr.io/cloud-builders/gcloud
-#   args:
-#   - kms
-#   - decrypt
-#   - --ciphertext-file=cypress/config.json.enc
-#   - --plaintext-file=cypress/config.json
-#   - --location=global
-#   - --keyring=first
-#   - --key=keyOne
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=cypress/config.json.enc
+  - --plaintext-file=cypress/config.json
+  - --location=global
+  - --keyring=first
+  - --key=keyOne
 # - name: gcr.io/cloud-builders/gcloud
 #   args:
 #   - kms
