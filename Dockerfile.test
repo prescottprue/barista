@@ -1,9 +1,15 @@
 FROM cypress/base:6
 
-# Handle input of environment (defaults to stage)
-ARG test_url_arg=https://fireadmin-stage.firebaseapp.com
-ENV CYPRESS_baseUrl=$test_url_arg
+# Handle input of test url (defaults to stage)
+ARG test_url=https://barista-stage.firebaseapp.com
+ENV CYPRESS_baseUrl=$test_url
 RUN echo $CYPRESS_baseUrl
+
+# Environment Variables
+# good colors for most applications
+ENV TERM xterm
+# avoid million NPM install messages
+ENV npm_config_loglevel warn
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -14,19 +20,22 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Bundle app source
-COPY . .
+# COPY . . # TODO: Uncomment when all of source needs to be copied
+COPY ./cypress/ ./cypress/
+COPY ./build/ ./build/
 
+# TODO: Only install dependencies used in building config files
 # Install Dependencies
-RUN npm install
+RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin
 
 # Install Cypress
-RUN npm install --save-dev cypress
+RUN npm install cypress
 
 # Verify Cypress Installed correctly
 RUN $(npm bin)/cypress verify
 
 # Build Test Config
-RUN npm run build test:config
+RUN npm run build:testConfig
 
 # Run Cypress tests (URL set by ENV above)
 ENTRYPOINT cypress run
