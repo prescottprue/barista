@@ -19,8 +19,9 @@ COPY package*.json .babelrc cypress.json serviceAccount.json.enc ./
 
 ### Directories
 # TODO: Look into Copying all in previous (cypress/* and build/* did not work)
-COPY ./build/ ./build/
-COPY ./cypress/ ./cypress/
+# COPY ./build/ ./build/
+# COPY ./cypress/ ./cypress/
+COPY . .
 
 # Install Dependencies (only those used to build config files)
 RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin
