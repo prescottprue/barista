@@ -21,7 +21,7 @@ steps:
 #   args: ['build', '-t', 'gcr.io/$PROJECT_ID/barista', '.']
 #   timeout: 500s
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/test-barista', '-f', 'Dockerfile.test']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/test-barista', '-f', 'Dockerfile.test', '.']
   timeout: 500s
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/test-barista']
