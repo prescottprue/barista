@@ -20,5 +20,6 @@ export default compose(
     createNewRun: ({ router, params: { projectId } }) => () => {
       router.push(`${LIST_PATH}/${projectId}/${RUNS_PATH}/${NEWRUN_PATH}`)
     }
-  })
+  }),
+  withStyles(styles)
 )

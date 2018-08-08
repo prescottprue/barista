@@ -6,18 +6,21 @@ stages:
   - build_production
   - deploy_production
 
+# Cache dependencies across jobs only pulling not uploading (upload to cache
+# happens in build stage)
 cache:
   untracked: true
   key: ${CI_COMMIT_REF_SLUG}
+  policy: pull # only pull cache, skip uploading
   paths:
     - node_modules/
     - functions/node_modules/
-    - .cache/Cypress
 
+# Script run before all stages unless otherwise overriden
 before_script:
-  - npm i
+  - CYPRESS_INSTALL_BINARY=0 npm i
   - npm i --prefix functions
-  - npm i firebase-ci
+  - npm i firebase-ci@next
 
 # Build Stage
 # Installs dependencies, builds app, and saves results for later (artifacts).
@@ -34,38 +37,27 @@ Build:
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-build/
-      - $CI_COMMIT_MESSAGE =~ /skip-app-build/
   artifacts:
     expire_in: 2 weeks
     paths:
       - dist
-  variables:
-    CYPRESS_INSTALL_BINARY: 0 # skip installing cypress binary
+      - functions/dist
+  # Override cache behavior set above since we want to both pull and push to
+  # the cache (no "policy" provided since pull-push is default)
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - functions/node_modules/
   script:
     - npm run build:config # create env specific src/config.js
     - npm run lint
     - npm run build
-
-Build Functions:
-  stage: build
-  image: node:8
-  when: always
-  except:
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip-build/
-      - $CI_COMMIT_MESSAGE =~ /skip-functions-build/
-  artifacts:
-    expire_in: 2 weeks
-    paths:
-      - functions/dist
-  variables:
-    CYPRESS_INSTALL_BINARY: 0 # skip installing cypress binary
-  script:
     - npm run build:functions
 
 # Unit Testing Stage
 # Run unit tests for Cloud Functions
-# NOTE: Cache was not used for node_modules since function deps were not perserving
 Unit Tests:
   stage: unit_tests
   image: node:8
@@ -79,7 +71,12 @@ Unit Tests:
     expire_in: 2 weeks
     paths:
       - functions/dist
+      - functions/coverage # Test coverage report
+      - functions/mochawesome-report # Test results in JSON and HTML
+  before_script:
+    - npm i --prefix functions
   script:
+    - npm run test --prefix functions
     - npm run test:cov --prefix functions
 
 # Deploy Staging
@@ -98,8 +95,6 @@ Deploy Staging:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-deploy/
       - $CI_COMMIT_MESSAGE =~ /skip-stage-deploy/
-  variables:
-    TRAVIS_BRANCH: master # workaround to get firebase-ci to use config for stage from .firebaserc
   script:
     - npm run deploy
 
@@ -118,17 +113,27 @@ E2E Tests:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-tests/
       - $CI_COMMIT_MESSAGE =~ /skip-e2e-tests/
+  # Cache dependencies across jobs only pulling not uploading
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - functions/node_modules/
+      - .cache/Cypress/
   artifacts:
     expire_in: 2 weeks
     paths:
       - cypress/videos
       - cypress/screenshots
       - cypress.env.json
-  script:
-     # Install Cypress so that binary is grabbed (skipped in build stage)
+  before_script:
+     # Install deps including Cypress binary (skipped in default before_script)
+    - npm i
     - npm i cypress
-     # Confirm Cypress is ready to use
+    # Confirm Cypress is ready to use
     - $(npm bin)/cypress verify
+  script:
      # Create environment specific test config including auth token
      # (saved to cypress.env.json) then run E2E Tests through Cypress
     - npm run test:stage -- --record --key $CYPRESS_KEY
@@ -142,15 +147,12 @@ Build Production:
     - master
     - prod
     - web
+  variables:
+    FIREBASE_CI_PROJECT: "prod" # deploy using prod project in .firebaserc
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-deploy/
       - $CI_COMMIT_MESSAGE =~ /skip-prod-deploy/
-  cache:
-    policy: pull # only pull cache, skip uploading
-    paths:
-      - node_modules
-      - functions/node_modules
   artifacts:
     expire_in: 2 weeks
     paths:
@@ -159,6 +161,8 @@ Build Production:
     - npm run clean # remove existing dist folder
     - npm run build:config # create env specific src/config.js
     - npm run build # rebuild bundle with new config
+    # Note: Functions are not rebuilt since a bundle with env specific config
+    # is not created as with React App
 
 # Deploy Production
 # Deploy React App and Cloud Functions to production environment
@@ -168,21 +172,16 @@ Deploy Production:
   environment:
     name: production
     url: https://barista-836b4.firebaseapp.com
-  when: manual
+  when: manual # Only allow run through button on Gitlab site
   only:
     - master
     - prod
     - web
+  variables:
+    FIREBASE_CI_PROJECT: "prod" # deploy using prod project in .firebaserc
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-deploy/
       - $CI_COMMIT_MESSAGE =~ /skip-prod-deploy/
-  cache:
-    policy: pull # only pull cache, skip uploading
-    paths:
-      - node_modules
-      - functions/node_modules
-  variables:
-    TRAVIS_BRANCH: prod # workaround to get firebase-ci to use config for stage from .firebaserc
   script:
-    - npm run deploy
+    - npm run deploy # Deploy Cloud Functions and React App (Firebase Hosting)

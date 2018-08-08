@@ -1,4 +1,20 @@
-const TOKEN_STORAGE_KEY = 'fbToken'
+import firebase from 'firebase/app'
+import 'firebase/database'
+import 'firebase/auth'
+import 'firebase/storage'
+import 'firebase/firestore'
+
+const projectId = Cypress.env('FIREBASE_PROJECT_ID')
+
+const fbConfig = {
+  apiKey: Cypress.env('FIREBASE_API_KEY'),
+  authDomain: `${projectId}.firebaseapp.com`,
+  databaseURL: `https://${projectId}.firebaseio.com`,
+  projectId: `${projectId}`,
+  storageBucket: `${projectId}.appspot.com`
+}
+
+window.fbInstance = firebase.initializeApp(fbConfig)
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -19,12 +35,34 @@ Cypress.Commands.add('login', (email, password) => {
     )
     return
   }
-  cy.log('FIREBASE_AUTH_JWT is defined, setting to session storage...')
-  window.sessionStorage.setItem(
-    TOKEN_STORAGE_KEY,
-    Cypress.env('FIREBASE_AUTH_JWT')
-  )
-  cy.log('FIREBASE_AUTH_JWT set to session storage, logging in...')
+  if (firebase.auth().currentUser) {
+    cy.log('Current user already exists, login complete.')
+  } else {
+    return new Promise((resolve, reject) => {
+      firebase.auth().onAuthStateChanged(auth => {
+        if (auth) {
+          resolve(auth)
+        }
+      })
+      firebase
+        .auth()
+        .signInWithCustomToken(Cypress.env('FIREBASE_AUTH_JWT'))
+        .then(() => {
+          console.debug('Login command successful')
+        })
+        .catch(reject)
+    })
+  }
+})
+
+Cypress.Commands.add('logout', (email, password) => {
+  cy.log('Confirming use is logged out...')
+  if (!firebase.auth().currentUser) {
+    cy.log('Current user already logged out.')
+  } else {
+    cy.log('Current user exists, logging out...')
+    return firebase.auth().signOut()
+  }
 })
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })

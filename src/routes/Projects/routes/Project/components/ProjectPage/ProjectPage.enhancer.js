@@ -1,6 +1,6 @@
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { withHandlers, withStateHandlers } from 'recompose'
+import { withHandlers } from 'recompose'
 import { firestoreConnect, withFirebase, getVal } from 'react-redux-firebase'
 import { spinnerWhileLoading } from 'utils/components'
 import { UserIsAuthenticated } from 'utils/router'
@@ -30,6 +30,5 @@ export default compose(
   withFirebase,
   // Show loading spinner while project is loading
   spinnerWhileLoading(['project']),
-  withStateHandlers({}, {}),
   withHandlers(handlers)
 )

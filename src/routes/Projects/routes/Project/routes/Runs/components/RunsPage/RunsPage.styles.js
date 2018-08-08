@@ -1,6 +1,11 @@
 export default theme => ({
   root: {
-    display: 'flex'
+    ...theme.mixins.gutters(),
+    display: 'flex',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2
   },
   titleBar: {
     display: 'grid',
