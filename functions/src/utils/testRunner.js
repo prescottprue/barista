@@ -26,7 +26,7 @@ function createRequestBody({ cloudProjectId, cloudZone, requestId }) {
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: barback-template\n      image: gcr.io/${cloudProjectId}/barback\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: test-barista-stage\n      image: gcr.io/${cloudProjectId}/test-barista\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },
@@ -103,7 +103,7 @@ export async function startTestRun({
   requestId,
   createdBy
 }) {
-  const instanceTemplateName = 'barback-template'
+  const instanceTemplateName = 'test-barista-stage'
   const cloudProjectId = process.env.GCLOUD_PROJECT || 'barista-836b4'
   const cloudZone = 'us-west1-b'
   const body = createRequestBody({ cloudProjectId, cloudZone, requestId })

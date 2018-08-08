@@ -1,5 +1,10 @@
 FROM cypress/base:6
 
+# Handle input of environment (defaults to stage)
+ARG test_url_arg=https://fireadmin-stage.firebaseapp.com
+ENV CYPRESS_baseUrl=$test_url_arg
+RUN echo $CYPRESS_baseUrl
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -20,5 +25,8 @@ RUN npm install --save-dev cypress
 # Verify Cypress Installed correctly
 RUN $(npm bin)/cypress verify
 
-# Create test config and run Cypress tests
-ENTRYPOINT npm run test
+# Build Test Config
+RUN npm run build test:config
+
+# Run Cypress tests (URL set by ENV above)
+ENTRYPOINT cypress run
