@@ -12,7 +12,7 @@ export default compose(
   firebaseConnect([{ path: 'test_results_meta' }]),
   // map redux state to props
   connect(({ firebase: { data } }) => ({
-    testMetaData: data['test_results_meta']
+    runMetaData: data['test_results_meta']
   })),
   withChildren,
   withStyles(styles),
