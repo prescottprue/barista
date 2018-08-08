@@ -1,0 +1,27 @@
+steps:
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=cypress/config.json.enc
+  - --plaintext-file=cypress/config.json
+  - --location=global
+  - --keyring=first
+  - --key=keyOne
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=serviceAccount.json.enc
+  - --plaintext-file=serviceAccount.json
+  - --location=global
+  - --keyring=first
+  - --key=keyOne
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/barista', '.']
+  timeout: 500s
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/test-barista', './cypress/Dockerfile']
+  timeout: 500s
+
+images: ['gcr.io/$PROJECT_ID/barista', 'gcr.io/$PROJECT_ID/test-barista']

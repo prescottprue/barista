@@ -1,0 +1,24 @@
+FROM cypress/base:6
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
+
+# Bundle app source
+COPY . .
+
+# Install Dependencies
+RUN npm install
+
+# Install Cypress
+RUN npm install --save-dev cypress
+
+# Verify Cypress Installed correctly
+RUN $(npm bin)/cypress verify
+
+# Create test config and run Cypress tests
+ENTRYPOINT npm run test
