@@ -31,10 +31,10 @@ async function callCloudBuildApiEvent(message) {
   console.log('messageBody', messageBody, Object.keys(messageBody))
   const { attributes } = message
   const { status } = attributes
-  const { source, sourceProvenance, finishTime } = messageBody
+  const { source, sourceProvenance } = messageBody
   const { branchName, projectId } = get(source, 'repoSource', {})
   const commitSha = get(sourceProvenance, 'resolvedRepoSource.commitSha', '')
-  const buildData = { attributes, source, branchName, commitSha, finishTime }
+  const buildData = { attributes, source, branchName, commitSha }
   const statusRef = admin.database().ref(`image_build_statues/${projectId}`)
   // Write status updates to RTDB (Failures, New Builds, etc)
   const [statusSetErr] = await to(statusRef.set({ status, buildData }))
@@ -47,10 +47,13 @@ async function callCloudBuildApiEvent(message) {
   if (status !== 'SUCCESS') {
     return null
   }
-
+  const imageMetaData = { projectId, buildData }
+  if (messageBody.finishTime) {
+    imageMetaData.finishTime = messageBody.finishTime
+  }
   // Write successful builds to container images collection
   const imageMetaRef = admin.firestore().collection('container_images')
-  const [metaWriteErr] = await to(imageMetaRef.add({ projectId, buildData }))
+  const [metaWriteErr] = await to(imageMetaRef.add(imageMetaData))
   if (metaWriteErr) {
     console.error('Error image metadata to Firestore')
     throw metaWriteErr

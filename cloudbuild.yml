@@ -4,7 +4,7 @@ steps:
   args:
   - kms
   - decrypt
-  - --ciphertext-file=cypress/config.json.enc
+  - --ciphertext-file=build/enc/config.json.enc
   - --plaintext-file=cypress/config.json
   - --location=global
   - --keyring=first
@@ -14,7 +14,7 @@ steps:
   args:
   - kms
   - decrypt
-  - --ciphertext-file=serviceAccount.json.enc
+  - --ciphertext-file=build/enc/serviceAccount.json.enc
   - --plaintext-file=serviceAccount.json
   - --location=global
   - --keyring=first
