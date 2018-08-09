@@ -2,3 +2,6 @@
 /server/
 /node_modules/
 /cypress/videos
+.eslintignore
+.gitlab-ci.yml
+LICENSE

@@ -1,10 +1,8 @@
-FROM cypress/base:6
+FROM cypress/base:8
 
 # Handle input of test url (defaults to stage)
 ARG test_url=https://barista-stage.firebaseapp.com
 ENV CYPRESS_baseUrl=$test_url
-RUN echo $CYPRESS_baseUrl
-RUN echo $STAGE_FIREBASE_CERT_URL
 
 # Environment Variables
 # good colors for most applications
@@ -25,14 +23,14 @@ COPY cypress/ /cypress/
 # Install Dependencies (only those used to build config files)
 RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin
 
+# Build Test Config
+RUN npm run build:testConfig
+
 # Install Cypress
 RUN npm install cypress
 
 # Verify Cypress Installed correctly
 RUN $(npm bin)/cypress verify
-
-# Build Test Config
-RUN npm run build:testConfig
 
 # Run Cypress tests (URL set by ENV above)
 ENTRYPOINT cypress run
