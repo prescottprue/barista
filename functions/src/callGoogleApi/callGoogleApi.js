@@ -97,6 +97,7 @@ export default async function callGoogleApi(snap, context) {
   const eventVal = snap.val()
   const eventId = get(context, 'params.pushId')
   const {
+    apiUrl,
     api = 'storage',
     method = 'GET',
     body,
@@ -109,32 +110,15 @@ export default async function callGoogleApi(snap, context) {
     .database()
     .ref(`responses/${eventPathName}/${eventId}`)
 
-  // Handle missing parameters
-  if (!projectId || !environment) {
-    const missingMsg = 'projectId and environment are required parameters'
-    console.error(missingMsg)
-    const missingParamsErr = new Error(missingMsg)
-    await responseRef.set({
-      completed: true,
-      error: missingMsg,
-      completedAt: admin.database.ServerValue.TIMESTAMP
-    })
-    throw missingParamsErr
-  }
   const appName = `app-${uniqueId()}`
-  console.log(
-    'Searching for service account from: ',
-    `projects/${projectId}/environments/${environment}`
-  )
-  let serviceAccount
 
+  let serviceAccount
   // Set to application default credentials when using compute api
-  if (api === 'compute') {
-    if (!functions.config().service_account) {
-      throw new Error('service_account functions config variable not set')
-    }
-    serviceAccount = functions.config().service_account
-  } else {
+  if (projectId && environment) {
+    console.log(
+      'Searching for service account from: ',
+      `projects/${projectId}/environments/${environment}`
+    )
     let getSAErr
     // Get Service Account object by decryping string from Firestore
     ;[getSAErr, serviceAccount] = await to(
@@ -144,7 +128,6 @@ export default async function callGoogleApi(snap, context) {
         { returnData: true }
       )
     )
-
     // Handle errors getting service account
     if (getSAErr || !serviceAccount) {
       console.error('Error getting service account:', getSAErr)
@@ -156,11 +139,18 @@ export default async function callGoogleApi(snap, context) {
       })
       throw missingParamsErr
     }
+  } else {
+    if (!functions.config().service_account) {
+      throw new Error('service_account functions config variable not set')
+    }
+    serviceAccount = functions.config().service_account
   }
 
-  const uri = `https://www.googleapis.com/${api}/${apiVersion}/${suffix}${
-    api === 'storage' ? '?cors' : ''
-  }`
+  const uri =
+    apiUrl ||
+    `https://www.googleapis.com/${api}/${apiVersion}/${suffix}${
+      api === 'storage' ? '?cors' : ''
+    }`
   // Call Google API with service account
   const [err, response] = await to(
     googleApisRequest(serviceAccount, {
