@@ -33,4 +33,4 @@ RUN npm install cypress
 RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above)
-ENTRYPOINT cypress run
+ENTRYPOINT $(npm bin)/cypress run

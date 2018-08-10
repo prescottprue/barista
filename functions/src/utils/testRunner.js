@@ -1,22 +1,29 @@
 import { rtdbRef, waitForValue } from './rtdb'
-import { getLocalServiceAccount } from './firebaseFunctions'
+import { getLocalServiceAccount, getFirebaseConfig } from './firebaseFunctions'
 import { to } from './async'
+import { REQUESTS_PATH, RESPONSES_PATH, CALL_GOOGLE_API_PATH } from 'constants'
 
 /**
  * Create body of request to create a VM on Google Compute Engine
- * @param  {String} cloudProjectId [description]
- * @param  {String} cloudZone      [description]
- * @return {Object}                [description]
+ * @param  {String} [cloudZone='us-west1-b'] [description]
+ * @param  {Object} [meta=null] - Object of extra metadata to pass to request
+ * @return {Object} Body to be used in Google API Request
  */
-function createRequestBody({ cloudProjectId, cloudZone, requestId }) {
+function createRunRequest({
+  cloudZone = 'us-west1-b',
+  createdBy,
+  meta = null
+}) {
+  const cloudProjectId = getFirebaseConfig('projectId')
   // NOTE: requestId can not be used in name since it does not conform to
   // name field standards with Compute's API. Instead the requestId is used
   // as a tag. Error caused looked like so:
   // 'Invalid value for field \'resource.name\':
   // 'Must be a match of regex \'(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)\'' }
   const name = `barback-instance-${Date.now()}`
+  const instanceTemplateName = 'test-barista-stage'
   const { client_email: serviceAccountEmail } = getLocalServiceAccount()
-  return {
+  const body = {
     kind: 'compute#instance',
     name,
     zone: `projects/${cloudProjectId}/zones/${cloudZone}`,
@@ -90,38 +97,38 @@ function createRequestBody({ cloudProjectId, cloudZone, requestId }) {
       }
     ]
   }
+
+  return {
+    api: 'compute',
+    createdBy,
+    method: 'POST',
+    meta,
+    suffix: `projects/${cloudProjectId}/zones/${cloudZone}/instances?souceInstanceTemplate=global/instanceTemplates/${instanceTemplateName}`,
+    body
+  }
 }
 
 /**
- * Run tests by invoking barback container within Google Cloud Compute Engine
- * @param req - Express HTTP Request
- * @param res - Express HTTP Response
+ * Start test run with specified template by creating request to callGoogleApi
+ * function.
+ * @param  {String} requestId - id of original
+ * @param  {String} createdBy - UID of request creator
+ * @param  {String} [instanceTemplateName='test-barista-stage'}] [description]
+ * @return {Promise}
  */
-export async function startTestRun({
-  environment: baristaEnvironment,
-  projectId: baristaProjectId,
-  requestId,
-  createdBy
+export async function callTestRunner({
+  meta,
+  createdBy,
+  instanceTemplateName = 'test-barista-stage'
 }) {
-  const instanceTemplateName = 'test-barista-stage'
-  const cloudProjectId = process.env.GCLOUD_PROJECT || 'barista-836b4'
-  const cloudZone = 'us-west1-b'
-  const body = createRequestBody({ cloudProjectId, cloudZone, requestId })
-  console.log('Calling with body:', body)
-  const requestRef = rtdbRef(`requests/callGoogleApi`).push()
-  const responseRef = rtdbRef(`responses/callGoogleApi/${requestRef.key}`)
-  // Push request to call google api function
-  const [requestErr] = await to(
-    requestRef.set({
-      api: 'compute',
-      createdBy,
-      method: 'POST',
-      suffix: `projects/${cloudProjectId}/zones/${cloudZone}/instances?souceInstanceTemplate=global/instanceTemplates/${instanceTemplateName}`,
-      projectId: baristaProjectId,
-      environment: baristaEnvironment,
-      body
-    })
+  const requestRef = rtdbRef(`${REQUESTS_PATH}/${CALL_GOOGLE_API_PATH}`).push()
+  const responseRef = rtdbRef(
+    `${RESPONSES_PATH}/${CALL_GOOGLE_API_PATH}/${requestRef.key}`
   )
+  const runRequest = createRunRequest({ instanceTemplateName, createdBy, meta })
+  // Push request to call google api function (set used since push is used
+  // syncrounously earlier to create key)
+  const [requestErr] = await to(requestRef.set(runRequest))
   // Handle errors writing request to RTDB
   if (requestErr) {
     console.error(

@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import { to } from 'utils/async'
-import { startTestRun } from 'utils/testRunner'
+import { callTestRunner } from 'utils/testRunner'
 import { contextToAuthUid } from 'utils/firebaseFunctions'
 import { rtdbRef } from 'utils/rtdb'
 
@@ -67,7 +67,7 @@ async function callRunnerEvent(snap, context) {
 
   // Call to start test run (calls callGoogleApi function)
   const [runErr, testRunResponseSnap] = await to(
-    startTestRun({ environment, projectId, requestId: pushId, createdBy })
+    callTestRunner({ requestId: pushId, createdBy })
   )
 
   // Handle errors starting test run

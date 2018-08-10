@@ -48,7 +48,20 @@ export function getLocalServiceAccount() {
  * //   storageBucket: 'projectId.appspot.com',
  * //   projectId: 'projectId'
  * // }
+ * @example Get Value
+ * getFirebaseConfig('projectId')
+ * // => "myProject"
  */
-export function getFirebaseConfig() {
-  return JSON.parse(process.env.FIREBASE_CONFIG)
+export function getFirebaseConfig(getPath, defaultVal) {
+  let fbConfig
+  try {
+    fbConfig = JSON.parse(process.env.FIREBASE_CONFIG)
+    if (!getPath) {
+      return fbConfig
+    }
+    return fbConfig[getPath]
+  } catch (err) {
+    console.error('Error getting Firebase config:', err)
+    throw err
+  }
 }
