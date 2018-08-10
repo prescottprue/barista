@@ -4,6 +4,7 @@ import { to } from 'utils/async'
 import { callTestRunner } from 'utils/testRunner'
 import { contextToAuthUid } from 'utils/firebaseFunctions'
 import { rtdbRef } from 'utils/rtdb'
+import { RESPONSES_PATH } from 'constants'
 
 const CALL_RUNNER_PATH = 'callRunner'
 
@@ -20,7 +21,7 @@ async function callRunnerEvent(snap, context) {
   } = context
   const eventData = snap.val()
   const { projectId, environment, createdBy = uid } = eventData
-  const responseRef = rtdbRef(`responses/${CALL_RUNNER_PATH}/${pushId}`)
+  const responseRef = rtdbRef(`${RESPONSES_PATH}/${CALL_RUNNER_PATH}/${pushId}`)
 
   // Handle request missing required params
   if (!projectId || !environment) {

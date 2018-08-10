@@ -21,7 +21,7 @@ export default compose(
     // Listener for projects the current user created
     {
       collection: 'projects',
-      where: ['createdBy', '==', uid]
+      where: ['public', '==', true]
     }
   ]),
   // Map projects from state to props

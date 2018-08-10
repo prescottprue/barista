@@ -2,6 +2,10 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import { get } from 'lodash'
 import { to } from 'utils/async'
+import {
+  CONTAINER_BUILDS_META_PATH,
+  CONTAINER_BUILDS_STATUS_PATH
+} from 'constants'
 
 function parseMessageBody(message) {
   try {
@@ -35,7 +39,9 @@ async function callCloudBuildApiEvent(message) {
   const { branchName, projectId } = get(source, 'repoSource', {})
   const commitSha = get(sourceProvenance, 'resolvedRepoSource.commitSha', '')
   const buildData = { attributes, source, branchName, commitSha }
-  const statusRef = admin.database().ref(`image_build_statues/${projectId}`)
+  const statusRef = admin
+    .database()
+    .ref(`${CONTAINER_BUILDS_STATUS_PATH}/${projectId}`)
   // Write status updates to RTDB (Failures, New Builds, etc)
   const [statusSetErr] = await to(statusRef.set({ status, buildData }))
   if (statusSetErr) {
@@ -52,7 +58,7 @@ async function callCloudBuildApiEvent(message) {
     imageMetaData.finishTime = messageBody.finishTime
   }
   // Write successful builds to container images collection
-  const imageMetaRef = admin.firestore().collection('container_images')
+  const imageMetaRef = admin.firestore().collection(CONTAINER_BUILDS_META_PATH)
   const [metaWriteErr] = await to(imageMetaRef.add(imageMetaData))
   if (metaWriteErr) {
     console.error('Error image metadata to Firestore')

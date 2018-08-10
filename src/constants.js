@@ -9,6 +9,9 @@ export const NEW_PROJECT_FORM_NAME = 'newProject'
 export const NEW_JOB_RUN_FORM_NAME = 'newRun'
 export const RUNS_PATH = 'runs'
 export const NEWRUN_PATH = 'new'
+export const BUILDS_PATH = 'builds'
+export const CONTAINER_BUILDS_META_PATH = 'container_builds'
+export const CONTAINER_BUILDS_STATUS_PATH = 'container_build_statues'
 
 export const formNames = {
   account: ACCOUNT_FORM_NAME,
@@ -25,6 +28,14 @@ export const paths = {
   signup: SIGNUP_PATH,
   runs: RUNS_PATH,
   newRun: NEWRUN_PATH
+}
+
+export const firebasePaths = {
+  containerBuildStatuses: CONTAINER_BUILDS_STATUS_PATH
+}
+
+export const firestorePaths = {
+  containerBuildsMeta: CONTAINER_BUILDS_META_PATH
 }
 
 export default { ...paths, ...formNames }

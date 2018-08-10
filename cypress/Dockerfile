@@ -14,7 +14,7 @@ ENV npm_config_loglevel warn
 ### Files
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY package*.json .babelrc cypress.json serviceAccount.json ./
+COPY package*.json cypress.json serviceAccount.json ./
 
 ### Directories
 COPY build/ /build/
