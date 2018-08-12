@@ -1,7 +1,11 @@
-/functions/
-/server/
-/node_modules/
-/cypress/videos
+functions
+server
+node_modules
+cypress/videos
 .eslintignore
 .gitlab-ci.yml
 LICENSE
+.dockerignore
+Dockerfile
+npm-debug.log
+.git
