@@ -1,16 +1,31 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import classes from './RunPage.scss'
+import { uppercase, get } from 'lodash'
+import Typography from '@material-ui/core/Typography'
 
-export const RunPage = ({ runpage }) => (
+export const RunPage = ({ runMeta, classes, runData, params: { runId } }) => (
   <div className={classes.container}>
-    <span>RunPage Component</span>
-    <pre>{JSON.stringify(runpage, null, 2)}</pre>
+    <Typography className={classes.title} variant="display1">
+      {`${uppercase(get(runMeta, 'environment', 'unkown'))} - runId:${runId}`}
+    </Typography>
+    <Typography className={classes.title} variant="headline" align="left">
+      Summary
+    </Typography>
+    <pre>{JSON.stringify({ runMeta }, null, 2)}</pre>
+    <Typography className={classes.title} variant="headline" align="left">
+      Specs
+    </Typography>
+    {
+      runData &&
+      <pre>{JSON.stringify(Object.keys(runData), null, 2)}</pre>
+    }
   </div>
 )
 
 RunPage.propTypes = {
-  runpage: PropTypes.object // from enhancer (firestoreConnect + connect)
+  runMeta: PropTypes.object, // from enhancer (firestoreConnect + connect)
+  runData: PropTypes.object, // from enhancer (firestoreConnect + connect)
+  classes: PropTypes.object // from enhancer (firestoreConnect + connect)
 }
 
 export default RunPage

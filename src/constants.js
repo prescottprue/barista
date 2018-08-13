@@ -8,6 +8,7 @@ export const SIGNUP_FORM_NAME = 'signup'
 export const NEW_PROJECT_FORM_NAME = 'newProject'
 export const RUNS_PATH = 'runs'
 export const NEWRUN_PATH = 'new'
+export const RUN_PATH = ':runId'
 
 export const formNames = {
   account: ACCOUNT_FORM_NAME,
