@@ -15,17 +15,15 @@ export const RunPage = ({ runMeta, classes, runData, params: { runId } }) => (
     <Typography className={classes.title} variant="headline" align="left">
       Specs
     </Typography>
-    {
-      runData &&
-      <pre>{JSON.stringify(Object.keys(runData), null, 2)}</pre>
-    }
+    {runData && <pre>{JSON.stringify(Object.keys(runData), null, 2)}</pre>}
   </div>
 )
 
 RunPage.propTypes = {
   runMeta: PropTypes.object, // from enhancer (firestoreConnect + connect)
   runData: PropTypes.object, // from enhancer (firestoreConnect + connect)
-  classes: PropTypes.object // from enhancer (firestoreConnect + connect)
+  classes: PropTypes.object, // from enhancer (firestoreConnect + connect)
+  params: PropTypes.object // from enhancer (firestoreConnect + connect)
 }
 
 export default RunPage
