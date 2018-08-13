@@ -40,30 +40,42 @@ export const RunMetaItem = ({
         }
         {/* eslint-disable-end prettier/prettier spaced-comment */}
       </Typography>
-      <Typography align="center" variant="body1" className={classes.data}>
-        {runId}
-      </Typography>
-      <Typography align="center" variant="body1" className={classes.data}>
-        {stats.passes}
-      </Typography>
-      <Typography align="center" variant="body1" className={classes.data}>
-        {stats.failures}
-      </Typography>
-      <Typography align="center" variant="body1" className={classes.data}>
-        {format(addMilliseconds(new Date(0), stats.duration), 'mm:ss')}
-      </Typography>
-      <Typography
-        align="center"
-        variant="body1"
-        className={classnames(classes.data, classes.dateWords)}>
-        {distanceInWordsToNow(stats.end)}
-      </Typography>
-      <Typography
-        align="center"
-        variant="body1"
-        className={classnames(classes.data)}>
-        {environment}
-      </Typography>
+      <Tooltip title="Build Number">
+        <Typography align="center" variant="body1" className={classes.data}>
+          {runId}
+        </Typography>
+      </Tooltip>
+      <Tooltip title="Passing Tests">
+        <Typography align="center" variant="body1" className={classes.data}>
+          {stats.passes}
+        </Typography>
+      </Tooltip>
+      <Tooltip title="Failing Tests">
+        <Typography align="center" variant="body1" className={classes.data}>
+          {stats.failures}
+        </Typography>
+      </Tooltip>
+      <Tooltip title="Duration">
+        <Typography align="center" variant="body1" className={classes.data}>
+          {format(addMilliseconds(new Date(0), stats.duration), 'mm:ss')}
+        </Typography>
+      </Tooltip>
+      <Tooltip title="Ending Time">
+        <Typography
+          align="center"
+          variant="body1"
+          className={classnames(classes.data, classes.dateWords)}>
+          {`${distanceInWordsToNow(stats.end)} ago`}
+        </Typography>
+      </Tooltip>
+      <Tooltip title="Environment">
+        <Typography
+          align="center"
+          variant="body1"
+          className={classnames(classes.data)}>
+          {environment}
+        </Typography>
+      </Tooltip>
       <div className={classes.buttonContainer}>
         {status === 'failed' ? (
           <Tooltip title="Re-run">
