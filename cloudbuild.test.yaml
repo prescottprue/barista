@@ -21,7 +21,14 @@ steps:
   - --key=keyOne
 # Build Barista E2E Test Image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/test-barista', '-f', 'cypress/Dockerfile', '.']
+  args: [
+    'build',
+    '-t',
+    'gcr.io/$PROJECT_ID/test-barista',
+    '-f',
+    'cypress/Dockerfile',
+    '.'
+  ]
   env: [
     'STAGE_FIREBASE_PROJECT_ID=barista-stage',
     'PROD_FIREBASE_PROJECT_ID=barista-836b4'
