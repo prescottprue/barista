@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography'
 export const RunPage = ({ runMeta, classes, runData, params: { runId } }) => (
   <div className={classes.container}>
     <Typography className={classes.title} variant="display1">
-      {`${uppercase(get(runMeta, 'environment', 'unkown'))} - runId:${runId}`}
+      {`${uppercase(get(runMeta, 'environment', 'unkown'))} - Job ${runId}`}
     </Typography>
     <Typography className={classes.title} variant="headline" align="left">
       Summary
@@ -15,7 +15,7 @@ export const RunPage = ({ runMeta, classes, runData, params: { runId } }) => (
     <Typography className={classes.title} variant="headline" align="left">
       Specs
     </Typography>
-    {runData && <pre>{JSON.stringify(Object.keys(runData), null, 2)}</pre>}
+    {runData && <pre>{JSON.stringify(runData, null, 2)}</pre>}
   </div>
 )
 
