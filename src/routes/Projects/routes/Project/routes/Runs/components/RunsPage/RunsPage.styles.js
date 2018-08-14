@@ -1,25 +1,38 @@
 export default theme => ({
   root: {
     ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 4,
-    paddingBottom: theme.spacing.unit * 4,
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  paper: {
-    ...theme.mixins.gutters(),
     marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 2,
     paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-    display: 'flex',
-    justifyContent: 'center',
-    width: '100%'
+    paddingBottom: theme.spacing.unit * 2
   },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
+  titleBar: {
+    display: 'grid',
+    justifyContents: 'flex-start',
+    marginTop: '2rem',
+    marginBottom: '2rem',
+    marginLeft: '1rem',
+    marginRight: '1rem',
+    gridTemplateColumns: '[title] auto 150px [actions]'
+  },
+  title: {
+    alignSelf: 'center'
+  },
+  reRunButton: {
     alignSelf: 'flex-end'
+  },
+  columnLabels: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(8, 1fr)',
+    marginLeft: '1rem',
+    marginRight: '1rem'
+  },
+  columnLabel: {
+    fontWeight: 200,
+    fontSize: '.9rem'
+  },
+  status: {
+    paddingLeft: '1rem'
   }
 })
