@@ -3,6 +3,5 @@
   "chromeWebSecurity": false,
   "requestTimeout": 50000,
   "responseTimeout": 50000,
-  "defaultCommandTimeout": 8000,
-  "reporter": "barista-reporter"
+  "defaultCommandTimeout": 8000
 }
