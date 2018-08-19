@@ -5,7 +5,7 @@ import { createSelector } from 'reselect'
 export const getBuildStatuses = state =>
   state.firebase.data[CONTAINER_BUILDS_STATUS_PATH]
 
-export const getProjectId = (state, props) => props.projectid
+export const getProjectId = (state, props) => props.projectId
 
 export const getProject = (state, props) =>
   get(state, `firestore.project.${props.projectid}`)
@@ -30,5 +30,5 @@ export const getMostRecentCommitSha = createSelector(
 
 export const getProjectImageBuildStatus = createSelector(
   [getBuildStatuses, getProjectId],
-  (buildStatuses, projectId) => get(buildStatuses, projectId)
+  (buildStatuses, projectId) => get(buildStatuses, `${projectId}.status`)
 )

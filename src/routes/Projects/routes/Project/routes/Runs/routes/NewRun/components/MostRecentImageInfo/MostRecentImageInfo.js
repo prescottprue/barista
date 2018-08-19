@@ -7,11 +7,13 @@ import Button from '@material-ui/core/Button'
 export const MostRecentImageInfo = ({
   buildId,
   branchName,
+  buildStatus,
   commitSha,
   classes,
   buildsPath
 }) => (
   <div className={classes.root}>
+    <Typography>Build Status: {buildStatus}</Typography>
     <Typography>Build Id: {buildId}</Typography>
     <Typography>Branch Name: {branchName}</Typography>
     <Typography>Commit Sha: {commitSha}</Typography>
@@ -25,6 +27,7 @@ export const MostRecentImageInfo = ({
 
 MostRecentImageInfo.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
+  buildStatus: PropTypes.string, // from enhancer (connect)
   buildId: PropTypes.string, // from enhancer (connect)
   branchName: PropTypes.string, // from enhancer (connect)
   commitSha: PropTypes.string, // from enhancer (connect)
