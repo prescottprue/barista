@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
-import { withHandlers, setPropTypes } from 'recompose'
+import { withHandlers, setPropTypes, withProps } from 'recompose'
 import { withFirebase } from 'react-redux-firebase'
 import { withStyles } from '@material-ui/core'
 import { withRouter } from 'utils/components'
@@ -24,6 +24,7 @@ export default compose(
       push: PropTypes.func.isRequired
     })
   }),
+  withProps(({ params }) => ({ projectId: params.projectId })),
   withHandlers(handlers),
   withStyles(styles)
 )

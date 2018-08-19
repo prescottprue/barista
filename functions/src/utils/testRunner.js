@@ -11,6 +11,7 @@ import { REQUESTS_PATH, RESPONSES_PATH, CALL_GOOGLE_API_PATH } from 'constants'
  */
 function createRunRequest({
   cloudZone = 'us-west1-b',
+  instanceTemplateName,
   createdBy,
   meta = null
 }) {
@@ -21,7 +22,6 @@ function createRunRequest({
   // 'Invalid value for field \'resource.name\':
   // 'Must be a match of regex \'(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)\'' }
   const name = `barback-instance-${Date.now()}`
-  const instanceTemplateName = 'test-barista-stage'
   const { client_email: serviceAccountEmail } = getLocalServiceAccount()
   const body = {
     kind: 'compute#instance',
@@ -119,7 +119,7 @@ function createRunRequest({
 export async function callTestRunner({
   meta,
   createdBy,
-  instanceTemplateName = 'test-barista-stage'
+  instanceTemplateName = 'test-brawndo-stage'
 }) {
   const requestRef = rtdbRef(`${REQUESTS_PATH}/${CALL_GOOGLE_API_PATH}`).push()
   const responseRef = rtdbRef(

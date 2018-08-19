@@ -27,7 +27,8 @@ export const paths = {
   login: LOGIN_PATH,
   signup: SIGNUP_PATH,
   runs: RUNS_PATH,
-  newRun: NEWRUN_PATH
+  newRun: NEWRUN_PATH,
+  builds: BUILDS_PATH
 }
 
 export const firebasePaths = {

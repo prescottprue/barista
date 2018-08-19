@@ -7,15 +7,18 @@ import Tooltip from '@material-ui/core/Tooltip'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import Paper from '@material-ui/core/Paper'
 import SelectField from 'components/SelectField'
+import MostRecentImageInfo from '../MostRecentImageInfo'
 
-const environmentOptions = [{ value: 'stage' }, { value: 'prod' }]
+const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
 
 export const NewRunForm = ({
   newRunForm,
   classes,
   handleSubmit,
+  goToBuilds,
   goBack,
   pristine,
+  projectId,
   submitting
 }) => (
   <form onSubmit={handleSubmit} className={classes.root}>
@@ -43,12 +46,15 @@ export const NewRunForm = ({
           name="environment"
           label="Select Run Environment"
         />
+        <MostRecentImageInfo projectId={projectId} />
       </div>
     </Paper>
   </form>
 )
 
 NewRunForm.propTypes = {
+  goToBuilds: PropTypes.func.isRequired,
+  projectId: PropTypes.string.isRequired,
   classes: PropTypes.object, // from enhancer (withStyles)
   newRunForm: PropTypes.object, // from enhancer (firestoreConnect + connect)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)

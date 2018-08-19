@@ -25,7 +25,8 @@ export default theme => ({
   },
   inputs: {
     display: 'flex',
-    justifyContent: 'flex-start',
+    flexDirection: 'column',
+    alignItems: 'center',
     width: '100%'
   },
   instructions: {
