@@ -36,14 +36,17 @@ async function callCloudBuildApiEvent(message) {
   const { attributes } = message
   const { status } = attributes
   const { source, sourceProvenance } = messageBody
-  const { branchName, projectId } = get(source, 'repoSource', {})
+  const { branchName, repoName } = get(source, 'repoSource', {})
+  const projectId = repoName.replace('github-reside-eng-', '')
   const commitSha = get(sourceProvenance, 'resolvedRepoSource.commitSha', '')
   const buildData = { attributes, source, branchName, commitSha }
   const statusRef = admin
     .database()
     .ref(`${CONTAINER_BUILDS_STATUS_PATH}/${projectId}`)
   // Write status updates to RTDB (Failures, New Builds, etc)
-  const [statusSetErr] = await to(statusRef.set({ status, buildData }))
+  const [statusSetErr] = await to(
+    statusRef.set({ status, branchName, buildData })
+  )
   if (statusSetErr) {
     console.error('Error setting status to RTDB')
     throw statusSetErr

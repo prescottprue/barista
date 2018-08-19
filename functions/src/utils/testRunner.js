@@ -13,6 +13,7 @@ function createRunRequest({
   cloudZone = 'us-west1-b',
   instanceTemplateName,
   createdBy,
+  requestKey,
   meta = null
 }) {
   const cloudProjectId = getFirebaseConfig('projectId')
@@ -21,7 +22,9 @@ function createRunRequest({
   // as a tag. Error caused looked like so:
   // 'Invalid value for field \'resource.name\':
   // 'Must be a match of regex \'(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)\'' }
-  const name = `barback-instance-${Date.now()}`
+  const name = `${instanceTemplateName}-${Date.now()}`
+  const toBeTestedProjectName = 'brawndo'
+  const toBeTestedEnv = 'int'
   const { client_email: serviceAccountEmail } = getLocalServiceAccount()
   const body = {
     kind: 'compute#instance',
@@ -33,7 +36,7 @@ function createRunRequest({
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: test-barista-stage\n      image: gcr.io/${cloudProjectId}/test-barista\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: test-${toBeTestedProjectName}\n      image: gcr.io/${cloudProjectId}/test-${toBeTestedProjectName}\n      args:\n        - 'test_url=https://${toBeTestedProjectName}-${toBeTestedEnv}.firebaseapp.com'\n      env:\n        - name: JOB_RUN_KEY\n          value: ${requestKey}\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },
@@ -125,7 +128,12 @@ export async function callTestRunner({
   const responseRef = rtdbRef(
     `${RESPONSES_PATH}/${CALL_GOOGLE_API_PATH}/${requestRef.key}`
   )
-  const runRequest = createRunRequest({ instanceTemplateName, createdBy, meta })
+  const runRequest = createRunRequest({
+    instanceTemplateName,
+    requestKey: requestRef.key,
+    createdBy,
+    meta
+  })
   // Push request to call google api function (set used since push is used
   // syncrounously earlier to create key)
   const [requestErr] = await to(requestRef.set(runRequest))

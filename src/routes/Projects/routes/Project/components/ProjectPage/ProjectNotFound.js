@@ -1,11 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import classes from './ProjectPage.scss'
 
-const ProjectNotFound = ({ params, project, startTestRun }) => (
+const ProjectNotFound = () => (
   <div className={classes.container}>
     <Card className={classes.card}>
       <CardContent className={classes.content}>
@@ -18,11 +17,5 @@ const ProjectNotFound = ({ params, project, startTestRun }) => (
     </Card>
   </div>
 )
-
-ProjectNotFound.propTypes = {
-  project: PropTypes.object,
-  startTestRun: PropTypes.func.isRequired, // from enhancer (withHandlers)
-  params: PropTypes.object.isRequired
-}
 
 export default ProjectNotFound
