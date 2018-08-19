@@ -38,15 +38,20 @@ function getEnvPrefix() {
 function envVarBasedOnCIEnv(varNameRoot) {
   const prefix = getEnvPrefix()
   const combined = `${prefix}${varNameRoot}`
-  if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
+  if (fs.existsSync(localTestConfigPath)) {
     const configObj = require(localTestConfigPath)
     console.log(
-      `Running in local environment, ${
+      `${
         configObj[combined] ? combined : varNameRoot
       } is being loaded from cypress/config.json`
     )
     return configObj[combined] || configObj[varNameRoot]
   }
+  console.log(
+    `${
+      process.env[combined] ? combined : varNameRoot
+    } is being loaded from environment variables`
+  )
   return process.env[combined] || process.env[varNameRoot]
 }
 

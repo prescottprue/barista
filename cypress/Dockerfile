@@ -5,10 +5,6 @@ ARG test_url=https://barista-stage.firebaseapp.com
 ENV CYPRESS_baseUrl=$test_url
 
 ## Environment Variables
-
-# Set CI to true to prevent a large number of messages during install of
-# dependencies such as Cypress
-ENV CI=true
 # Prevent a large number messages during NPM install
 ENV npm_config_loglevel warn
 # Color logs where possible
@@ -32,7 +28,9 @@ RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin bari
 RUN npm run build:testConfig
 
 # Install Cypress
-RUN npm install cypress
+# Set CI to true to prevent a large number of messages during install of
+# dependencies such as Cypress
+RUN CI=true npm install cypress
 
 # Verify Cypress Installed correctly
 RUN $(npm bin)/cypress verify
