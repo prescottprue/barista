@@ -23,6 +23,11 @@ export default theme => ({
     justifyContent: 'space-between',
     width: '100%'
   },
+  button: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '2rem'
+  },
   inputs: {
     display: 'flex',
     flexDirection: 'column',

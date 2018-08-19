@@ -4,8 +4,7 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import {
   CONTAINER_BUILDS_META_PATH,
-  CONTAINER_BUILDS_STATUS_PATH,
-  paths
+  CONTAINER_BUILDS_STATUS_PATH
 } from 'constants'
 import { setPropTypes } from 'recompose'
 import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
@@ -40,8 +39,7 @@ export default compose(
     branchName: getMostRecentBranchName(state, props),
     commitSha: getMostRecentCommitSha(state, props),
     buildId: getMostRecentBuildId(state, props),
-    buildStatus: getProjectImageBuildStatus(state, props),
-    buildsPath: `${paths.list}/${props.projectId}/${paths.builds}`
+    buildStatus: getProjectImageBuildStatus(state, props)
   })),
   withStyles(styles)
 )

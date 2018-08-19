@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
@@ -7,7 +8,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import Paper from '@material-ui/core/Paper'
 import SelectField from 'components/SelectField'
-import MostRecentImageInfo from '../MostRecentImageInfo'
+import MostRecentImageInfo from 'routes/Projects/routes/Project/components/MostRecentImageInfo'
 
 const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
 
@@ -15,7 +16,7 @@ export const NewRunForm = ({
   newRunForm,
   classes,
   handleSubmit,
-  goToBuilds,
+  buildsPath,
   goBack,
   pristine,
   projectId,
@@ -47,14 +48,19 @@ export const NewRunForm = ({
           label="Select Run Environment"
         />
         <MostRecentImageInfo projectId={projectId} />
+        <div className={classes.button}>
+          <Button component={Link} variant="outlined" to={buildsPath}>
+            Go To Builds
+          </Button>
+        </div>
       </div>
     </Paper>
   </form>
 )
 
 NewRunForm.propTypes = {
-  goToBuilds: PropTypes.func.isRequired,
   projectId: PropTypes.string.isRequired,
+  buildsPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object, // from enhancer (withStyles)
   newRunForm: PropTypes.object, // from enhancer (firestoreConnect + connect)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)

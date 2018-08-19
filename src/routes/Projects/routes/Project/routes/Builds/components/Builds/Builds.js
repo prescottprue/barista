@@ -1,22 +1,55 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { map } from 'lodash'
+import { map, get, invoke } from 'lodash'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
+import { formatDateTime } from 'utils/formatters'
+import MostRecentImageInfo from 'routes/Projects/routes/Project/components/MostRecentImageInfo'
 
-export const Builds = ({ builds, buildStatuses, classes }) => (
+export const Builds = ({ builds, buildStatuses, projectId, classes }) => (
   <div className={classes.root}>
-    <Typography>Builds</Typography>
+    <Typography variant="headline" component="h3">
+      Builds
+    </Typography>
     <Paper className={classes.paper}>
-      <pre>{JSON.stringify(buildStatuses, null, 2)}</pre>
+      <MostRecentImageInfo projectId={projectId} />
     </Paper>
     <Paper className={classes.paper}>
-      {map(builds, build => <pre>{JSON.stringify(build, null, 2)}</pre>)}
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Build Id</TableCell>
+            <TableCell>Finish Time</TableCell>
+            <TableCell>Branch Name</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {map(builds, build => {
+            return (
+              <TableRow key={build.id}>
+                <TableCell>
+                  {get(build, 'buildData.attributes.buildId')}
+                </TableCell>
+                <TableCell>
+                  {formatDateTime(invoke(get(build, 'finishTime'), 'toDate'))}
+                </TableCell>
+                <TableCell>{get(build, 'buildData.branchName')}</TableCell>
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
     </Paper>
   </div>
 )
 
 Builds.propTypes = {
+  projectId: PropTypes.string.isRequired,
   builds: PropTypes.array, // from enhancer (firestoreConnect + connect)
   buildStatuses: PropTypes.object,
   classes: PropTypes.object.isRequired // from enhancer (withStyles)

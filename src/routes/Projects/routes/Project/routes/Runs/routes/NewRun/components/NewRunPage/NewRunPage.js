@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { startCase } from 'lodash'
 import Typography from '@material-ui/core/Typography'
 import NewRunForm from '../NewRunForm'
 
 export const NewRunPage = ({ classes, startTestRun, goBack, projectId }) => (
   <div className={classes.root}>
     <Typography variant="headline" component="h3">
-      New Run
+      New {startCase(projectId)} Job Run
     </Typography>
     <NewRunForm onSubmit={startTestRun} projectId={projectId} />
   </div>

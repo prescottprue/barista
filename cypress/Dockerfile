@@ -28,7 +28,7 @@ RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin bari
 RUN npm run build:testConfig
 
 # Install Cypress
-# Set CI to true to prevent a large number of messages during install of
+# Set CI=true to prevent a large number of messages during install of
 # dependencies such as Cypress
 RUN CI=true npm install cypress
 
