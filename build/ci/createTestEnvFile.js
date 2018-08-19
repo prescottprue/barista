@@ -190,6 +190,7 @@ async function createTestConfig() {
         serviceAccountPath,
         JSON.stringify(serviceAccount, null, 2)
       )
+      console.log('Service account created successfully')
     }
     return customToken
   } catch (err) {
