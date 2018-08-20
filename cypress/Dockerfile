@@ -5,11 +5,11 @@ ARG test_url=https://barista-stage.firebaseapp.com
 ENV CYPRESS_baseUrl=$test_url
 ENV FIREBASE_TOKEN $FIREBASE_TOKEN
 ENV JOB_RUN_KEY $JOB_RUN_KEY
+
 # Prevent a large number messages during NPM install
 ENV npm_config_loglevel warn
 # Color logs where possible
 ENV TERM xterm
-
 ## Copy code into container
 
 ### Files
@@ -22,7 +22,7 @@ COPY build/ /build/
 COPY cypress/ /cypress/
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter
+RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.5
 
 # Build Test Config
 RUN npm run build:testConfig
@@ -36,4 +36,4 @@ RUN CI=true npm install cypress
 RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above)
-ENTRYPOINT JOB_RUN_KEY=$JOB_RUN_KEY $(npm bin)/cypress run --reporter barista-reporter
+ENTRYPOINT echo "\"reporterOptions=$JOB_RUN_KEY\"" && $(npm bin)/cypress run --reporter barista-reporter --reporter-options "\"reporterOptions=$JOB_RUN_KEY\""
