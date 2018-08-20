@@ -26,7 +26,7 @@ COPY build/ /build/
 COPY cypress/ /cypress/
 
 # Install Dependencies (only those used to build config files)
-RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin barista-reporter
+RUN npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter
 
 # Build Test Config
 RUN npm run build:testConfig
