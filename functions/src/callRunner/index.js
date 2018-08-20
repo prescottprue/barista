@@ -1,11 +1,12 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import { to } from 'utils/async'
-import { startTestRun } from 'utils/testRunner'
+import { callTestRunner } from 'utils/testRunner'
+import { contextToAuthUid } from 'utils/firebaseFunctions'
+import { rtdbRef } from 'utils/rtdb'
+import { RESPONSES_PATH } from 'constants'
 
-function rtdbRef(refPath) {
-  return admin.database().ref(refPath)
-}
+const CALL_RUNNER_PATH = 'callRunner'
 
 /**
  * @param  {functions.Event} event - Function event
@@ -13,46 +14,24 @@ function rtdbRef(refPath) {
  * @return {Promise}
  */
 async function callRunnerEvent(snap, context) {
+  const uid = contextToAuthUid(context)
   const {
     params: { pushId },
-    auth,
     timestamp
   } = context
   const eventData = snap.val()
-  const { projectId, environment } = eventData
-  const responseRef = rtdbRef(`responses/callRunner/${pushId}`)
-
-  // Handle request missing required params
-  if (!projectId || !environment) {
-    const missingParamsMsg = 'projectId and environment are required'
-    console.error(missingParamsMsg)
-
-    // Write error to response object within RTDB
-    const [missingParamsErrWrite] = await to(
-      responseRef.push({ status: 'error', error: missingParamsMsg })
-    )
-
-    // Handle errors writing error back to response object within RTDB
-    if (missingParamsErrWrite) {
-      console.error(
-        `Error writing error data to RTDB: ${missingParamsErrWrite.message ||
-          ''}`,
-        missingParamsErrWrite
-      )
-      throw missingParamsErrWrite
-    }
-    throw new Error(missingParamsMsg)
-  }
+  const { createdBy = uid, jobRunKey, instanceTemplateName } = eventData
+  const responseRef = rtdbRef(`${RESPONSES_PATH}/${CALL_RUNNER_PATH}/${pushId}`)
 
   // Write test run document to Firestore
   const [metaAddErr] = await to(
     admin
       .firestore()
-      .collection(`test_runs`)
+      .collection('test_runs')
       .add({
-        createdBy: auth.uid,
+        createdBy,
         createdAt: timestamp,
-        meta: { callRunnerRequestId: pushId, projectId, environment }
+        meta: { callRunnerRequestId: pushId }
       })
   )
 
@@ -66,8 +45,13 @@ async function callRunnerEvent(snap, context) {
   }
 
   // Call to start test run (calls callGoogleApi function)
-  const [runErr] = await to(
-    startTestRun({ environment, projectId, resultsId: pushId })
+  const [runErr, testRunResponseSnap] = await to(
+    callTestRunner({
+      requestId: pushId,
+      createdBy,
+      meta: { jobRunKey },
+      instanceTemplateName
+    })
   )
 
   // Handle errors starting test run
@@ -93,7 +77,12 @@ async function callRunnerEvent(snap, context) {
   }
 
   // Write success response to RTDB
-  const [writeErr, response] = await to(responseRef.push({ status: 'success' }))
+  const [writeErr] = await to(
+    responseRef.push({
+      status: 'success',
+      runStartResponse: testRunResponseSnap.val()
+    })
+  )
 
   // Handle errors writing response to RTDB
   if (writeErr) {
@@ -101,7 +90,9 @@ async function callRunnerEvent(snap, context) {
     throw writeErr
   }
 
-  return response
+  console.log('Request completed successfully, exiting.')
+
+  return null
 }
 
 /**

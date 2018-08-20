@@ -17,6 +17,7 @@
     "lint": "eslint src functions server build cypress project.config.js",
     "lint:fix": "npm run lint -- --fix",
     "functions:start": "npm run start --prefix functions",
+    "functions:watch": "npm run watch --prefix functions",
     "functions:build": "npm run build --prefix functions",
     "functions:test": "npm run test --prefix functions",
     "format": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\"",
@@ -61,6 +62,7 @@
     "redux-form": "^7.4.0",
     "redux-form-material-ui": "next",
     "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {

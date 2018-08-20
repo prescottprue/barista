@@ -13,3 +13,9 @@
 .title {
   font-size: 2rem !important;
 }
+.card {
+  @extend .flex-row-center;
+}
+.content {
+  @extend .flex-column-center;
+}

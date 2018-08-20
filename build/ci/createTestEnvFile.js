@@ -3,9 +3,14 @@ import * as admin from 'firebase-admin'
 import { pickBy, isUndefined, size, keys, isString } from 'lodash'
 import fs from 'fs'
 import path from 'path'
-const testEnvFilePath = path.join(process.cwd(), 'cypress.env.json')
-const localTestConfigPath = path.join(process.cwd(), 'cypress', 'config.json')
-const serviceAccountPath = path.join(process.cwd(), 'serviceAccount.json')
+const testEnvFilePath = path.join(__dirname, '../..', 'cypress.env.json')
+const localTestConfigPath = path.join(
+  __dirname,
+  '../..',
+  'cypress',
+  'config.json'
+)
+const serviceAccountPath = path.join(__dirname, '../..', 'serviceAccount.json')
 const prefixesByCiEnv = {
   staging: 'STAGE_',
   production: 'PROD_'
@@ -33,15 +38,20 @@ function getEnvPrefix() {
 function envVarBasedOnCIEnv(varNameRoot) {
   const prefix = getEnvPrefix()
   const combined = `${prefix}${varNameRoot}`
-  if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
+  if (fs.existsSync(localTestConfigPath)) {
     const configObj = require(localTestConfigPath)
     console.log(
-      `Running in local environment, ${
+      `${
         configObj[combined] ? combined : varNameRoot
       } is being loaded from cypress/config.json`
     )
     return configObj[combined] || configObj[varNameRoot]
   }
+  console.log(
+    `${
+      process.env[combined] ? combined : varNameRoot
+    } is being loaded from environment variables`
+  )
   return process.env[combined] || process.env[varNameRoot]
 }
 
@@ -81,8 +91,12 @@ function getParsedEnvVar(varNameRoot) {
 function getServiceAccount() {
   // Check for local service account file (Local dev)
   if (fs.existsSync(serviceAccountPath)) {
+    console.log('local service account being loaded from ./serviceAccount.json')
     return require(serviceAccountPath)
   }
+  console.log(
+    'Service Account file does not exist locally, falling back to environment variables'
+  )
   // Use environment variables (CI)
   return {
     type: 'service_account',
@@ -172,6 +186,8 @@ async function createTestConfig() {
     // Write config file to cypress.env.json
     fs.writeFileSync(testEnvFilePath, JSON.stringify(newCypressConfig, null, 2))
 
+    console.log(`${testEnvFilePath} created successfully`)
+
     // Create service account file if it does not already exist (for use in reporter)
     if (!fs.existsSync(serviceAccountPath)) {
       // Write service account file as string
@@ -179,6 +195,7 @@ async function createTestConfig() {
         serviceAccountPath,
         JSON.stringify(serviceAccount, null, 2)
       )
+      console.log('Service account created successfully')
     }
     return customToken
   } catch (err) {

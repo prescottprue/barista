@@ -76,7 +76,6 @@ Unit Tests:
   before_script:
     - npm i --prefix functions
   script:
-    - npm run test --prefix functions
     - npm run test:cov --prefix functions
 
 # Deploy Staging

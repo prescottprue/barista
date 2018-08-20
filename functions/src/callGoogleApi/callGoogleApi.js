@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
 import { get, uniqueId } from 'lodash'
 import request from 'request-promise'
 import google from 'googleapis'
@@ -96,6 +97,7 @@ export default async function callGoogleApi(snap, context) {
   const eventVal = snap.val()
   const eventId = get(context, 'params.pushId')
   const {
+    apiUrl,
     api = 'storage',
     method = 'GET',
     body,
@@ -108,48 +110,47 @@ export default async function callGoogleApi(snap, context) {
     .database()
     .ref(`responses/${eventPathName}/${eventId}`)
 
-  // Handle missing parameters
-  if (!projectId || !environment) {
-    const missingMsg = 'projectId and environment are required parameters'
-    console.error(missingMsg)
-    const missingParamsErr = new Error(missingMsg)
-    await responseRef.set({
-      completed: true,
-      error: missingMsg,
-      completedAt: admin.database.ServerValue.TIMESTAMP
-    })
-    throw missingParamsErr
-  }
   const appName = `app-${uniqueId()}`
-  console.log(
-    'Searching for service account from: ',
-    `projects/${projectId}/environments/${environment}`
-  )
 
-  // Get Service Account object by decryping string from Firestore
-  const [getSAErr, serviceAccount] = await to(
-    serviceAccountFromFirestorePath(
-      `projects/${projectId}/environments/${environment}`,
-      appName,
-      { returnData: true }
+  let serviceAccount
+  // Set to application default credentials when using compute api
+  if (projectId && environment) {
+    console.log(
+      'Searching for service account from: ',
+      `projects/${projectId}/environments/${environment}`
     )
-  )
-
-  // Handle errors getting service account
-  if (getSAErr || !serviceAccount) {
-    console.error('Error getting service account:', getSAErr)
-    const missingParamsErr = getSAErr
-    await responseRef.set({
-      completed: true,
-      error: getSAErr.message || getSAErr,
-      completedAt: admin.database.ServerValue.TIMESTAMP
-    })
-    throw missingParamsErr
+    let getSAErr
+    // Get Service Account object by decryping string from Firestore
+    ;[getSAErr, serviceAccount] = await to(
+      serviceAccountFromFirestorePath(
+        `projects/${projectId}/environments/${environment}`,
+        appName,
+        { returnData: true }
+      )
+    )
+    // Handle errors getting service account
+    if (getSAErr || !serviceAccount) {
+      console.error('Error getting service account:', getSAErr)
+      const missingParamsErr = getSAErr
+      await responseRef.set({
+        completed: true,
+        error: getSAErr.message || getSAErr,
+        completedAt: admin.database.ServerValue.TIMESTAMP
+      })
+      throw missingParamsErr
+    }
+  } else {
+    if (!functions.config().service_account) {
+      throw new Error('service_account functions config variable not set')
+    }
+    serviceAccount = functions.config().service_account
   }
 
-  const uri = `https://www.googleapis.com/${api}/${apiVersion}/${suffix}${
-    api === 'storage' ? '?cors' : ''
-  }`
+  const uri =
+    apiUrl ||
+    `https://www.googleapis.com/${api}/${apiVersion}/${suffix}${
+      api === 'storage' ? '?cors' : ''
+    }`
   // Call Google API with service account
   const [err, response] = await to(
     googleApisRequest(serviceAccount, {

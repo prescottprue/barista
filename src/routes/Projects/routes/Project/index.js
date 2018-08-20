@@ -24,9 +24,10 @@ export default store => ({
       /*  Webpack - use require callback to define
           dependencies for bundling   */
       const Runs = require('./routes/Runs').default
+      const Builds = require('./routes/Builds').default
 
       /*  Return getComponent   */
-      cb(null, [Runs(store)])
+      cb(null, [Runs(store), Builds(store)])
     })
   }
 })

@@ -1,0 +1,13 @@
+steps:
+# Build Barista App Image
+# TODO: Uncomment this step once using app image. We don't currently since we
+# deploy directly to Firebase since we don't have a good way of emulating
+# RTDB, Firestore, and Functions.
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/barista', '.']
+  timeout: 500s
+# Push App Image To Container Registry (Barista uses this)
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/barista']
+  timeout: 500s
+images: ['gcr.io/$PROJECT_ID/barista']

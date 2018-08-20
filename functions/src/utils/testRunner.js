@@ -1,14 +1,32 @@
-import admin from 'firebase-admin'
+import { rtdbRef, waitForValue } from './rtdb'
+import { getLocalServiceAccount, getFirebaseConfig } from './firebaseFunctions'
+import { to } from './async'
+import { REQUESTS_PATH, RESPONSES_PATH, CALL_GOOGLE_API_PATH } from 'constants'
 
 /**
  * Create body of request to create a VM on Google Compute Engine
- * @param  {String} cloudProjectId [description]
- * @param  {String} cloudZone      [description]
- * @return {Object}                [description]
+ * @param  {String} [cloudZone='us-west1-b'] [description]
+ * @param  {Object} [meta=null] - Object of extra metadata to pass to request
+ * @return {Object} Body to be used in Google API Request
  */
-function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
-  const name = `barback-instance-${resultsId}`
-  return {
+function createRunRequest({
+  cloudZone = 'us-west1-b',
+  instanceTemplateName,
+  createdBy,
+  requestKey,
+  meta = null
+}) {
+  const cloudProjectId = getFirebaseConfig('projectId')
+  // NOTE: requestId can not be used in name since it does not conform to
+  // name field standards with Compute's API. Instead the requestId is used
+  // as a tag. Error caused looked like so:
+  // 'Invalid value for field \'resource.name\':
+  // 'Must be a match of regex \'(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)\'' }
+  const name = `${instanceTemplateName}-${Date.now()}`
+  const toBeTestedProjectName = 'brawndo'
+  const toBeTestedEnv = 'int'
+  const { client_email: serviceAccountEmail } = getLocalServiceAccount()
+  const body = {
     kind: 'compute#instance',
     name,
     zone: `projects/${cloudProjectId}/zones/${cloudZone}`,
@@ -18,7 +36,7 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: barback-template\n      image: gcr.io/${cloudProjectId}/github-prescottprue-barback\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: test-${toBeTestedProjectName}\n      image: gcr.io/${cloudProjectId}/test-${toBeTestedProjectName}\n      args:\n        - 'test_url=https://${toBeTestedProjectName}-${toBeTestedEnv}.firebaseapp.com'\n      env:\n        - name: JOB_RUN_KEY\n          value: ${requestKey}\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },
@@ -32,7 +50,7 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
         boot: true,
         mode: 'READ_WRITE',
         autoDelete: true,
-        deviceName: 'barback-template-1',
+        deviceName: `${name}-storage`,
         initializeParams: {
           sourceImage:
             'projects/cos-cloud/global/images/cos-stable-67-10575-55-0',
@@ -70,7 +88,7 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
     deletionProtection: false,
     serviceAccounts: [
       {
-        email: 'functions-dev-2@barista-836b4.iam.gserviceaccount.com',
+        email: serviceAccountEmail,
         scopes: [
           'https://www.googleapis.com/auth/devstorage.read_only',
           'https://www.googleapis.com/auth/logging.write',
@@ -82,32 +100,60 @@ function createRequestBody({ cloudProjectId, cloudZone, resultsId }) {
       }
     ]
   }
+
+  return {
+    api: 'compute',
+    createdBy,
+    method: 'POST',
+    meta,
+    suffix: `projects/${cloudProjectId}/zones/${cloudZone}/instances?souceInstanceTemplate=global/instanceTemplates/${instanceTemplateName}`,
+    body
+  }
 }
 
 /**
- * Run tests by invoking barback container within Google Cloud Compute Engine
- * @param req - Express HTTP Request
- * @param res - Express HTTP Response
+ * Start test run with specified template by creating request to callGoogleApi
+ * function.
+ * @param  {String} requestId - id of original
+ * @param  {String} createdBy - UID of request creator
+ * @param  {String} [instanceTemplateName='test-barista-stage'}] [description]
+ * @return {Promise}
  */
-export async function startTestRun({
-  environment: baristaEnvironment,
-  projectId: baristaProjectId,
-  resultsId
+export async function callTestRunner({
+  meta,
+  createdBy,
+  instanceTemplateName = 'test-brawndo-stage'
 }) {
-  const instanceTemplateName = 'barback-template'
-  const cloudProjectId = process.env.GCLOUD_PROJECT || 'barista-836b4'
-  const cloudZone = 'us-west1-b'
-  // TODO: Fallback to local auth and call google API directly instead of
-  // getting service account stored in Firestore
-  await admin
-    .database()
-    .ref('requests/callGoogleApi')
-    .push({
-      api: 'compute',
-      method: 'POST',
-      suffix: `projects/${cloudProjectId}/zones/${cloudZone}/instances?souceInstanceTemplate=global/instanceTemplates/${instanceTemplateName}`,
-      projectId: baristaProjectId,
-      environment: baristaEnvironment,
-      body: createRequestBody({ cloudProjectId, cloudZone })
-    })
+  const requestRef = rtdbRef(`${REQUESTS_PATH}/${CALL_GOOGLE_API_PATH}`).push()
+  const responseRef = rtdbRef(
+    `${RESPONSES_PATH}/${CALL_GOOGLE_API_PATH}/${requestRef.key}`
+  )
+  const runRequest = createRunRequest({
+    instanceTemplateName,
+    requestKey: requestRef.key,
+    createdBy,
+    meta
+  })
+  // Push request to call google api function (set used since push is used
+  // syncrounously earlier to create key)
+  const [requestErr] = await to(requestRef.set(runRequest))
+  // Handle errors writing request to RTDB
+  if (requestErr) {
+    console.error(
+      `Error writing request to RTDB: ${requestErr.message || ''}`,
+      requestErr
+    )
+    throw requestErr
+  }
+  const [responseErr, responseSnap] = await to(waitForValue(responseRef))
+  // Handle errors waiting for response from RTDB
+  if (responseErr) {
+    console.error(
+      `Error waiting for response from test run start: ${responseErr.message ||
+        ''}`,
+      responseErr
+    )
+    throw responseErr
+  }
+  return responseSnap
 }
