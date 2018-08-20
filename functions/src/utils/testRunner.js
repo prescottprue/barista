@@ -23,8 +23,9 @@ function createRunRequest({
   // 'Invalid value for field \'resource.name\':
   // 'Must be a match of regex \'(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)\'' }
   const name = `${instanceTemplateName}-${Date.now()}`
-  const toBeTestedProjectName = 'brawndo'
-  const toBeTestedEnv = 'int'
+  // TODO: Pass actual project here
+  const toBeTestedProjectName = 'barista'
+  const toBeTestedEnv = 'stage'
   const { client_email: serviceAccountEmail } = getLocalServiceAccount()
   const body = {
     kind: 'compute#instance',

@@ -1,12 +1,17 @@
 FROM cypress/base:8
 
-# Handle input of test url (defaults to stage)
+## Arguments -> Environment
+# CYPRESS_baseUrl through test_url (defaults to stage)
 ARG test_url=https://barista-stage.firebaseapp.com
 ENV CYPRESS_baseUrl=$test_url
 
-# Handle input of FIREBASE_TOKEN through firebase_token argument
+# FIREBASE_TOKEN through firebase_token argument
 ARG firebase_token
 ENV FIREBASE_TOKEN=$firebase_token
+
+# JOB_RUN_KEY through job_run_key argument
+ARG job_run_key
+ENV JOB_RUN_KEY=$job_run_key
 
 ## Environment Variables
 # Prevent a large number messages during NPM install
