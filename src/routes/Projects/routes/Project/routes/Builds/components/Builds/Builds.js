@@ -9,6 +9,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import { formatDateTime } from 'utils/formatters'
+import ImageBuildStatus from 'routes/Projects/routes/Project/components/ImageBuildStatus'
 import MostRecentImageInfo from 'routes/Projects/routes/Project/components/MostRecentImageInfo'
 
 export const Builds = ({ builds, buildStatuses, projectId, classes }) => (
@@ -17,6 +18,7 @@ export const Builds = ({ builds, buildStatuses, projectId, classes }) => (
       {startCase(projectId)} Builds
     </Typography>
     <Paper className={classes.paper}>
+      <ImageBuildStatus projectId={projectId} />
       <MostRecentImageInfo projectId={projectId} />
     </Paper>
     <Paper className={classes.paper}>

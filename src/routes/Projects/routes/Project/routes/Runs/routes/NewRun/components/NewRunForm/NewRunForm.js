@@ -8,6 +8,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import Paper from '@material-ui/core/Paper'
 import SelectField from 'components/SelectField'
+import ImageBuildStatus from 'routes/Projects/routes/Project/components/ImageBuildStatus'
 import MostRecentImageInfo from 'routes/Projects/routes/Project/components/MostRecentImageInfo'
 
 const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
@@ -47,6 +48,7 @@ export const NewRunForm = ({
           name="environment"
           label="Select Run Environment"
         />
+        <ImageBuildStatus projectId={projectId} />
         <MostRecentImageInfo projectId={projectId} />
         <div className={classes.button}>
           <Button component={Link} variant="outlined" to={buildsPath}>

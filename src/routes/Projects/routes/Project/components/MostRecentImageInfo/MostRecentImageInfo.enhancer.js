@@ -12,8 +12,7 @@ import styles from './MostRecentImageInfo.styles'
 import {
   getMostRecentCommitSha,
   getMostRecentBranchName,
-  getMostRecentBuildId,
-  getProjectImageBuildStatus
+  getMostRecentBuildId
 } from 'selectors'
 
 export default compose(
@@ -38,8 +37,7 @@ export default compose(
   connect((state, props) => ({
     branchName: getMostRecentBranchName(state, props),
     commitSha: getMostRecentCommitSha(state, props),
-    buildId: getMostRecentBuildId(state, props),
-    buildStatus: getProjectImageBuildStatus(state, props)
+    buildId: getMostRecentBuildId(state, props)
   })),
   withStyles(styles)
 )
