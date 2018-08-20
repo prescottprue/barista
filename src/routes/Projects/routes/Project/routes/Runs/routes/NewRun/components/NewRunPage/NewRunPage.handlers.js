@@ -19,6 +19,7 @@ export function startTestRun({ firebase, projectId }) {
     return firebase.push('requests/callRunner', {
       jobRunKey: pushKey,
       environment,
+      baristaProject: projectId,
       instanceTemplateName
     })
   }

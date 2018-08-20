@@ -45,4 +45,4 @@ RUN CI=true npm install cypress
 RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above)
-ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter
+ENTRYPOINT JOB_RUN_KEY=$job_run_key $(npm bin)/cypress run --reporter barista-reporter

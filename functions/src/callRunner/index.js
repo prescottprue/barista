@@ -20,7 +20,13 @@ async function callRunnerEvent(snap, context) {
     timestamp
   } = context
   const eventData = snap.val()
-  const { createdBy = uid, jobRunKey, instanceTemplateName } = eventData
+  const {
+    createdBy = uid,
+    jobRunKey,
+    environment,
+    baristaProject,
+    instanceTemplateName
+  } = eventData
   const responseRef = rtdbRef(`${RESPONSES_PATH}/${CALL_RUNNER_PATH}/${pushId}`)
 
   // Write test run document to Firestore
@@ -48,7 +54,10 @@ async function callRunnerEvent(snap, context) {
   const [runErr, testRunResponseSnap] = await to(
     callTestRunner({
       requestId: pushId,
+      jobRunKey,
       createdBy,
+      environment,
+      baristaProject,
       meta: { jobRunKey },
       instanceTemplateName
     })

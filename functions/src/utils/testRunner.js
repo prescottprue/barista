@@ -5,7 +5,14 @@ import { REQUESTS_PATH, RESPONSES_PATH, CALL_GOOGLE_API_PATH } from 'constants'
 
 /**
  * Create body of request to create a VM on Google Compute Engine
- * @param  {String} [cloudZone='us-west1-b'] [description]
+ * @param  {String} [cloudZone='us-west1-b'] - Zone in which compute engine
+ * VM should be created
+ * @param {String} environment - Environment to be tested. This value is
+ * used to determine which container to use and which test url to pass.
+ * @param {String} baristaProject - Name of barista project to be tested. This
+ * value is used to determine which container to use and which test url to pass.
+ * @param {String} createdAt - UID of user creating VM instance
+ * @param {String} requestKey - Key of original test run request
  * @param  {Object} [meta=null] - Object of extra metadata to pass to request
  * @return {Object} Body to be used in Google API Request
  */
@@ -13,6 +20,8 @@ function createRunRequest({
   cloudZone = 'us-west1-b',
   instanceTemplateName,
   createdBy,
+  environment,
+  baristaProject,
   requestKey,
   meta = null
 }) {
@@ -23,9 +32,6 @@ function createRunRequest({
   // 'Invalid value for field \'resource.name\':
   // 'Must be a match of regex \'(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)\'' }
   const name = `${instanceTemplateName}-${Date.now()}`
-  // TODO: Pass actual project here
-  const toBeTestedProjectName = 'barista'
-  const toBeTestedEnv = 'stage'
   const { client_email: serviceAccountEmail } = getLocalServiceAccount()
   const body = {
     kind: 'compute#instance',
@@ -37,7 +43,7 @@ function createRunRequest({
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: test-${toBeTestedProjectName}\n      image: gcr.io/${cloudProjectId}/test-${toBeTestedProjectName}\n      args:\n        - 'test_url=https://${toBeTestedProjectName}-${toBeTestedEnv}.firebaseapp.com'\n      env:\n        - name: JOB_RUN_KEY\n          value: ${requestKey}\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: test-${baristaProject}\n      image: gcr.io/${cloudProjectId}/test-${baristaProject}\n      args:\n        - 'test_url=https://${baristaProject}-${environment}.firebaseapp.com'\n        - job_run_key=allOneBarista\n      env:\n        - name: JOB_RUN_KEY\n          value: ${requestKey}\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },
@@ -122,6 +128,9 @@ function createRunRequest({
  */
 export async function callTestRunner({
   meta,
+  jobRunKey,
+  environment,
+  baristaProject,
   createdBy,
   instanceTemplateName = 'test-brawndo-stage'
 }) {
@@ -132,6 +141,9 @@ export async function callTestRunner({
   const runRequest = createRunRequest({
     instanceTemplateName,
     requestKey: requestRef.key,
+    jobRunKey,
+    environment,
+    baristaProject,
     createdBy,
     meta
   })
