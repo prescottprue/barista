@@ -1,7 +1,7 @@
 import { createSelector } from '../utils'
 
 describe('Projects Page', () => {
-  let open // eslint-disable-line no-unused-vars
+  let openSpy // eslint-disable-line no-unused-vars
   // Setup before tests including creating a server to listen for external requests
   before(() => {
     // Create a server to listen to requests sent out to Google Auth and Firestore
@@ -22,7 +22,7 @@ describe('Projects Page', () => {
       .then(win => {
         // Create a spy on the servers onOpen event so we can later expect
         // it to be called with specific arguments
-        open = cy.spy(cy.state('server').options, 'onOpen')
+        openSpy = cy.spy(cy.state('server').options, 'onOpen')
         return null
       })
     // Login using custom token

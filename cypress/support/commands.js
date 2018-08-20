@@ -3,6 +3,7 @@ import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/firestore'
+import { isObject } from 'lodash'
 
 const projectId = Cypress.env('FIREBASE_PROJECT_ID')
 
@@ -108,6 +109,78 @@ Cypress.Commands.add('uploadFile', (selector, fileUrl, type = '') => {
       })
     })
   })
+})
+
+function getArgsString(args) {
+  return args && args.length ? ` ${args.join(' ')}` : ''
+}
+
+/**
+ * Call Real Time Database path with some specified action. Authentication is through FIREBASE_TOKEN since firebase-tools
+ * @param {String} action - The action type to call with (set, push, update, remove)
+ * @param {String} actionPath - Path within RTDB that action should be applied
+ * @param {Object} opts - Options
+ * @param {Array} opts.args - Command line args to be passed
+ * @type {Cypress.Command}
+ * @example Basic
+ * callRtdb('add', 'project/test-project', 'fakeProject.json')
+ * @example Other Args
+ * const opts = { args: ['-r'] }
+ * callFirestore('delete', 'project/test-project', opts)
+ */
+Cypress.Commands.add(
+  'callRtdb',
+  (action, actionPath, fixturePath, opts = {}) => {
+    const options = isObject(fixturePath) ? fixturePath : opts
+    const otherArgs = ' -y'
+    const { args = [] } = options
+    const baseArgsString = getArgsString(args)
+    const fullPathToFixture = `cypress/fixtures/${fixturePath}`
+    switch (action) {
+      case 'delete':
+        return cy.exec(
+          `npx firebase database:${action} ${actionPath}${baseArgsString}${otherArgs}`
+        )
+      default:
+        const command = `npx firebase database:${action} /${actionPath} ${fullPathToFixture}${baseArgsString}${otherArgs}`
+        cy.log(`command to be called: ${command}`)
+        return cy.exec(command)
+    }
+  }
+)
+
+/**
+ * Call Firestore instance with some specified action. Authentication is through serviceAccount.json since it is at the base
+ * level. If using delete, auth is through FIREBASE_TOKEN since firebase-tools is used (instead of firebaseExtra).
+ * @param {String} action - The action type to call with (set, push, update, remove)
+ * @param {String} actionPath - Path within RTDB that action should be applied
+ * @param {Object} opts - Options
+ * @param {Array} opts.args - Command line args to be passed
+ * @type {Cypress.Command}
+ * @example Basic
+ * callFirestore('add', 'project/test-project', 'fakeProject.json')
+ * @example Recursive Delete
+ * const opts = { recursive: true }
+ * callFirestore('delete', 'project/test-project', 'fakeProject.json', opts)
+ * @example Other Args
+ * const opts = { args: ['-r'] }
+ * callFirestore('delete', 'project/test-project', )
+ */
+Cypress.Commands.add('callFirestore', (action, actionPath, opts = {}) => {
+  const { args = [] } = opts
+  const baseArgsString = getArgsString(args)
+  switch (action) {
+    case 'delete':
+      const argsString = `${baseArgsString}${opts.recursive ? ' -r' : ''}`
+      return cy.exec(
+        `npx firebase firestore ${action} ${actionPath}${argsString}`
+      )
+    default:
+      const argsWithMeta = `${baseArgsString}${opts.withMeta ? ' -m' : ''}`
+      cy.exec(
+        `bin/firebaseExtra firestore ${action} ${actionPath}${argsWithMeta}`
+      )
+  }
 })
 
 // -- This is a child command --
