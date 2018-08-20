@@ -6,6 +6,13 @@
         { "fieldPath": "projectId", "mode": "ASC" },
         { "fieldPath": "finishTime", "mode": "ASC" }
       ]
+    },
+    {
+      "collectionId": "container_builds",
+      "fields": [
+        { "fieldPath": "projectId", "mode": "ASC" },
+        { "fieldPath": "finishTime", "mode": "DESC" }
+      ]
     }
   ]
 }
