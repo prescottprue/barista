@@ -1,13 +1,7 @@
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import {
-  withHandlers,
-  flattenProp,
-  pure,
-  withProps,
-  setPropTypes
-} from 'recompose'
+import { withHandlers, flattenProp, withProps, setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import { LIST_PATH, RUNS_PATH } from 'constants'
 import { getProjectRunMeta } from 'selectors'
@@ -15,7 +9,7 @@ import * as handlers from './RunMetaItem.handlers'
 import styles from './RunMetaItem.styles'
 
 export default compose(
-  // set proptypes used in HOCs
+  // set proptypes used in enhancer
   setPropTypes({
     projectId: PropTypes.string.isRequired,
     runId: PropTypes.string.isRequired
@@ -33,6 +27,5 @@ export default compose(
   // add handlers as props
   withHandlers(handlers),
   // add classes prop with classes from RunMetaItem.styles.js
-  withStyles(styles),
-  pure
+  withStyles(styles)
 )

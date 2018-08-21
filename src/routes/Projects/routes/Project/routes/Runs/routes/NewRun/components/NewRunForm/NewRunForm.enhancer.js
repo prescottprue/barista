@@ -7,12 +7,9 @@ import { NEW_JOB_RUN_FORM_NAME, paths } from 'constants'
 import styles from './NewRunForm.styles'
 
 export default compose(
-  // set proptypes used in HOCs
+  // set proptypes used in enhancer
   setPropTypes({
     projectId: PropTypes.string.isRequired,
-    router: PropTypes.shape({
-      push: PropTypes.func.isRequired
-    }),
     onSubmit: PropTypes.func.isRequired
   }),
   // add form capabilities and props
@@ -26,5 +23,6 @@ export default compose(
     runsPath: `${paths.list}/${projectId}/${paths.runs}`,
     buildsPath: `${paths.list}/${projectId}/${paths.builds}`
   })),
+  // add classes prop with classes from NewRunForm.styles.js
   withStyles(styles)
 )

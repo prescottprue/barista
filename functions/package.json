@@ -6,15 +6,15 @@
     "node": "8"
   },
   "scripts": {
-    "test": "mocha ./test/unit/** -R mochawesome",
-    "test:cov": "istanbul cover $(npm bin)/_mocha ./test/unit/** -- -R mochawesome",
+    "test": "mocha ./test/unit/**",
+    "test:cov": "istanbul cover $(npm bin)/_mocha ./test/unit/**",
     "lint": "eslint -c .eslintrc src test ./index.js",
     "lint:fix": "npm run lint -- --fix",
     "build": "npm run clean && babel src -d --out-dir dist --retainLines",
     "watch": "npm run build -- --watch",
     "clean": "rimraf dist etc",
     "serve": "npm run build && firebase serve --only functions",
-    "shell": "npm run build && firebase experimental:functions:shell",
+    "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "npm run build && firebase functions:log"

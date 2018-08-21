@@ -2,17 +2,6 @@ import { get } from 'lodash'
 import { TEST_RUNS_META_PATH, CALL_RUNNER_REQUEST_PATH } from 'constants'
 
 /**
- * Handler for going back to runs page
- * @param  {Object} props - Component props
- * @return {Function} Function which accepts form values and starts test run
- */
-export function goBack({ runsPagePath, router }) {
-  return () => {
-    router.push(runsPagePath)
-  }
-}
-
-/**
  * Handler for starting test run. Works by pushing to requests/callRunner
  * which triggers the callRunner function.
  * @param  {Object} props - Component props

@@ -15,13 +15,15 @@ import { getProjectOrderedProjectRunsMeta } from 'selectors'
 import styles from './RunsPage.styles'
 
 export default compose(
+  // add custom props
   withProps(({ params: { projectId } }) => ({
     projectId,
     newRunPath: `${LIST_PATH}/${projectId}/${RUNS_PATH}/${NEWRUN_PATH}`
   })),
+  // set proptypes used in enhancer
   setPropTypes({
-    projectId: PropTypes.string.isRequired, // used in multiple HOCs
-    newRunPath: PropTypes.string.isRequired // used in handlers
+    projectId: PropTypes.string.isRequired, // used in enhancer
+    newRunPath: PropTypes.string.isRequired // used in enhancer (handlers)
   }),
   // create listener for runs, results go into redux
   firebaseConnect(({ projectId }) => [
@@ -36,5 +38,6 @@ export default compose(
     runMetaData: getProjectOrderedProjectRunsMeta(state, props)
   })),
   withChildren,
+  // add classes prop with classes from RunMetaItem.styles.js
   withStyles(styles)
 )

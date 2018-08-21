@@ -4,7 +4,7 @@ import { startCase } from 'lodash'
 import Typography from '@material-ui/core/Typography'
 import NewRunForm from '../NewRunForm'
 
-export const NewRunPage = ({ classes, startTestRun, goBack, projectId }) => (
+export const NewRunPage = ({ classes, startTestRun, projectId }) => (
   <div className={classes.root}>
     <div className={classes.titleBar}>
       <Typography variant="headline" component="h3">
@@ -18,7 +18,6 @@ export const NewRunPage = ({ classes, startTestRun, goBack, projectId }) => (
 NewRunPage.propTypes = {
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   startTestRun: PropTypes.func.isRequired, // from enhancer (withHandlers)
-  goBack: PropTypes.func.isRequired, // from enhancer (withHandlers)
   projectId: PropTypes.string.isRequired
 }
 

@@ -1,5 +1,5 @@
-export function goBack({ router, runsPagePath }) {
+export function retryWithSameSettings({ router, runsPagePath }) {
   return () => {
-    router.push(runsPagePath)
+    console.log('placeholder') // eslint-disable-line no-console
   }
 }

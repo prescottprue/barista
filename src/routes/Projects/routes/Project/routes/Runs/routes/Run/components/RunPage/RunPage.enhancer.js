@@ -6,11 +6,16 @@ import { firebaseConnect } from 'react-redux-firebase'
 import { withStyles } from '@material-ui/core/styles'
 import { withHandlers, withProps, setPropTypes } from 'recompose'
 import { paths, TEST_RUNS_DATA_PATH, TEST_RUNS_META_PATH } from 'constants'
-import { withRouter } from 'utils/components'
 import * as handlers from './RunPage.handlers'
 import styles from './RunPage.styles'
 
 export default compose(
+  // set prop-types used in enhancer
+  setPropTypes({
+    params: PropTypes.shape({
+      projectId: PropTypes.string.isRequired
+    })
+  }),
   // create listener for runpage, results go into redux
   firebaseConnect(({ params: { projectId, runId } }) => [
     { path: `${TEST_RUNS_DATA_PATH}/${projectId}/${runId}` },
@@ -21,22 +26,14 @@ export default compose(
     metaData: get(data, `${TEST_RUNS_META_PATH}.${projectId}.${runId}`),
     runData: get(data, `${TEST_RUNS_DATA_PATH}.${projectId}.${runId}`)
   })),
-  // add props.router
-  withRouter,
-  // set prop-types used in enhancer
-  setPropTypes({
-    params: PropTypes.shape({
-      projectId: PropTypes.string.isRequired
-    }),
-    router: PropTypes.shape({
-      push: PropTypes.func.isRequired
-    })
-  }),
+  // add custom props
   withProps(({ params: { projectId, runId } }) => ({
     projectId,
     runId,
     runsPagePath: `${paths.list}/${projectId}/${paths.runs}`
   })),
+  // add handlers as props
   withHandlers(handlers),
+  // add props.clases from RunPage.styles
   withStyles(styles)
 )
