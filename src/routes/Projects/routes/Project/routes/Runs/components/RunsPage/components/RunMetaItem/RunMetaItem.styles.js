@@ -1,7 +1,8 @@
 export default theme => ({
   root: {
     marginLeft: '1rem',
-    marginRight: '1rem'
+    marginRight: '1rem',
+    width: '100%'
   },
   summaryRoot: {
     padding: 0
@@ -44,16 +45,17 @@ export default theme => ({
   detailsButton: {
     gridColumnStart: 2
   },
-  '@-moz-keyframes spin': {
-    '100%': {
-      '-moz-transform': 'rotate(-360deg)'
-    }
-  },
-  '@-webkit-keyframes spin': {
-    '100%': {
-      '-webkit-transform': 'rotate(-360deg)'
-    }
-  },
+  // Causes "Warning: [JSS] Unknown at-rule @-moz-keyframes spin"
+  // '@-moz-keyframes spin': {
+  //   '100%': {
+  //     '-moz-transform': 'rotate(-360deg)'
+  //   }
+  // },
+  // '@-webkit-keyframes spin': {
+  //   '100%': {
+  //     '-webkit-transform': 'rotate(-360deg)'
+  //   }
+  // },
   '@keyframes spin': {
     '100%': {
       '-webkit-transform': 'rotate(-360deg)',

@@ -12,14 +12,14 @@ import styles from './RunPage.styles'
 
 export default compose(
   // create listener for runpage, results go into redux
-  firebaseConnect(({ params }) => [
-    { path: `${TEST_RUNS_DATA_PATH}/${params.runId}` },
-    { path: `${TEST_RUNS_META_PATH}/${params.runId}` }
+  firebaseConnect(({ params: { projectId, runId } }) => [
+    { path: `${TEST_RUNS_DATA_PATH}/${projectId}/${runId}` },
+    { path: `${TEST_RUNS_META_PATH}/${projectId}/${runId}` }
   ]),
   // map redux state to props
-  connect(({ firebase: { data } }, { params }) => ({
-    metaData: get(data, `${TEST_RUNS_META_PATH}/${params.runId}`),
-    runData: get(data, `${TEST_RUNS_DATA_PATH}.${params.runId}`)
+  connect(({ firebase: { data } }, { params: { projectId, runId } }) => ({
+    metaData: get(data, `${TEST_RUNS_META_PATH}.${projectId}.${runId}`),
+    runData: get(data, `${TEST_RUNS_DATA_PATH}.${projectId}.${runId}`)
   })),
   // add props.router
   withRouter,

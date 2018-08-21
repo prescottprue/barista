@@ -29,7 +29,7 @@ export default store => ({
       const NewRun = require('./routes/NewRun').default
 
       /*  Return getComponent   */
-      cb(null, [Run(store), NewRun(store)])
+      cb(null, [NewRun(store), Run(store)])
     })
   }
 })

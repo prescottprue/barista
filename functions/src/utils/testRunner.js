@@ -44,7 +44,7 @@ function createRunRequest({
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: test-${baristaProject}\n      image: gcr.io/${cloudProjectId}/test-${baristaProject}\n      args:\n        - 'test_url=https://${baristaProject}-${environment}.firebaseapp.com'\n        - job_run_key=allOneBarista\n      env:\n        - name: JOB_RUN_KEY\n          value: ${jobRunKey}\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: test-${baristaProject}\n      image: gcr.io/${cloudProjectId}/test-${baristaProject}\n      env:\n        - name: JOB_RUN_KEY\n          value: ${baristaProject}/${jobRunKey}\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },
