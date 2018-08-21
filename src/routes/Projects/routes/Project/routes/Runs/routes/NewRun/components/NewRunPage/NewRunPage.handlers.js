@@ -7,20 +7,22 @@ export function goBack({ router, projectId }) {
   }
 }
 
-export function startTestRun({ firebase, projectId }) {
+export function startTestRun({ firebase, projectId, router }) {
   return values => {
     const environment = get(values, 'environment', '')
     const instanceTemplateName = `test-${projectId}-${environment}`
     const pushRef = firebase.pushWithMeta('test_runs_meta', {
       environment,
+      status: 'pending',
       instanceTemplateName
     })
     const pushKey = pushRef.key
-    return firebase.push('requests/callRunner', {
+    firebase.push('requests/callRunner', {
       jobRunKey: pushKey,
       environment,
       baristaProject: projectId,
       instanceTemplateName
     })
+    router.push(`/${paths.list}/${projectId}/runs/${pushKey}`)
   }
 }

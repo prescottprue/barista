@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router'
 import { map } from 'lodash'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
@@ -11,8 +12,8 @@ import { COLUMN_HEADERS } from './RunsPage.constants'
 export const RunsPage = ({
   runMetaData,
   classes,
-  createNewRun,
   params,
+  newRunPath,
   router
 }) => (
   <Grid className={classes.container}>
@@ -23,7 +24,8 @@ export const RunsPage = ({
       <Button
         variant="outlined"
         className={classes.reRunButton}
-        onClick={createNewRun}>
+        component={Link}
+        to={newRunPath}>
         Create New Job
       </Button>
     </div>
@@ -54,7 +56,7 @@ export const RunsPage = ({
 RunsPage.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
   runMetaData: PropTypes.object, // from enhancer (firestoreConnect + connect)
-  createNewRun: PropTypes.func, // from enhancer (firestoreConnect + connect)
+  newRunPath: PropTypes.string.isRequired, // from enhancer (withProps)
   params: PropTypes.object, // from enhancer (firestoreConnect + connect)
   router: PropTypes.object // from enhancer (firestoreConnect + connect)
 }

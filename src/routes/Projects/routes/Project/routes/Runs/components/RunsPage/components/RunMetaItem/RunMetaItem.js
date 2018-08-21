@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
+import { get } from 'lodash'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import Typography from '@material-ui/core/Typography'
@@ -47,17 +48,17 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Passing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {stats.passes}
+          {get(stats, 'passes', '-')}
         </Typography>
       </Tooltip>
       <Tooltip title="Failing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {stats.failures}
+          {get(stats, 'failures', '-')}
         </Typography>
       </Tooltip>
       <Tooltip title="Duration">
         <Typography align="center" variant="body1" className={classes.data}>
-          {format(addMilliseconds(new Date(0), stats.duration), 'mm:ss')}
+          {format(addMilliseconds(new Date(0), get(stats, 'duration')), 'mm:ss')}
         </Typography>
       </Tooltip>
       <Tooltip title="Ending Time">
@@ -65,7 +66,7 @@ export const RunMetaItem = ({
           align="center"
           variant="body1"
           className={classnames(classes.data, classes.dateWords)}>
-          {`${distanceInWordsToNow(stats.end)} ago`}
+          {`${distanceInWordsToNow(get(stats, 'end'))} ago`}
         </Typography>
       </Tooltip>
       <Tooltip title="Environment">
