@@ -8,6 +8,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import Paper from '@material-ui/core/Paper'
 import SelectField from 'components/SelectField'
+import ImageBuildStatus from 'routes/Projects/routes/Project/components/ImageBuildStatus'
 import MostRecentImageInfo from 'routes/Projects/routes/Project/components/MostRecentImageInfo'
 
 const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
@@ -17,7 +18,7 @@ export const NewRunForm = ({
   classes,
   handleSubmit,
   buildsPath,
-  goBack,
+  runsPath,
   pristine,
   projectId,
   submitting
@@ -25,7 +26,7 @@ export const NewRunForm = ({
   <form onSubmit={handleSubmit} className={classes.root}>
     <div className={classes.buttons}>
       <Tooltip title="Back To Runs">
-        <IconButton onClick={goBack}>
+        <IconButton component={Link} to={runsPath}>
           <BackIcon />
         </IconButton>
       </Tooltip>
@@ -47,6 +48,7 @@ export const NewRunForm = ({
           name="environment"
           label="Select Run Environment"
         />
+        <ImageBuildStatus projectId={projectId} />
         <MostRecentImageInfo projectId={projectId} />
         <div className={classes.button}>
           <Button component={Link} variant="outlined" to={buildsPath}>
@@ -66,7 +68,7 @@ NewRunForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)
   pristine: PropTypes.bool.isRequired, // from enhancer (reduxForm)
   submitting: PropTypes.bool.isRequired, // from enhancer (reduxForm)
-  goBack: PropTypes.func.isRequired // from enhancer (withHandlers)
+  runsPath: PropTypes.string.isRequired // from enhancer (withProps)
 }
 
 export default NewRunForm

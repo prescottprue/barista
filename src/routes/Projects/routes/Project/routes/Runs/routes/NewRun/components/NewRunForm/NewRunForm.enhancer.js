@@ -1,16 +1,12 @@
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { reduxForm } from 'redux-form'
-import { withHandlers, withProps, setPropTypes } from 'recompose'
+import { withProps, setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
-import { withRouter } from 'utils/components'
 import { NEW_JOB_RUN_FORM_NAME, paths } from 'constants'
-import * as handlers from './NewRunForm.handlers'
 import styles from './NewRunForm.styles'
 
 export default compose(
-  // add props.router
-  withRouter,
   // set proptypes used in HOCs
   setPropTypes({
     projectId: PropTypes.string.isRequired,
@@ -19,8 +15,6 @@ export default compose(
     }),
     onSubmit: PropTypes.func.isRequired
   }),
-  // add handlers as props
-  withHandlers(handlers),
   // add form capabilities and props
   reduxForm({
     form: NEW_JOB_RUN_FORM_NAME,
@@ -29,6 +23,7 @@ export default compose(
   }),
   // add custom props
   withProps(({ projectId }) => ({
+    runsPath: `${paths.list}/${projectId}/${paths.runs}`,
     buildsPath: `${paths.list}/${projectId}/${paths.builds}`
   })),
   withStyles(styles)

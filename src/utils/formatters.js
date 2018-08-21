@@ -1,4 +1,4 @@
-import { isDate } from 'lodash'
+import { isDate, isObject, invoke } from 'lodash'
 import { format } from 'date-fns'
 
 /**
@@ -7,6 +7,9 @@ import { format } from 'date-fns'
  * @return {Date} Formatted time
  */
 export function getDateObject(dateValue = null) {
+  if (isObject(dateValue) && dateValue.toDate) {
+    return invoke(dateValue, 'toDate')
+  }
   return isDate(dateValue) ? dateValue : new Date(dateValue)
 }
 

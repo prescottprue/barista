@@ -1,0 +1,13 @@
+functions
+server
+src
+node_modules
+cypress/videos
+.eslintignore
+.gitlab-ci.yml
+LICENSE
+.dockerignore
+Dockerfile
+npm-debug.log
+.git
+dist

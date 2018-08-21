@@ -3,6 +3,7 @@ import { createSelector } from '../utils'
 describe('Login Page', () => {
   beforeEach(() => {
     cy.visit('/login')
+    cy.callRtdb('set', 'remote/test', 'example.json')
   })
 
   it('Signup link brings user to signup page', () => {

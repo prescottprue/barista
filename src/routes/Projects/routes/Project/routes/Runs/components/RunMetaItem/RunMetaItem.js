@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router'
 import classnames from 'classnames'
+import { get } from 'lodash'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import Typography from '@material-ui/core/Typography'
@@ -22,7 +24,7 @@ export const RunMetaItem = ({
   stats,
   status,
   environment,
-  goToDetails,
+  runDetailPath,
   reRunJob
 }) => (
   <ExpansionPanel className={classes.root}>
@@ -47,17 +49,17 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Passing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {stats.passes}
+          {get(stats, 'passes', '-')}
         </Typography>
       </Tooltip>
       <Tooltip title="Failing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {stats.failures}
+          {get(stats, 'failures', '-')}
         </Typography>
       </Tooltip>
       <Tooltip title="Duration">
         <Typography align="center" variant="body1" className={classes.data}>
-          {format(addMilliseconds(new Date(0), stats.duration), 'mm:ss')}
+          {format(addMilliseconds(new Date(0), get(stats, 'duration')), 'mm:ss')}
         </Typography>
       </Tooltip>
       <Tooltip title="Ending Time">
@@ -65,7 +67,7 @@ export const RunMetaItem = ({
           align="center"
           variant="body1"
           className={classnames(classes.data, classes.dateWords)}>
-          {`${distanceInWordsToNow(stats.end)} ago`}
+          {`${distanceInWordsToNow(get(stats, 'end'))} ago`}
         </Typography>
       </Tooltip>
       <Tooltip title="Environment">
@@ -94,7 +96,8 @@ export const RunMetaItem = ({
             variant="fab"
             color="primary"
             aria-label="go-to-details"
-            onClick={goToDetails}
+            component={Link}
+            to={runDetailPath}
             mini
             className={classnames(classes.button, classes.detailsButton)}>
             <GoTo />
@@ -106,14 +109,14 @@ export const RunMetaItem = ({
 )
 
 RunMetaItem.propTypes = {
-  classes: PropTypes.object, // from enhancer (withStyles)
-  runId: PropTypes.string,
+  runId: PropTypes.string.isRequired,
   pending: PropTypes.bool,
   stats: PropTypes.object,
   status: PropTypes.string,
   environment: PropTypes.string,
-  goToDetails: PropTypes.func,
-  reRunJob: PropTypes.func
+  runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
+  classes: PropTypes.object.isRequired, // from enhancer (withStyles)
+  reRunJob: PropTypes.func.isRequired // from enhancer (withHandlers)
 }
 
 export default RunMetaItem

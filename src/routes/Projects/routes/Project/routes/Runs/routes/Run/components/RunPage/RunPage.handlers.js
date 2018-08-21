@@ -1,7 +1,5 @@
-import { paths } from 'constants'
-
-export function goBack({ router, params: { projectId } }) {
+export function goBack({ router, runsPagePath }) {
   return () => {
-    router.push(`${paths.list}/${projectId}/${paths.runs}`)
+    router.push(runsPagePath)
   }
 }

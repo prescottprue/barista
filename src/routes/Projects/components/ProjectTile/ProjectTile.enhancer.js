@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types'
-import { invoke } from 'lodash'
 import { compose } from 'redux'
 import {
   withStateHandlers,
@@ -41,6 +40,6 @@ export default compose(
     clickProjectDelete: props => () => props.onDeleteClick(props.projectId)
   }),
   withProps(({ createdAt }) => ({
-    formattedCreatedAt: formatDate(invoke(createdAt, 'toDate'))
+    formattedCreatedAt: formatDate(createdAt)
   }))
 )

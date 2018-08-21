@@ -15,7 +15,7 @@ export default compose(
   firestoreConnect(({ projectId }) => [
     {
       collection: CONTAINER_BUILDS_META_PATH,
-      orderBy: ['finishTime'],
+      orderBy: ['finishTime', 'desc'],
       where: ['projectId', '==', projectId]
     }
   ]),
