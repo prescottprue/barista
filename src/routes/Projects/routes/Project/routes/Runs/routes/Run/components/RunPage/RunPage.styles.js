@@ -15,11 +15,6 @@ export default theme => ({
     marginTop: '2rem',
     width: '100%'
   },
-  title: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center'
-  },
   buttons: {
     display: 'flex',
     justifyContent: 'space-between',

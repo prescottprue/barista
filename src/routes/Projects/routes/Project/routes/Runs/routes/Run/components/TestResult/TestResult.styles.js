@@ -1,3 +1,1 @@
-export default theme => ({
-  root: {}
-})
+export default theme => ({})

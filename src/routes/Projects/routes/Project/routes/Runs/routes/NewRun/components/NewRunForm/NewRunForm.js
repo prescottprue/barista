@@ -18,7 +18,7 @@ export const NewRunForm = ({
   classes,
   handleSubmit,
   buildsPath,
-  goBack,
+  runsPath,
   pristine,
   projectId,
   submitting
@@ -26,7 +26,7 @@ export const NewRunForm = ({
   <form onSubmit={handleSubmit} className={classes.root}>
     <div className={classes.buttons}>
       <Tooltip title="Back To Runs">
-        <IconButton onClick={goBack}>
+        <IconButton component={Link} to={runsPath}>
           <BackIcon />
         </IconButton>
       </Tooltip>
@@ -68,7 +68,7 @@ NewRunForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)
   pristine: PropTypes.bool.isRequired, // from enhancer (reduxForm)
   submitting: PropTypes.bool.isRequired, // from enhancer (reduxForm)
-  goBack: PropTypes.func.isRequired // from enhancer (withHandlers)
+  runsPath: PropTypes.string.isRequired // from enhancer (withProps)
 }
 
 export default NewRunForm
