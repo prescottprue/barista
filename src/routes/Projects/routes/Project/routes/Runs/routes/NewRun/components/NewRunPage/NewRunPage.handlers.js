@@ -1,13 +1,24 @@
 import { get } from 'lodash'
-import { paths, TEST_RUNS_META_PATH } from 'constants'
+import { TEST_RUNS_META_PATH } from 'constants'
 
-export function goBack({ router, projectId }) {
+/**
+ * Handler for going back to runs page
+ * @param  {Object} props - Component props
+ * @return {Function} Function which accepts form values and starts test run
+ */
+export function goBack({ runsPagePath, router }) {
   return () => {
-    router.push(`${paths.list}/${projectId}/${paths.runs}`)
+    router.push(runsPagePath)
   }
 }
 
-export function startTestRun({ firebase, projectId, router }) {
+/**
+ * Handler for starting test run. Works by pushing to requests/callRunner
+ * which triggers the callRunner function.
+ * @param  {Object} props - Component props
+ * @return {Function} Function which accepts form values and starts test run
+ */
+export function startTestRun({ firebase, projectId, router, runsPagePath }) {
   return values => {
     const environment = get(values, 'environment', '')
     const instanceTemplateName = `test-${projectId}-${environment}`
@@ -25,7 +36,7 @@ export function startTestRun({ firebase, projectId, router }) {
         instanceTemplateName
       })
       .then(() => {
-        return router.push(`/${paths.list}/${projectId}/runs/${pushKey}`)
+        return router.push(`${runsPagePath}/${pushKey}`)
       })
   }
 }

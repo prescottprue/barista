@@ -5,6 +5,7 @@ import { withFirebase } from 'react-redux-firebase'
 import { withStyles } from '@material-ui/core'
 import { withRouter } from 'utils/components'
 import * as handlers from './NewRunPage.handlers'
+import { paths } from 'constants'
 import styles from './NewRunPage.styles'
 
 export default compose(
@@ -24,7 +25,10 @@ export default compose(
       push: PropTypes.func.isRequired
     })
   }),
-  withProps(({ params }) => ({ projectId: params.projectId })),
+  withProps(({ params: { projectId } }) => ({
+    projectId,
+    runsPagePath: `${paths.list}/${projectId}/${paths.runs}`
+  })),
   withHandlers(handlers),
   withStyles(styles)
 )
