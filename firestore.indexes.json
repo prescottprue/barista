@@ -3,15 +3,15 @@
     {
       "collectionId": "container_builds",
       "fields": [
-        { "fieldPath": "projectId", "mode": "ASC" },
-        { "fieldPath": "finishTime", "mode": "ASC" }
+        { "fieldPath": "projectId", "mode": "ASCENDING" },
+        { "fieldPath": "finishTime", "mode": "ASCENDING" }
       ]
     },
     {
       "collectionId": "container_builds",
       "fields": [
-        { "fieldPath": "projectId", "mode": "ASC" },
-        { "fieldPath": "finishTime", "mode": "DESC" }
+        { "fieldPath": "projectId", "mode": "ASCENDING" },
+        { "fieldPath": "finishTime", "mode": "DESCENDING" }
       ]
     }
   ]
