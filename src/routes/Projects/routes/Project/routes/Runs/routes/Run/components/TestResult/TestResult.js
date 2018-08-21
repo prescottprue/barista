@@ -34,9 +34,9 @@ export const TestResult = ({ resultData, classes, name }) => (
 )
 
 TestResult.propTypes = {
+  name: PropTypes.string.isRequired,
   classes: PropTypes.object, // from enhancer (withStyles)
-  resultData: PropTypes.object, // from enhancer (firestoreConnect + connect)
-  name: PropTypes.string.isRequired
+  resultData: PropTypes.object // from enhancer (firestoreConnect + connect)
 }
 
 export default TestResult

@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { TEST_RUNS_META_PATH } from 'constants'
+import { TEST_RUNS_META_PATH, CALL_RUNNER_REQUEST_PATH } from 'constants'
 
 /**
  * Handler for going back to runs page
@@ -22,14 +22,17 @@ export function startTestRun({ firebase, projectId, router, runsPagePath }) {
   return values => {
     const environment = get(values, 'environment', '')
     const instanceTemplateName = `test-${projectId}-${environment}`
-    const pushRef = firebase.pushWithMeta(TEST_RUNS_META_PATH, {
-      environment,
-      status: 'pending',
-      instanceTemplateName
-    })
+    const pushRef = firebase.pushWithMeta(
+      `${TEST_RUNS_META_PATH}/${projectId}`,
+      {
+        environment,
+        status: 'pending',
+        instanceTemplateName
+      }
+    )
     const pushKey = pushRef.key
     return firebase
-      .push('requests/callRunner', {
+      .push(CALL_RUNNER_REQUEST_PATH, {
         jobRunKey: pushKey,
         environment,
         baristaProject: projectId,

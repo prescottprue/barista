@@ -9,12 +9,16 @@ export default theme => ({
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2
   },
+  titleBar: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '2rem',
+    width: '100%'
+  },
   buttons: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     width: '100%',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2,
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2
   },

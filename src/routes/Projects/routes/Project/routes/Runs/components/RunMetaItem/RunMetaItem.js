@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router'
 import classnames from 'classnames'
 import { get } from 'lodash'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
@@ -23,7 +24,7 @@ export const RunMetaItem = ({
   stats,
   status,
   environment,
-  goToDetails,
+  runDetailPath,
   reRunJob
 }) => (
   <ExpansionPanel className={classes.root}>
@@ -95,7 +96,8 @@ export const RunMetaItem = ({
             variant="fab"
             color="primary"
             aria-label="go-to-details"
-            onClick={goToDetails}
+            component={Link}
+            to={runDetailPath}
             mini
             className={classnames(classes.button, classes.detailsButton)}>
             <GoTo />
@@ -107,14 +109,14 @@ export const RunMetaItem = ({
 )
 
 RunMetaItem.propTypes = {
-  classes: PropTypes.object, // from enhancer (withStyles)
-  runId: PropTypes.string,
+  runId: PropTypes.string.isRequired,
   pending: PropTypes.bool,
   stats: PropTypes.object,
   status: PropTypes.string,
   environment: PropTypes.string,
-  goToDetails: PropTypes.func,
-  reRunJob: PropTypes.func
+  runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
+  classes: PropTypes.object.isRequired, // from enhancer (withStyles)
+  reRunJob: PropTypes.func.isRequired // from enhancer (withHandlers)
 }
 
 export default RunMetaItem

@@ -15,6 +15,7 @@ export const CONTAINER_BUILDS_META_PATH = 'container_builds'
 export const CONTAINER_BUILDS_STATUS_PATH = 'container_build_statues'
 export const TEST_RUNS_META_PATH = 'test_runs_meta'
 export const TEST_RUNS_DATA_PATH = 'test_runs_data'
+export const CALL_RUNNER_REQUEST_PATH = 'requests/callRunner'
 
 export const formNames = {
   account: ACCOUNT_FORM_NAME,

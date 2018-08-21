@@ -6,9 +6,11 @@ import NewRunForm from '../NewRunForm'
 
 export const NewRunPage = ({ classes, startTestRun, goBack, projectId }) => (
   <div className={classes.root}>
-    <Typography variant="headline" component="h3">
-      New {startCase(projectId)} Job Run
-    </Typography>
+    <div className={classes.titleBar}>
+      <Typography variant="headline" component="h3">
+        New {startCase(projectId)} Job Run
+      </Typography>
+    </div>
     <NewRunForm onSubmit={startTestRun} projectId={projectId} />
   </div>
 )

@@ -13,12 +13,18 @@ export default theme => ({
     display: 'flex',
     justifyContent: 'center',
     marginTop: '2rem',
-    marginBottom: '2rem',
     width: '100%'
   },
   title: {
     width: '100%',
     display: 'flex',
     justifyContent: 'center'
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2
   }
 })
