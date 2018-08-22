@@ -35,7 +35,7 @@ export const RunsPage = ({
       </Tooltip>
       <Button
         variant="outlined"
-        className={classes.reRunButton}
+        className={classes.createButton}
         component={Link}
         to={newRunPath}>
         Create New Job

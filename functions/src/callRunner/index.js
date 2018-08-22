@@ -2,10 +2,10 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import { to } from 'utils/async'
 import { callTestRunner } from 'utils/testRunner'
-import { contextToAuthUid, getFirebaseConfig } from 'utils/firebaseFunctions'
+import { contextToAuthUid } from 'utils/firebaseFunctions'
 import { rtdbRef } from 'utils/rtdb'
 import { RESPONSES_PATH } from 'constants'
-import { get, pick } from 'lodash'
+import { get } from 'lodash'
 
 const CALL_RUNNER_PATH = 'callRunner'
 

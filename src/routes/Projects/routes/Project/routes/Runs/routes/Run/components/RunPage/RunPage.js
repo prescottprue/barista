@@ -28,12 +28,11 @@ export const RunPage = ({
         </IconButton>
       </Tooltip>
     </div>
-    {testResults ? (
+    {runData ? (
       <TestResultsList testResults={runData} metaData={metaData} />
     ) : (
       <Paper>Pulling Container...</Paper>
     )}
-
     <TestResultsList testResults={runData} metaData={metaData} />
   </div>
 )

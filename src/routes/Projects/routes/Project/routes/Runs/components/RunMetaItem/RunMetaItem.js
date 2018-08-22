@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import classnames from 'classnames'
-import { get } from 'lodash'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import Typography from '@material-ui/core/Typography'
@@ -15,6 +14,19 @@ import {
   ArrowForward as GoTo,
   Replay as Rerun
 } from '@material-ui/icons'
+
+function iconFromStatus(status, classes) {
+  switch (status) {
+    case 'failed':
+      return <ErrorIcon color="error" />
+    case 'passed':
+      return <CheckCircle className={classes.pass} />
+    case 'pending':
+      return <Rerun color="disabled" className={classes.pending} />
+    default:
+      return <Warning />
+  }
+}
 
 export const RunMetaItem = ({
   classes,
@@ -36,13 +48,7 @@ export const RunMetaItem = ({
         root: classes.summaryRoot
       }}>
       <Typography align="center" variant="body1" className={classes.data}>
-        {/* eslint-disable prettier/prettier */}
-        {status === 'failed' ? <ErrorIcon color="error" />
-          : status === 'passed' ? <CheckCircle className={classes.pass}/>
-          : status === 'pending' ? <Rerun color="disabled" className={classes.pending}/>
-          : <Warning />
-        }
-        {/* eslint-disable-end prettier/prettier spaced-comment */}
+        {iconFromStatus(status, classes)}
       </Typography>
       <Tooltip title="Build Number">
         <Typography align="center" variant="body1" className={classes.data}>
@@ -61,7 +67,7 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Duration">
         <Typography align="center" variant="body1" className={classes.data}>
-            {formattedDuration}
+          {formattedDuration}
         </Typography>
       </Tooltip>
       <Tooltip title="Ending Time">

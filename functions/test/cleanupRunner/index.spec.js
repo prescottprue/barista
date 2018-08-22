@@ -38,7 +38,7 @@ describe('cleanupRunner RTDB Cloud Function (onUpdate)', () => {
       params: { filePath: 'testing', userId: 1 }
     }
 
-    const res = await cleanupRunner(snap , fakeContext)
+    const res = await cleanupRunner(snap, fakeContext)
     expect(res).to.be.null
   })
 })

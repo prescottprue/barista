@@ -13,6 +13,7 @@ export const Navbar = ({
   displayName,
   authExists,
   goToAccount,
+  googleLogin,
   handleLogout,
   closeAccountMenu,
   anchorEl,
@@ -41,7 +42,7 @@ export const Navbar = ({
           anchorEl={anchorEl}
         />
       ) : (
-        <LoginMenu />
+        <LoginMenu onSigninClick={googleLogin} />
       )}
     </Toolbar>
   </AppBar>
@@ -54,6 +55,7 @@ Navbar.propTypes = {
   authExists: PropTypes.bool, // from enhancer (withProps - auth)
   goToAccount: PropTypes.func.isRequired, // from enhancer (withHandlers - router)
   handleLogout: PropTypes.func.isRequired, // from enhancer (withHandlers - firebase)
+  googleLogin: PropTypes.func.isRequired, // from enhancer (withHandlers - firebase)
   closeAccountMenu: PropTypes.func.isRequired, // from enhancer (withHandlers - firebase)
   handleMenu: PropTypes.func.isRequired, // from enhancer (withHandlers - firebase)
   anchorEl: PropTypes.object // from enhancer (withStateHandlers - handleMenu)

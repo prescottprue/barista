@@ -1,7 +1,5 @@
 import CoreLayout from '../layouts/CoreLayout'
 import Home from './Home'
-import LoginRoute from './Login'
-import SignupRoute from './Signup'
 import ProjectsRoute from './Projects'
 import AccountRoute from './Account'
 import NotFoundRoute from './NotFound'
@@ -17,8 +15,6 @@ export const createRoutes = store => ({
   onEnter: createOnEnter(store),
   childRoutes: [
     AccountRoute(store),
-    LoginRoute(store),
-    SignupRoute(store),
     ProjectsRoute(store),
     // AsyncRoute(store) // async routes setup by passing store
     // SyncRoute, // sync routes just need route object by itself

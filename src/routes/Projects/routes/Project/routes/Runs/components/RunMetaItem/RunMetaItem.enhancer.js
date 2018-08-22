@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { withHandlers, flattenProp, withProps, setPropTypes } from 'recompose'
-import { get } from 'lodash'
 import { withStyles } from '@material-ui/core/styles'
 import { LIST_PATH, RUNS_PATH } from 'constants'
 import { getProjectRunMeta } from 'selectors'
@@ -29,7 +28,7 @@ export default compose(
     runDetailPath: `${LIST_PATH}/${projectId}/${RUNS_PATH}/${runId}`,
     formattedDuration: duration ? format(new Date(duration), 'mm:ss') : '-',
     formattedEnd: end ? `${distanceInWordsToNow(end)} ago` : '-'
-  }),
+  })),
   // add handlers as props
   withHandlers(handlers),
   // add classes prop with classes from RunMetaItem.styles.js
