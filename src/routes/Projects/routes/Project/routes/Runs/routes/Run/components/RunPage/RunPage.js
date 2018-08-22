@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
+import Paper from '@material-ui/core/Paper'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import TestResultsList from '../TestResultsList'
 
@@ -27,6 +28,12 @@ export const RunPage = ({
         </IconButton>
       </Tooltip>
     </div>
+    {testResults ? (
+      <TestResultsList testResults={runData} metaData={metaData} />
+    ) : (
+      <Paper>Pulling Container...</Paper>
+    )}
+
     <TestResultsList testResults={runData} metaData={metaData} />
   </div>
 )

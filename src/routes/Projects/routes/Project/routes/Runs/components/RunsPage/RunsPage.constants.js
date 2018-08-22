@@ -4,7 +4,7 @@ export const COLUMN_HEADERS = [
   { label: 'passing', align: 'center' },
   { label: 'failing', align: 'center' },
   { label: 'duration', align: 'center' },
-  { label: 'start time', align: 'left' },
+  { label: 'end time', align: 'left' },
   { label: 'environment', align: 'center' },
   { label: 'actions', align: 'center' }
 ]

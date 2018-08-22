@@ -72,7 +72,7 @@ export const RunsPage = ({
 
 RunsPage.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
-  runMetaData: PropTypes.object, // from enhancer (firestoreConnect + connect)
+  runMetaData: PropTypes.array, // from enhancer (firestoreConnect + connect)
   newRunPath: PropTypes.string.isRequired, // from enhancer (withProps)
   projectId: PropTypes.string.isRequired, // from enhancer (withProps)
   params: PropTypes.object, // from enhancer (firestoreConnect + connect)

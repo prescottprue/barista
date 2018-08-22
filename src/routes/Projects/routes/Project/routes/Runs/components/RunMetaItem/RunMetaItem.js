@@ -15,13 +15,15 @@ import {
   ArrowForward as GoTo,
   Replay as Rerun
 } from '@material-ui/icons'
-import { format, addMilliseconds, distanceInWordsToNow } from 'date-fns'
 
 export const RunMetaItem = ({
   classes,
   runId,
   pending,
-  stats,
+  passes,
+  failures,
+  formattedDuration,
+  formattedEnd,
   status,
   environment,
   runDetailPath,
@@ -49,17 +51,17 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Passing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {get(stats, 'passes', '-')}
+          {passes || '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Failing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {get(stats, 'failures', '-')}
+          {failures || '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Duration">
         <Typography align="center" variant="body1" className={classes.data}>
-          {format(addMilliseconds(new Date(0), get(stats, 'duration')), 'mm:ss')}
+            {formattedDuration}
         </Typography>
       </Tooltip>
       <Tooltip title="Ending Time">
@@ -67,7 +69,7 @@ export const RunMetaItem = ({
           align="center"
           variant="body1"
           className={classnames(classes.data, classes.dateWords)}>
-          {`${distanceInWordsToNow(get(stats, 'end'))} ago`}
+          {formattedEnd}
         </Typography>
       </Tooltip>
       <Tooltip title="Environment">
@@ -111,7 +113,10 @@ export const RunMetaItem = ({
 RunMetaItem.propTypes = {
   runId: PropTypes.string.isRequired,
   pending: PropTypes.bool,
-  stats: PropTypes.object,
+  passes: PropTypes.number,
+  failures: PropTypes.number,
+  formattedEnd: PropTypes.string,
+  formattedDuration: PropTypes.string, // from enhancer (withProps)
   status: PropTypes.string,
   environment: PropTypes.string,
   runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)

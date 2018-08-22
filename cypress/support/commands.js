@@ -3,7 +3,11 @@ import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/firestore'
-import { isObject } from 'lodash'
+import {
+  getFixtureBlob,
+  buildRtdbCommand,
+  buildFirestoreCommand
+} from '../utils/commands'
 
 const projectId = Cypress.env('FIREBASE_PROJECT_ID')
 
@@ -17,19 +21,16 @@ const fbConfig = {
 
 window.fbInstance = firebase.initializeApp(fbConfig)
 
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
+/**
+ * Login to Firebase auth using FIREBASE_AUTH_JWT environment variable
+ * which is generated using firebase-admin authenticated with serviceAccount
+ * during test:buildConfig phase.
+ * @type {Cypress.Command}
+ * @example Basic
+ * cy.login()
+ */
+Cypress.Commands.add('login', () => {
+  /** Log in using token **/
   if (!Cypress.env('FIREBASE_AUTH_JWT')) {
     cy.log(
       'FIREBASE_AUTH_JWT must be set to cypress environment in order to login'
@@ -40,6 +41,7 @@ Cypress.Commands.add('login', (email, password) => {
     cy.log('Current user already exists, login complete.')
   } else {
     return new Promise((resolve, reject) => {
+      // eslint-disable-line consistent-return
       firebase.auth().onAuthStateChanged(auth => {
         if (auth) {
           resolve(auth)
@@ -56,8 +58,14 @@ Cypress.Commands.add('login', (email, password) => {
   }
 })
 
-Cypress.Commands.add('logout', (email, password) => {
-  cy.log('Confirming use is logged out...')
+/**
+ * Logout of Firebase auth
+ * @type {Cypress.Command}
+ * @example Basic
+ * cy.logout()
+ */
+Cypress.Commands.add('logout', () => {
+  cy.log('Confirming user is logged out...')
   if (!firebase.auth().currentUser) {
     cy.log('Current user already logged out.')
   } else {
@@ -65,25 +73,6 @@ Cypress.Commands.add('logout', (email, password) => {
     return firebase.auth().signOut()
   }
 })
-
-/**
- * Converts fixture to Blob. All file types are converted to base64 then
- * converted to a Blob using Cypress expect application/json. Json files are
- * just stringified then converted to a blob (fixes issue invalid Blob issues).
- * @param {String} fileUrl - The file url to upload
- * @param {String} type - content type of the uploaded file
- * @return {Promise} Resolves with blob containing fixture contents
- */
-function getFixtureBlob(fileUrl, type) {
-  return type === 'application/json'
-    ? cy
-        .fixture(fileUrl)
-        .then(
-          jsonObj =>
-            new Blob([JSON.stringify(jsonObj)], { type: 'application/json' })
-        )
-    : cy.fixture(fileUrl, 'base64').then(Cypress.Blob.base64StringToBlob)
-}
 
 /**
  * Uploads a file to an input
@@ -111,10 +100,6 @@ Cypress.Commands.add('uploadFile', (selector, fileUrl, type = '') => {
   })
 })
 
-function getArgsString(args) {
-  return args && args.length ? ` ${args.join(' ')}` : ''
-}
-
 /**
  * Call Real Time Database path with some specified action. Authentication is through FIREBASE_TOKEN since firebase-tools
  * @param {String} action - The action type to call with (set, push, update, remove)
@@ -123,29 +108,17 @@ function getArgsString(args) {
  * @param {Array} opts.args - Command line args to be passed
  * @type {Cypress.Command}
  * @example Basic
- * callRtdb('add', 'project/test-project', 'fakeProject.json')
+ * cy.callRtdb('set', 'project/test-project', 'fakeProject.json')
  * @example Other Args
- * const opts = { args: ['-r'] }
- * callFirestore('delete', 'project/test-project', opts)
+ * const opts = { args: ['-d'] }
+ * cy.callRtdb('update', 'project/test-project', opts)
  */
 Cypress.Commands.add(
   'callRtdb',
   (action, actionPath, fixturePath, opts = {}) => {
-    const options = isObject(fixturePath) ? fixturePath : opts
-    const otherArgs = ' -y'
-    const { args = [] } = options
-    const baseArgsString = getArgsString(args)
-    const fullPathToFixture = `cypress/fixtures/${fixturePath}`
-    switch (action) {
-      case 'delete':
-        return cy.exec(
-          `npx firebase database:${action} ${actionPath}${baseArgsString}${otherArgs}`
-        )
-      default:
-        const command = `npx firebase database:${action} /${actionPath} ${fullPathToFixture}${baseArgsString}${otherArgs}`
-        cy.log(`command to be called: ${command}`)
-        return cy.exec(command)
-    }
+    const rtdbCommand = buildRtdbCommand(action, actionPath, fixturePath, opts)
+    cy.log(`Calling RTDB command:\n${rtdbCommand}`)
+    return cy.exec(rtdbCommand)
   }
 )
 
@@ -158,38 +131,24 @@ Cypress.Commands.add(
  * @param {Array} opts.args - Command line args to be passed
  * @type {Cypress.Command}
  * @example Basic
- * callFirestore('add', 'project/test-project', 'fakeProject.json')
+ * cy.callFirestore('add', 'project/test-project', 'fakeProject.json')
  * @example Recursive Delete
  * const opts = { recursive: true }
- * callFirestore('delete', 'project/test-project', 'fakeProject.json', opts)
+ * cy.callFirestore('delete', 'project/test-project', opts)
  * @example Other Args
  * const opts = { args: ['-r'] }
- * callFirestore('delete', 'project/test-project', )
+ * cy.callFirestore('delete', 'project/test-project', opts)
  */
-Cypress.Commands.add('callFirestore', (action, actionPath, opts = {}) => {
-  const { args = [] } = opts
-  const baseArgsString = getArgsString(args)
-  switch (action) {
-    case 'delete':
-      const argsString = `${baseArgsString}${opts.recursive ? ' -r' : ''}`
-      return cy.exec(
-        `npx firebase firestore ${action} ${actionPath}${argsString}`
-      )
-    default:
-      const argsWithMeta = `${baseArgsString}${opts.withMeta ? ' -m' : ''}`
-      cy.exec(
-        `bin/firebaseExtra firestore ${action} ${actionPath}${argsWithMeta}`
-      )
+Cypress.Commands.add(
+  'callFirestore',
+  (action, actionPath, fixturePath, opts = {}) => {
+    const firestoreCommand = buildFirestoreCommand(
+      action,
+      actionPath,
+      fixturePath,
+      opts
+    )
+    cy.log(`Calling Firestore command:\n${firestoreCommand}`)
+    return cy.exec(firestoreCommand)
   }
-})
-
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+)
