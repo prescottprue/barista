@@ -118,7 +118,7 @@ export const RunMetaItem = ({
 
 RunMetaItem.propTypes = {
   runId: PropTypes.string.isRequired,
-  pending: PropTypes.bool,
+  pending: PropTypes.number,
   passes: PropTypes.number,
   failures: PropTypes.number,
   formattedEnd: PropTypes.string,

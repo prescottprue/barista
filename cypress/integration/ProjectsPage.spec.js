@@ -1,6 +1,6 @@
 import { createSelector } from '../utils'
 
-describe('Projects Page', () => {
+describe.skip('Projects Page', () => {
   let openSpy // eslint-disable-line no-unused-vars
   // Setup before tests including creating a server to listen for external requests
   before(() => {

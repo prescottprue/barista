@@ -6,6 +6,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Paper from '@material-ui/core/Paper'
 import BackIcon from '@material-ui/icons/ArrowBack'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import TestResultsList from '../TestResultsList'
 
 export const RunPage = ({
@@ -31,9 +32,11 @@ export const RunPage = ({
     {runData ? (
       <TestResultsList testResults={runData} metaData={metaData} />
     ) : (
-      <Paper>Pulling Container...</Paper>
+      <Paper className={classes.empty}>
+        <CircularProgress />
+        <Typography className={classes.progressMsg}>Running...</Typography>
+      </Paper>
     )}
-    <TestResultsList testResults={runData} metaData={metaData} />
   </div>
 )
 
