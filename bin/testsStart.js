@@ -14,7 +14,6 @@ function writeStart() {
   }
   return db
     .update({
-      status: 'started',
       testsStartedAt: admin.database.ServerValue.TIMESTAMP
     })
     .then(() => {

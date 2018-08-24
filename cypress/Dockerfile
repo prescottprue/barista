@@ -19,6 +19,7 @@ COPY package*.json cypress.json serviceAccount.json ./
 
 ### Directories
 COPY build/ /build/
+COPY bin/ /bin/
 COPY cypress/ /cypress/
 
 # Install Dependencies (only those used to build config files)

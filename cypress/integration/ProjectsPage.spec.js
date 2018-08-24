@@ -1,30 +1,30 @@
 import { createSelector } from '../utils'
 
-describe.skip('Projects Page', () => {
+describe('Projects Page', () => {
   let openSpy // eslint-disable-line no-unused-vars
   // Setup before tests including creating a server to listen for external requests
   before(() => {
     // Create a server to listen to requests sent out to Google Auth and Firestore
-    cy.server()
-      // Google get google account info (periodically called by Firebase JS SDK)
-      .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo/)
-      .as('getGoogleAccountInfo')
-      // Firebase JS SDK request - Called when listener attached
-      .route('POST', /google.firestore.v1beta1.Firestore\/Listen/)
-      .as('listenForProjects')
-      // Firebase JS SDK request - Called when data is returned
-      .route('GET', /google.firestore.v1beta1.Firestore\/Listen/)
-      .as('getProjectData')
-      // Firebase JS SDK request - Called when project data is written
-      .route('POST', /google.firestore.v1beta1.Firestore\/Write/)
-      .as('addProject')
-      .window()
-      .then(win => {
-        // Create a spy on the servers onOpen event so we can later expect
-        // it to be called with specific arguments
-        openSpy = cy.spy(cy.state('server').options, 'onOpen')
-        return null
-      })
+    // cy.server()
+    //   // Google get google account info (periodically called by Firebase JS SDK)
+    //   .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo/)
+    //   .as('getGoogleAccountInfo')
+    //   // Firebase JS SDK request - Called when listener attached
+    //   .route('POST', /google.firestore.v1beta1.Firestore\/Listen/)
+    //   .as('listenForProjects')
+    //   // Firebase JS SDK request - Called when data is returned
+    //   .route('GET', /google.firestore.v1beta1.Firestore\/Listen/)
+    //   .as('getProjectData')
+    //   // Firebase JS SDK request - Called when project data is written
+    //   .route('POST', /google.firestore.v1beta1.Firestore\/Write/)
+    //   .as('addProject')
+    //   .window()
+    //   .then(win => {
+    //     // Create a spy on the servers onOpen event so we can later expect
+    //     // it to be called with specific arguments
+    //     openSpy = cy.spy(cy.state('server').options, 'onOpen')
+    //     return null
+    //   })
     // Login using custom token
     cy.login()
     // Go to projects page
@@ -51,7 +51,7 @@ describe.skip('Projects Page', () => {
   })
 
   describe('Delete Project', () => {
-    it('allows project to be deleted by project owner', () => {
+    it.skip('allows project to be deleted by project owner', () => {
       // click on the more button
       cy.get(createSelector('project-tile-more'))
         .first()
