@@ -36,4 +36,4 @@ RUN CI=true npm install cypress
 RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above)
-ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter
+ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter; echo \"$?\" | bin/testsComplete.js

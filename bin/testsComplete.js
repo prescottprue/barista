@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
+
 const admin = require('firebase-admin')
 const isString = require('lodash/isString')
 const fs = require('fs')
@@ -36,7 +38,7 @@ function envVarBasedOnCIEnv(varNameRoot) {
     const configObj = require(localTestConfigPath)
     console.log(
       `Running in local environment, ${
-      configObj[combined] ? combined : varNameRoot
+        configObj[combined] ? combined : varNameRoot
       } is being loaded from cypress/config.json`
     )
     return configObj[combined] || configObj[varNameRoot]
@@ -147,17 +149,27 @@ stdin.on('data', function(chunk) {
 
 stdin.on('end', function() {
   const db = initializeFirebase().database()
-  console('her we go', process.env.SOME_ENV)
-  if (data === '0' || data === 0) {
-    db.ref(`test_runs_meta/${process.env.SOME_ENV}`).update({ status: 'success' }).
+  if (!process.env.JOB_RUN_KEY) {
+    console.log(
+      'JOB_RUN_KEY not found within environment, exiting with error status'
+    )
+    process.exit(1)
   } else {
-    db.ref(`test_runs_meta/${process.env.SOME_ENV}`).update({ status: 'error' }).
+    const testMetaPath = `test_runs_meta/${process.env.JOB_RUN_KEY}`
+    const resultsRef = db.ref(testMetaPath)
+    const status = data === '0' || data === 0 ? 'success' : 'error'
+    console(`Writing status "${status}" to ${testMetaPath}`)
+    return resultsRef
+      .update({ status })
+      .then(() => {
+        process.exit()
+      })
+      .catch(err => {
+        console.error(
+          `Error writing status "${status}" to Firebase: ${err.message || ''}`,
+          err
+        )
+        process.exit(1)
+      })
   }
 })
-
-;(async function() {
-  console.log('argv', process.argv)
-  console.log('stdout', process.stdout)
-  console.log('stderr', process.stderr)
-  console.log('stdin', process.stdin)
-})()
