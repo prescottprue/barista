@@ -22,7 +22,7 @@ COPY build/ /build/
 COPY cypress/ /cypress/
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.6
+RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.7
 
 # Build Test Config
 RUN npm run build:testConfig
@@ -36,4 +36,8 @@ RUN CI=true npm install cypress
 RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above)
-ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter; echo \"$?\" | bin/testsComplete.js
+# Steps:
+# 1. Mark test as status "started" within tests_runs_meta/$JOB_RUN_KEY
+# 2. Run Cypress reporting results using Barista Reporter (writes to test_runs_data/$JOB_RUN_KEY)
+# 3. Update RTDB with status "complete" within tests_runs_meta/$JOB_RUN_KEY
+ENTRYPOINT bin/testsStart.js; $(npm bin)/cypress run --reporter barista-reporter; echo \"$?\" | bin/testsComplete.js
