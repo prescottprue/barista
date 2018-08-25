@@ -5,7 +5,7 @@ import { withHandlers, flattenProp, withProps, setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import { LIST_PATH, RUNS_PATH } from 'constants'
 import { getProjectRunMeta } from 'selectors'
-import { format, distanceInWordsToNow } from 'date-fns'
+import { formatDateTime } from 'utils/formatters'
 import * as handlers from './RunMetaItem.handlers'
 import styles from './RunMetaItem.styles'
 
@@ -24,10 +24,11 @@ export default compose(
   // flatten stats into duration, passes, failures, end
   flattenProp('stats'),
   // add custom props
-  withProps(({ projectId, runId, duration, end }) => ({
+  withProps(({ projectId, runId, duration, startedAt, completedAt }) => ({
     runDetailPath: `${LIST_PATH}/${projectId}/${RUNS_PATH}/${runId}`,
-    formattedDuration: duration ? format(new Date(duration), 'mm:ss') : '-',
-    formattedEnd: end ? `${distanceInWordsToNow(end)} ago` : '-'
+    // Convert duration into minutes
+    formattedDuration: duration ? (duration / 60000).toFixed(3) : '-',
+    formattedStart: startedAt ? formatDateTime(startedAt) : '-'
   })),
   // add handlers as props
   withHandlers(handlers),

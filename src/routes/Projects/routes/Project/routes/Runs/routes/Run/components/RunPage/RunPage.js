@@ -4,16 +4,14 @@ import { Link } from 'react-router'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
-import Paper from '@material-ui/core/Paper'
 import BackIcon from '@material-ui/icons/ArrowBack'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import TestResultsList from '../TestResultsList'
 
 export const RunPage = ({
   classes,
-  runData,
   runsPagePath,
   metaData,
+  projectId,
   runId
 }) => (
   <div className={classes.root}>
@@ -29,20 +27,13 @@ export const RunPage = ({
         </IconButton>
       </Tooltip>
     </div>
-    {runData ? (
-      <TestResultsList testResults={runData} metaData={metaData} />
-    ) : (
-      <Paper className={classes.empty}>
-        <CircularProgress />
-        <Typography className={classes.progressMsg}>Running...</Typography>
-      </Paper>
-    )}
+    <TestResultsList projectId={projectId} runId={runId} />
   </div>
 )
 
 RunPage.propTypes = {
-  runData: PropTypes.object,
   metaData: PropTypes.object,
+  projectId: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   runsPagePath: PropTypes.string.isRequired, // from enhancer (withProps)
   runId: PropTypes.string.isRequired // from enhancer (withProps)

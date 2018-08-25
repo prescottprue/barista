@@ -3,8 +3,8 @@ export const COLUMN_HEADERS = [
   { label: 'run id', align: 'center' },
   { label: 'passing', align: 'center' },
   { label: 'failing', align: 'center' },
-  { label: 'duration', align: 'center' },
-  { label: 'end time', align: 'left' },
+  { label: 'duration (s)', align: 'center' },
+  { label: 'start time', align: 'left' },
   { label: 'environment', align: 'center' },
   { label: 'actions', align: 'center' }
 ]

@@ -29,6 +29,11 @@ export const getProjectRunMeta = createSelector(
 export const getProjectRunsData = (state, props) =>
   get(state, `firebase.data.${props.projectId}-testRunsData`)
 
+export const getRunReports = createSelector(
+  [getProjectRunsData, getRunId],
+  (projectRuns, runId) => get(projectRuns, `${runId}.reporterInstances`)
+)
+
 export const getProjectOrderedProjectRunsMeta = createSelector(
   [getProjectRunsMeta],
   projectRuns =>
