@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, pickBy } from 'lodash'
 import { CONTAINER_BUILDS_STATUS_PATH } from 'constants'
 import { createSelector } from 'reselect'
 
@@ -16,22 +16,24 @@ export const getMostRecentBuild = (state, props) =>
 export const getProjectRunsMeta = (state, props) =>
   get(state, `firebase.ordered.${props.projectId}-testRunsMeta`)
 
-const getProjectRunsMetaData = (state, props) =>
-  get(state, `firebase.data.${props.projectId}-testRunsMeta`)
+const getProjectRunsData = (state, props) =>
+  get(state, `firebase.data.${props.projectId}-testRunsData`)
 
 const getRunId = (state, props) => props.runId
 
 export const getProjectRunMeta = createSelector(
-  [getProjectRunsMetaData, getRunId],
+  [getProjectRunsData, getRunId],
   (projectRunsMeta, runId) => get(projectRunsMeta, runId)
 )
 
-export const getProjectRunsData = (state, props) =>
-  get(state, `firebase.data.${props.projectId}-testRunsData`)
-
-export const getRunReports = createSelector(
+export const getProjectRunData = createSelector(
   [getProjectRunsData, getRunId],
-  (projectRuns, runId) => get(projectRuns, `${runId}.reporterInstances`)
+  (projectRunsData, runId) => get(projectRunsData, runId)
+)
+
+export const getSuitesWithTests = createSelector(
+  [getProjectRunData],
+  projectRuns => pickBy(projectRuns, run => !!run.tests)
 )
 
 export const getProjectOrderedProjectRunsMeta = createSelector(

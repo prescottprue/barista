@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { firebaseConnect } from 'react-redux-firebase'
 import { withStyles } from '@material-ui/core/styles'
 import { withHandlers, withProps, setPropTypes } from 'recompose'
-import { paths, TEST_RUNS_META_PATH } from 'constants'
+import { paths, TEST_RUNS_META_PATH, TEST_RUNS_DATA_PATH } from 'constants'
 import { getProjectRunMeta } from 'selectors'
 import * as handlers from './RunPage.handlers'
 import styles from './RunPage.styles'
@@ -18,7 +18,8 @@ export default compose(
   }),
   // create listener for runpage, results go into redux
   firebaseConnect(({ params: { projectId, runId } }) => [
-    { path: `${TEST_RUNS_META_PATH}/${projectId}/${runId}` }
+    { path: `${TEST_RUNS_META_PATH}/${projectId}/${runId}` },
+    { path: `${TEST_RUNS_DATA_PATH}/${projectId}/${runId}` }
   ]),
   // map redux state to props
   connect((state, props) => ({

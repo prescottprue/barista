@@ -9,7 +9,8 @@ import {
   LIST_PATH,
   RUNS_PATH,
   NEWRUN_PATH,
-  TEST_RUNS_META_PATH
+  TEST_RUNS_META_PATH,
+  TEST_RUNS_DATA_PATH
 } from 'constants'
 import { getProjectOrderedProjectRunsMeta } from 'selectors'
 import styles from './RunsPage.styles'
@@ -30,7 +31,12 @@ export default compose(
     {
       path: `${TEST_RUNS_META_PATH}/${projectId}`,
       queryParams: ['orderByChild=createdAt'],
-      storeAs: `${projectId}-testRunsMeta`
+      storeAs: `${projectId}-testRunsMeta` // storeAs is used for ordered list data
+    },
+    {
+      path: `${TEST_RUNS_DATA_PATH}/${projectId}`,
+      queryParams: ['orderByChild=createdAt'],
+      storeAs: `${projectId}-testRunsData` // storeAs is used for ordered list data
     }
   ]),
   // map redux state to props

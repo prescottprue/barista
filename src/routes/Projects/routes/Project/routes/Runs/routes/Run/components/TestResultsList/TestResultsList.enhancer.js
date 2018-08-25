@@ -3,7 +3,7 @@ import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
-import { getRunReports } from 'selectors'
+import { getSuitesWithTests } from 'selectors'
 import { renderWhile } from 'utils/components'
 import TestResultsNotFound from './TestResultsNotFound'
 import styles from './TestResultsList.styles'
@@ -15,7 +15,7 @@ export default compose(
   }),
   // map redux state to props
   connect((state, props) => ({
-    runData: getRunReports(state, props)
+    runData: getSuitesWithTests(state, props)
   })),
   renderWhile(
     ({ runData }) => !runData,
