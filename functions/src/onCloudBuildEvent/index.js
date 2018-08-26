@@ -51,7 +51,11 @@ async function callCloudBuildApiEvent(message) {
   const { branchName, repoName } = get(source, 'repoSource', {})
   const commitSha = get(sourceProvenance, 'resolvedRepoSource.commitSha', '')
   const buildData = { attributes, source, branchName, commitSha }
-
+  if (!repoName) {
+    const noRepoErr = 'No repo name found in message body'
+    console.error(noRepoErr, messageBody)
+    throw new Error(noRepoErr)
+  }
   // Strip prefix from repo name to get project (prefix is from cloud-build)
   const projectId = repoName.replace('github-reside-eng-', '')
 

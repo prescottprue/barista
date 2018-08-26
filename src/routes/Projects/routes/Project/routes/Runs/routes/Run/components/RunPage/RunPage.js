@@ -9,9 +9,9 @@ import TestResultsList from '../TestResultsList'
 
 export const RunPage = ({
   classes,
-  runData,
   runsPagePath,
   metaData,
+  projectId,
   runId
 }) => (
   <div className={classes.root}>
@@ -27,13 +27,13 @@ export const RunPage = ({
         </IconButton>
       </Tooltip>
     </div>
-    <TestResultsList testResults={runData} metaData={metaData} />
+    <TestResultsList projectId={projectId} runId={runId} />
   </div>
 )
 
 RunPage.propTypes = {
-  runData: PropTypes.object,
   metaData: PropTypes.object,
+  projectId: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   runsPagePath: PropTypes.string.isRequired, // from enhancer (withProps)
   runId: PropTypes.string.isRequired // from enhancer (withProps)

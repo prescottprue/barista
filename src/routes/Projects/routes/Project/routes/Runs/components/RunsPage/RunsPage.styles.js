@@ -31,8 +31,9 @@ export default theme => ({
   title: {
     alignSelf: 'center'
   },
-  reRunButton: {
-    alignSelf: 'flex-end'
+  createButton: {
+    alignSelf: 'flex-end',
+    marginBottom: theme.spacing.unit * 2
   },
   columnLabels: {
     display: 'grid',
@@ -44,8 +45,5 @@ export default theme => ({
   columnLabel: {
     fontWeight: 200,
     fontSize: '.9rem'
-  },
-  status: {
-    paddingLeft: '1rem'
   }
 })

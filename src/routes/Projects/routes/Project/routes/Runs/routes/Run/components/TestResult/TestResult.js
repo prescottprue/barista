@@ -19,11 +19,20 @@ export const TestResult = ({ resultData, classes, name }) => (
         <span>{get(first(resultData), 'state')}</span>
         <div>
           Specs:
-          {map(resultData, (result, resultId) => (
-            <Card key={`Result-Spec-${resultId}`}>
+          {map(resultData, (suite, suiteId) => (
+            <Card key={`Result-Spec-${suiteId}`}>
               <CardContent>
-                <div>State: {get(result, 'state')}</div>
-                <div>Duration: {get(result, 'duration', 0) / 1000} seconds</div>
+                {map(get(suite, 'tests'), (test, testId) => (
+                  <Card key={`Result-Spec-${testId}`}>
+                    <CardContent>
+                      <div>State: {get(test, 'state')}</div>
+                      <div>
+                        Duration: {get(test, 'duration', 0) / 1000} seconds
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                <div>Duration: {get(suite, 'duration', 0) / 1000} seconds</div>
               </CardContent>
             </Card>
           ))}

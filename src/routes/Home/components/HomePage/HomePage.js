@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 
 export const Home = ({ classes }) => (
   <div className={classes.root}>
-    <Paper className={classes.paper} elevation={1}>
+    <Paper className={classes.paper} elevation={1} data-test="features">
       <Typography variant="headline" component="h3">
         Remote Test Runner For Cypress and Mocha
       </Typography>

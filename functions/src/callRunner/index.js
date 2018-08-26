@@ -5,6 +5,7 @@ import { callTestRunner } from 'utils/testRunner'
 import { contextToAuthUid } from 'utils/firebaseFunctions'
 import { rtdbRef } from 'utils/rtdb'
 import { RESPONSES_PATH } from 'constants'
+import { get } from 'lodash'
 
 const CALL_RUNNER_PATH = 'callRunner'
 
@@ -84,13 +85,32 @@ async function callRunnerEvent(snap, context) {
     // Throw out of the function with original error
     throw runErr
   }
-
-  // Write success response to RTDB
+  const responseData = get(testRunResponseSnap.val(), 'responseData', {})
+  const targetLink = get(responseData, 'targetLink', '')
+  const resourceUrl = targetLink.replace(
+    'https://www.googleapis.com/compute/v1/',
+    ''
+  )
+  const [, , , zone, , id] = resourceUrl.split('/')
+  const instanceMeta = {
+    resourceUrl,
+    zone,
+    id,
+    targetLink,
+    createdBy: responseData.user || null
+  }
   const [writeErr] = await to(
-    responseRef.push({
-      status: 'success',
-      runStartResponse: testRunResponseSnap.val()
-    })
+    Promise.all([
+      // Write success response to RTDB
+      responseRef.update({
+        status: 'success',
+        runStartResponse: testRunResponseSnap.val()
+      }),
+      // Update instanceMeta parameter on test_run_meta object
+      rtdbRef(
+        `test_runs_meta/${baristaProject}/${jobRunKey}/instanceMeta`
+      ).update(instanceMeta)
+    ])
   )
 
   // Handle errors writing response to RTDB

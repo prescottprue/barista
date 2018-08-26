@@ -1,7 +1,6 @@
 import React from 'react'
-import { Link } from 'react-router'
+import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
-import { LOGIN_PATH, SIGNUP_PATH } from 'constants'
 
 const buttonStyle = {
   color: 'white',
@@ -9,15 +8,15 @@ const buttonStyle = {
   alignSelf: 'center'
 }
 
-export const LoginMenu = () => (
+export const LoginMenu = ({ onSigninClick }) => (
   <div>
-    <Button style={buttonStyle} component={Link} to={SIGNUP_PATH}>
-      Sign Up
-    </Button>
-    <Button style={buttonStyle} component={Link} to={LOGIN_PATH}>
-      Login
+    <Button style={buttonStyle} onClick={onSigninClick}>
+      Sign In
     </Button>
   </div>
 )
+LoginMenu.propTypes = {
+  onSigninClick: PropTypes
+}
 
 export default LoginMenu
