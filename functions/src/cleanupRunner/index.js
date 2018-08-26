@@ -130,5 +130,5 @@ async function cleanupRunnerEvent(change, context) {
  * @type {functions.CloudFunction}
  */
 export default functions.database
-  .ref('/test_runs_meta/{projectId}/{jobRunKey}/status')
+  .ref('/test_runs_meta/{projectId}/{jobRunKey}/runResult')
   .onUpdate(cleanupRunnerEvent)
