@@ -28,6 +28,9 @@ COPY build/ /build/
 COPY bin/ /bin/
 COPY cypress/ /cypress/
 
+## Add executable permission to tests complete script
+RUN chmod +x bin/testsComplete.js
+
 # Install Dependencies (only those used to build config files)
 RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11
 
