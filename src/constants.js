@@ -11,6 +11,7 @@ export const RUNS_PATH = 'runs'
 export const NEWRUN_PATH = 'new'
 export const RUN_PATH = ':runId'
 export const BUILDS_PATH = 'builds'
+export const TAGS_PATH = 'tags'
 export const CONTAINER_BUILDS_META_PATH = 'container_builds'
 export const CONTAINER_BUILDS_STATUS_PATH = 'container_build_statues'
 export const TEST_RUNS_META_PATH = 'test_runs_meta'
@@ -32,7 +33,8 @@ export const paths = {
   signup: SIGNUP_PATH,
   runs: RUNS_PATH,
   newRun: NEWRUN_PATH,
-  builds: BUILDS_PATH
+  builds: BUILDS_PATH,
+  tags: TAGS_PATH
 }
 
 export const firebasePaths = {
