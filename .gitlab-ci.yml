@@ -20,7 +20,7 @@ cache:
 before_script:
   - CYPRESS_INSTALL_BINARY=0 npm i
   - npm i --prefix functions
-  - npm i firebase-ci@next
+  - npm i firebase-tools@4.1.0 firebase-ci@next
 
 # Build Stage
 # Installs dependencies, builds app, and saves results for later (artifacts).
@@ -72,11 +72,9 @@ Unit Tests:
     paths:
       - functions/dist
       - functions/coverage # Test coverage report
-      - functions/mochawesome-report # Test results in JSON and HTML
   before_script:
     - npm i --prefix functions
   script:
-    - npm run test --prefix functions
     - npm run test:cov --prefix functions
 
 # Deploy Staging
@@ -130,7 +128,7 @@ E2E Tests:
   before_script:
      # Install deps including Cypress binary (skipped in default before_script)
     - npm i
-    - npm i cypress
+    - CI=true npm i cypress # CI=true to prevent exessive logs from cypress
     # Confirm Cypress is ready to use
     - $(npm bin)/cypress verify
   script:

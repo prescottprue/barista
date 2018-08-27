@@ -10,7 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import DeleteIcon from '@material-ui/icons/Delete'
 import PersonIcon from '@material-ui/icons/Person'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
-import EditIcon from '@material-ui/icons/ModeEdit'
+import EditIcon from '@material-ui/icons/Edit'
 import classes from './ProjectTile.scss'
 
 export const ProjectTile = ({

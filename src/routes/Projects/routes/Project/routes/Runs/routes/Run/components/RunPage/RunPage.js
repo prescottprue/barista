@@ -1,29 +1,42 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { uppercase, get } from 'lodash'
+import { Link } from 'react-router'
 import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
+import BackIcon from '@material-ui/icons/ArrowBack'
+import TestResultsList from '../TestResultsList'
 
-export const RunPage = ({ runMeta, classes, runData, params: { runId } }) => (
-  <div className={classes.container}>
-    <Typography className={classes.title} variant="display1">
-      {`${uppercase(get(runMeta, 'environment', 'unkown'))} - Job ${runId}`}
-    </Typography>
-    <Typography className={classes.title} variant="headline" align="left">
-      Summary
-    </Typography>
-    <pre>{JSON.stringify({ runMeta }, null, 2)}</pre>
-    <Typography className={classes.title} variant="headline" align="left">
-      Specs
-    </Typography>
-    {runData && <pre>{JSON.stringify(runData, null, 2)}</pre>}
+export const RunPage = ({
+  classes,
+  runsPagePath,
+  metaData,
+  projectId,
+  runId
+}) => (
+  <div className={classes.root}>
+    <div className={classes.titleBar}>
+      <Typography variant="headline" component="h3">
+        Run {runId}
+      </Typography>
+    </div>
+    <div className={classes.buttons}>
+      <Tooltip title="Back To Runs">
+        <IconButton component={Link} to={runsPagePath}>
+          <BackIcon />
+        </IconButton>
+      </Tooltip>
+    </div>
+    <TestResultsList projectId={projectId} runId={runId} />
   </div>
 )
 
 RunPage.propTypes = {
-  runMeta: PropTypes.object, // from enhancer (firestoreConnect + connect)
-  runData: PropTypes.object, // from enhancer (firestoreConnect + connect)
-  classes: PropTypes.object, // from enhancer (firestoreConnect + connect)
-  params: PropTypes.object // from enhancer (firestoreConnect + connect)
+  metaData: PropTypes.object,
+  projectId: PropTypes.string.isRequired,
+  classes: PropTypes.object.isRequired, // from enhancer (withStyles)
+  runsPagePath: PropTypes.string.isRequired, // from enhancer (withProps)
+  runId: PropTypes.string.isRequired // from enhancer (withProps)
 }
 
 export default RunPage

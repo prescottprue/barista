@@ -1,5 +1,5 @@
 import express from 'express'
-import { runTests } from 'utils/testRunner'
+import { callTestRunner } from 'utils/testRunner'
 const router = express.Router()
 
 /**
@@ -8,11 +8,14 @@ const router = express.Router()
  * @param res - Express HTTP Response
  */
 export async function handleRunRequest(req, res) {
-  const { environment, projectId } = req.body
-  // TODO: Fallback to local auth and call google API directly instead of
-  // getting service account stored in Firestore
+  const { instanceTemplateName } = req.body
+  const { uid: createdBy } = req.user
   try {
-    await runTests({ environment, projectId })
+    await callTestRunner({
+      instanceTemplateName,
+      createdBy,
+      meta: { restRequest: true }
+    })
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
     res.end(`Test run started!`)
   } catch (err) {

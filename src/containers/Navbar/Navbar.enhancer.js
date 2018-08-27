@@ -7,9 +7,9 @@ import {
   withStateHandlers
 } from 'recompose'
 import { withFirebase, isEmpty, isLoaded } from 'react-redux-firebase'
-import { ACCOUNT_PATH } from 'constants'
 import { withRouter, spinnerWhileLoading } from 'utils/components'
 import { withStyles } from '@material-ui/core'
+import * as handlers from './Navbar.handlers'
 import styles from './Navbar.styles'
 
 export default compose(
@@ -37,18 +37,8 @@ export default compose(
   withRouter,
   // Add props.firebase (used in handlers)
   withFirebase,
-  // Handlers
-  withHandlers({
-    handleLogout: props => () => {
-      props.firebase.logout()
-      props.router.push('/')
-      props.closeAccountMenu()
-    },
-    goToAccount: props => () => {
-      props.router.push(ACCOUNT_PATH)
-      props.closeAccountMenu()
-    }
-  }),
+  // Add handlers as props
+  withHandlers(handlers),
   withProps(({ auth, profile }) => ({
     authExists: isLoaded(auth) && !isEmpty(auth)
   })),

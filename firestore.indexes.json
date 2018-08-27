@@ -1,14 +1,18 @@
 {
-  // Example:
-  //
-  // "indexes": [
-  //   {
-  //     "collectionId": "widgets",
-  //     "fields": [
-  //       { "fieldPath": "foo", "mode": "ASCENDING" },
-  //       { "fieldPath": "bar", "mode": "DESCENDING" }
-  //     ]
-  //   }
-  // ]
-  "indexes": []
+  "indexes": [
+    {
+      "collectionId": "container_builds",
+      "fields": [
+        { "fieldPath": "projectId", "mode": "ASCENDING" },
+        { "fieldPath": "finishTime", "mode": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionId": "container_builds",
+      "fields": [
+        { "fieldPath": "projectId", "mode": "ASCENDING" },
+        { "fieldPath": "finishTime", "mode": "DESCENDING" }
+      ]
+    }
+  ]
 }

@@ -58,12 +58,12 @@ NewProjectDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  closeAndReset: PropTypes.func.isRequired, // added by enhancer (withHandlers)
-  handleSubmit: PropTypes.func.isRequired, // added by redux-form
-  pristine: PropTypes.bool.isRequired, // added by redux-form
-  reset: PropTypes.func.isRequired, // added by redux-form
-  submitting: PropTypes.bool.isRequired, // added by redux-form
-  submit: PropTypes.func.isRequired // added by redux-form
+  closeAndReset: PropTypes.func.isRequired, // from enhancer (withHandlers)
+  handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)
+  pristine: PropTypes.bool.isRequired, // from enhancer (reduxForm)
+  reset: PropTypes.func.isRequired, // from enhancer (reduxForm)
+  submitting: PropTypes.bool.isRequired, // from enhancer (reduxForm)
+  submit: PropTypes.func.isRequired // from enhancer (reduxForm)
 }
 
 export default NewProjectDialog

@@ -1,36 +1,31 @@
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
-import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
-import { withHandlers, setPropTypes } from 'recompose'
+import { withHandlers, setPropTypes, withProps } from 'recompose'
+import { withFirebase } from 'react-redux-firebase'
 import { withStyles } from '@material-ui/core'
-import { withRouter } from 'utils/components'
+import * as handlers from './NewRunPage.handlers'
 import { paths } from 'constants'
 import styles from './NewRunPage.styles'
 
 export default compose(
-  // create listener for newrunpage, results go into redux
-  firebaseConnect([{ path: 'newrunpage' }]),
-  // map redux state to props
-  connect(({ firebase: { data } }) => ({
-    newrunpage: data.newrunpage
-  })),
-  withRouter,
+  // add props.firebase
+  withFirebase,
+  // set proptypes used in enhancer
   setPropTypes({
     params: PropTypes.shape({
       projectId: PropTypes.string.isRequired
     }),
-    router: PropTypes.shape({
+    firebase: PropTypes.shape({
       push: PropTypes.func.isRequired
     })
   }),
-  withHandlers({
-    goBack: ({ router, params: { projectId } }) => () => {
-      router.push(`${paths.list}/${projectId}/${paths.runs}`)
-    },
-    startTestRun: props => () => {
-      // console.log('props:', props)
-    }
-  }),
+  // add custom props
+  withProps(({ params: { projectId } }) => ({
+    projectId,
+    runsPagePath: `${paths.list}/${projectId}/${paths.runs}`
+  })),
+  // add handlers as props
+  withHandlers(handlers),
+  // add classes prop with classes from RunMetaItem.styles.js
   withStyles(styles)
 )

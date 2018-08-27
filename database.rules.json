@@ -9,6 +9,9 @@
     },
     "projects": {
       ".indexOn": ["createdBy"]
+    },
+    "container_build_statues": {
+      ".write": false
     }
   }
 }
