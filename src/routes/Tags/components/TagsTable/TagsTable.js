@@ -7,6 +7,7 @@ import { get } from 'lodash'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
+import { formatDateTime } from 'utils/formatters'
 
 // Column cofiguration
 const tagsTableColumns = [
@@ -22,7 +23,7 @@ const tagsTableColumns = [
     value: 'projects',
     format: projects => (projects ? Object.keys(projects).join(', ') : 'Global')
   },
-  { value: 'createdAt' }
+  { value: 'createdAt', format: dateObj => formatDateTime(dateObj) }
 ]
 
 export const TagsTable = ({ tags, classes }) => (

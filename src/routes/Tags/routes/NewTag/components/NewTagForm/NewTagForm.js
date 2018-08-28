@@ -4,10 +4,18 @@ import { Link } from 'react-router'
 import { Field } from 'redux-form'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
+import Button from '@material-ui/core/Button'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import Paper from '@material-ui/core/Paper'
-import { TextField } from 'redux-form-material-ui'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import { TextField, Checkbox } from 'redux-form-material-ui'
 import { TAGS_PATH } from 'constants'
+import Typography from '@material-ui/core/Typography'
+
+const projects = [{ value: 'brawndo' }, { value: 'barista' }]
 
 export const NewTagForm = ({ classes, handleSubmit, pristine, submitting }) => (
   <form onSubmit={handleSubmit} className={classes.root}>
@@ -17,11 +25,31 @@ export const NewTagForm = ({ classes, handleSubmit, pristine, submitting }) => (
           <BackIcon />
         </IconButton>
       </Tooltip>
+      <Button
+        variant="raised"
+        color="primary"
+        disabled={pristine || submitting}
+        type="submit">
+        Submit New Tag
+      </Button>
     </div>
     <Paper className={classes.paper}>
       <div className={classes.inputs}>
         <Field fullWidth name="name" component={TextField} label="Name" />
         <Field fullWidth name="value" component={TextField} label="Value" />
+        <div>
+          <Typography>Projects</Typography>
+          <List>
+            {projects.map(({ value }) => (
+              <ListItem key={value} dense button className={classes.listItem}>
+                <ListItemText primary={value} />
+                <ListItemSecondaryAction>
+                  <Field name={`projects.${value}`} component={Checkbox} />
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </div>
       </div>
     </Paper>
   </form>
