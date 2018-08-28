@@ -1,7 +1,6 @@
 export default theme => ({
   root: {
-    width: '70%',
-    marginLeft: '15%',
+    width: '100%',
     marginTop: theme.spacing.unit * 3,
     overflowX: 'auto'
   },

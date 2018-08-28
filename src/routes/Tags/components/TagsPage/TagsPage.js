@@ -31,15 +31,13 @@ export const TagsPage = ({ tags, classes }) => (
         Create New Tag
       </Button>
     </div>
-    <div>
-      <TagsTable />
-    </div>
+    <TagsTable />
   </Grid>
 )
 
 TagsPage.propTypes = {
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
-  tags: PropTypes.object // from enhancer (firestoreConnect + connect)
+  tags: PropTypes.array // from enhancer (firestoreConnect + connect)
 }
 
 export default TagsPage

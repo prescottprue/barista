@@ -4,11 +4,13 @@ import { Link } from 'react-router'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
+import Button from '@material-ui/core/Button'
+import { TAG_GROUPS_PATH } from 'constants'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import TagGroupsTable from '../TagGroupsTable'
 
 export const TagGroupsPage = ({ tags, classes }) => (
-  <div className={classes.container}>
+  <div className={classes.root}>
     <div className={classes.titleBar}>
       <Typography variant="headline" component="h3">
         Tag Groups
@@ -20,10 +22,15 @@ export const TagGroupsPage = ({ tags, classes }) => (
           <BackIcon />
         </IconButton>
       </Tooltip>
+      <Button
+        variant="outlined"
+        className={classes.createButton}
+        component={Link}
+        to={`${TAG_GROUPS_PATH}/new`}>
+        Create Tag Group
+      </Button>
     </div>
-    <div>
-      <TagGroupsTable />
-    </div>
+    <TagGroupsTable />
   </div>
 )
 

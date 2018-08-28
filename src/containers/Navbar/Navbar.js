@@ -6,7 +6,6 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import AccountMenu from './AccountMenu'
 import LoginMenu from './LoginMenu'
-import { LIST_PATH } from 'constants'
 
 export const Navbar = ({
   avatarUrl,
@@ -27,7 +26,7 @@ export const Navbar = ({
         color="inherit"
         className={classes.flex}
         component={Link}
-        to={authExists ? LIST_PATH : '/'}
+        to="/"
         data-test="brand">
         Barista
       </Typography>

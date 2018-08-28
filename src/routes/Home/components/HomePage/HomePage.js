@@ -18,13 +18,10 @@ export const Home = ({ classes }) => (
       <Typography variant="headline" component="h3">
         Remote Test Runner For Cypress and Mocha
       </Typography>
-      <Typography component="p" color="textSecondary">
-        More Coming Soon
-      </Typography>
       <div className={classes.links}>
         {links.map((linkData, linkIndex) => (
           <Link to={linkData.path} key={`${linkIndex}-${linkData.value}`}>
-            <p>View {startCase(linkData.value)}</p>
+            <p>{startCase(linkData.value)}</p>
           </Link>
         ))}
       </div>

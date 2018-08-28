@@ -14,16 +14,5 @@ export default theme => ({
     justifyContent: 'center',
     marginTop: '2rem',
     width: '100%'
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2
-  },
-  createButton: {
-    alignSelf: 'flex-end',
-    marginBottom: theme.spacing.unit * 2
   }
 })

@@ -8,6 +8,7 @@ export const TAG_GROUPS_PATH = '/tagGroups'
 export const RUNS_PATH = 'runs'
 export const NEWRUN_PATH = 'new'
 export const NEW_TAG_PATH = 'new'
+export const NEW_TAG_GROUP_PATH = 'new'
 export const RUN_PATH = ':runId'
 
 export const paths = {

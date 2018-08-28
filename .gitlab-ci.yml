@@ -111,7 +111,8 @@ E2E Tests:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip-tests/
       - $CI_COMMIT_MESSAGE =~ /skip-e2e-tests/
-  # Cache dependencies across jobs only pulling not uploading
+  # Override cache behavior set above since we want to both pull and push to
+  # the cache (no "policy" provided since pull-push is default)
   cache:
     untracked: true
     key: ${CI_COMMIT_REF_SLUG}
