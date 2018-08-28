@@ -14,7 +14,6 @@ import MostRecentImageInfo from 'routes/Projects/routes/Project/components/MostR
 const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
 
 export const NewRunForm = ({
-  newRunForm,
   classes,
   handleSubmit,
   buildsPath,
@@ -64,7 +63,6 @@ NewRunForm.propTypes = {
   projectId: PropTypes.string.isRequired,
   buildsPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object, // from enhancer (withStyles)
-  newRunForm: PropTypes.object, // from enhancer (firestoreConnect + connect)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)
   pristine: PropTypes.bool.isRequired, // from enhancer (reduxForm)
   submitting: PropTypes.bool.isRequired, // from enhancer (reduxForm)

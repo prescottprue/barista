@@ -1,4 +1,4 @@
-import { TAGS_PATH as path } from 'constants'
+import { NEW_TAG_PATH as path } from 'constants'
 
 export default store => ({
   path,
@@ -11,24 +11,14 @@ export default store => ({
       require => {
         /*  Webpack - use require callback to define
           dependencies for bundling   */
-        const TagsPage = require('./components/TagsPage').default
+        const NewTagPage = require('./components/NewTagPage').default
 
         /*  Return getComponent   */
-        cb(null, TagsPage)
+        cb(null, NewTagPage)
 
         /* Webpack named bundle   */
       },
-      'TagsPage'
+      'NewTagPage'
     )
-  },
-  getChildRoutes(partialNextState, cb) {
-    require.ensure([], require => {
-      /*  Webpack - use require callback to define
-          dependencies for bundling   */
-      const NewTag = require('./routes/NewTag').default
-
-      /*  Return getComponent   */
-      cb(null, [NewTag(store)])
-    })
   }
 })

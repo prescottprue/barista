@@ -1,4 +1,5 @@
 /* --------------- App Paths/Routes --------------- */
+export const HOME_PATH = '/'
 export const LIST_PATH = '/projects'
 export const ACCOUNT_PATH = '/account'
 export const BUILDS_PATH = '/builds'
@@ -6,6 +7,7 @@ export const TAGS_PATH = '/tags'
 export const TAG_GROUPS_PATH = '/tagGroups'
 export const RUNS_PATH = 'runs'
 export const NEWRUN_PATH = 'new'
+export const NEW_TAG_PATH = 'new'
 export const RUN_PATH = ':runId'
 
 export const paths = {
@@ -49,6 +51,8 @@ export const LOGIN_FORM_NAME = 'login'
 export const SIGNUP_FORM_NAME = 'signup'
 export const NEW_PROJECT_FORM_NAME = 'newProject'
 export const NEW_JOB_RUN_FORM_NAME = 'newRun'
+export const NEW_TAG_FORM_NAME = 'newTag'
+export const NEW_TAG_GROUP_FORM_NAME = 'newTagGroup'
 
 /**
  * @type Object
@@ -58,6 +62,8 @@ export const formNames = {
   signup: SIGNUP_FORM_NAME,
   login: LOGIN_FORM_NAME,
   newProject: NEW_PROJECT_FORM_NAME,
+  newTag: NEW_TAG_FORM_NAME,
+  newTagGroup: NEW_TAG_GROUP_FORM_NAME,
   newJobRun: NEW_JOB_RUN_FORM_NAME
 }
 

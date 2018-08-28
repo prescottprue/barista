@@ -21,5 +21,29 @@ export default theme => ({
     width: '100%',
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2
+  },
+  paper: {
+    ...theme.mixins.gutters(),
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2,
+    width: '100%'
+  },
+  title: {
+    alignSelf: 'center'
+  },
+  createButton: {
+    alignSelf: 'flex-end',
+    marginBottom: theme.spacing.unit * 2
+  },
+  columnLabels: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(8, 1fr)',
+    marginLeft: '1rem',
+    width: '100%',
+    marginRight: '1rem'
+  },
+  columnLabel: {
+    fontWeight: 200,
+    fontSize: '.9rem'
   }
 })
