@@ -1,6 +1,7 @@
 import CoreLayout from '../layouts/CoreLayout'
 import Home from './Home'
 import ProjectsRoute from './Projects'
+import TagGroupsRoute from './TagGroups'
 import TagsRoute from './Tags'
 import AccountRoute from './Account'
 import NotFoundRoute from './NotFound'
@@ -18,6 +19,7 @@ export const createRoutes = store => ({
     AccountRoute(store),
     ProjectsRoute(store),
     TagsRoute(store),
+    TagGroupsRoute(store),
     // AsyncRoute(store) // async routes setup by passing store
     // SyncRoute, // sync routes just need route object by itself
     /* Place all Routes above here so NotFoundRoute can act as a 404 page */

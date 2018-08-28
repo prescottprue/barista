@@ -24,7 +24,7 @@ export function getProjectId(state, props) {
  * @param {Object} props - Component props
  */
 export function getProject(state, props) {
-  return get(state, `firestore.project.${props.projectid}`)
+  return get(state, `firestore.projects.${props.projectid}`)
 }
 
 /**

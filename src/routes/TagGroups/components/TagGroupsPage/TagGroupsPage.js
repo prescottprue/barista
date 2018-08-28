@@ -5,13 +5,13 @@ import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import BackIcon from '@material-ui/icons/ArrowBack'
-import TagsTable from '../TagsTable'
+import TagGroupsTable from '../TagGroupsTable'
 
-export const TagsPage = ({ tags, classes }) => (
+export const TagGroupsPage = ({ tags, classes }) => (
   <div className={classes.container}>
     <div className={classes.titleBar}>
       <Typography variant="headline" component="h3">
-        Tags
+        Tag Groups
       </Typography>
     </div>
     <div className={classes.buttons}>
@@ -22,14 +22,14 @@ export const TagsPage = ({ tags, classes }) => (
       </Tooltip>
     </div>
     <div>
-      <TagsTable />
+      <TagGroupsTable />
     </div>
   </div>
 )
 
-TagsPage.propTypes = {
+TagGroupsPage.propTypes = {
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   tags: PropTypes.object // from enhancer (firestoreConnect + connect)
 }
 
-export default TagsPage
+export default TagGroupsPage

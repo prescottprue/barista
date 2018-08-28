@@ -2,8 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import { paths } from 'constants'
+import { startCase } from 'lodash'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
+
+const links = [
+  { path: paths.list, value: 'projects' },
+  { path: paths.tags, value: 'tags' },
+  { path: paths.tagGroups, value: 'tagGroups' }
+]
 
 export const Home = ({ classes }) => (
   <div className={classes.root}>
@@ -15,9 +22,11 @@ export const Home = ({ classes }) => (
         More Coming Soon
       </Typography>
       <div className={classes.links}>
-        <Link to={paths.list}>
-          <p>View Projects</p>
-        </Link>
+        {links.map((linkData, linkIndex) => (
+          <Link to={linkData.path} key={`${linkIndex}-${linkData.value}`}>
+            <p>View {startCase(linkData.value)}</p>
+          </Link>
+        ))}
       </div>
     </Paper>
   </div>

@@ -10,5 +10,11 @@ export default theme => ({
     ...theme.mixins.gutters(),
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2
+  },
+  links: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    flexDirection: 'column'
   }
 })
