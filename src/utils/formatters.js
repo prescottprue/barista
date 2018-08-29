@@ -1,5 +1,5 @@
 import { isDate, isObject, invoke } from 'lodash'
-import { format, distanceInWordsStrict } from "date-fns";
+import { format, distanceInWordsStrict } from 'date-fns'
 
 /**
  * Convert date string or object into date object
@@ -61,7 +61,10 @@ export function formatDateTime(dateValue, includeMilliseconds = false) {
  * @param {*} [compareToDateValue=new Date()] - The later time dateValue being cmpared to
  * @returns {String} Relative time difference string
  */
-export function strictDistanceInWords(dateValue, compareToDateValue = new Date()) {
+export function strictDistanceInWords(
+  dateValue,
+  compareToDateValue = new Date()
+) {
   return distanceInWordsStrict(
     getDateObject(dateValue),
     getDateObject(compareToDateValue)
