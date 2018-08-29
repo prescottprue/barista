@@ -7,6 +7,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import Tooltip from '@material-ui/core/Tooltip'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import {
   Error as ErrorIcon,
   CheckCircle,
@@ -35,22 +36,26 @@ export const RunMetaItem = ({
   passes,
   failures,
   formattedDuration,
-  formattedEnd,
+  formattedStart,
+  startedAtToolTip,
   status,
   environment,
   runDetailPath,
-  reRunJob
+  reRunJob,
+  tests,
+  showProgress,
+  allTests
 }) => (
   <ExpansionPanel className={classes.root}>
     <ExpansionPanelSummary
       classes={{
-        content: classes.summary,
+        content: showProgress ? classes.progressMargin : classes.summary,
         root: classes.summaryRoot
       }}>
       <Typography align="center" variant="body1" className={classes.data}>
         {iconFromStatus(status, classes)}
       </Typography>
-      <Tooltip title="Build Number">
+      <Tooltip title="Run Id">
         <Typography align="center" variant="body1" className={classes.data}>
           {runId}
         </Typography>
@@ -70,12 +75,12 @@ export const RunMetaItem = ({
           {formattedDuration}
         </Typography>
       </Tooltip>
-      <Tooltip title="Ending Time">
+      <Tooltip title={startedAtToolTip}>
         <Typography
           align="center"
           variant="body1"
           className={classnames(classes.data, classes.dateWords)}>
-          {formattedEnd}
+          {formattedStart}
         </Typography>
       </Tooltip>
       <Tooltip title="Environment">
@@ -112,6 +117,14 @@ export const RunMetaItem = ({
           </Button>
         </Tooltip>
       </div>
+      {showProgress ? (
+        <LinearProgress
+          className={classnames(classes.progressBar)}
+          variant="determinate"
+          value={tests}
+          valueBuffer={allTests}
+        />
+      ) : null}
     </ExpansionPanelSummary>
   </ExpansionPanel>
 )
@@ -121,7 +134,6 @@ RunMetaItem.propTypes = {
   pending: PropTypes.number,
   passes: PropTypes.number,
   failures: PropTypes.number,
-  formattedEnd: PropTypes.string,
   formattedDuration: PropTypes.string, // from enhancer (withProps)
   status: PropTypes.string,
   environment: PropTypes.string,

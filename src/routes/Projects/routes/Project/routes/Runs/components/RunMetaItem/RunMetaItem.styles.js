@@ -7,6 +7,11 @@ export default theme => ({
   summaryRoot: {
     padding: 0
   },
+  progressMargin: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(8, 1fr)',
+    marginBottom: 0
+  },
   summary: {
     display: 'grid',
     gridTemplateColumns: 'repeat(8, 1fr)'
@@ -44,6 +49,11 @@ export default theme => ({
   },
   detailsButton: {
     gridColumnStart: 2
+  },
+  progressBar: {
+    gridColumnStart: 1,
+    gridColumnEnd: 9,
+    marginTop: '1rem'
   },
   // Causes "Warning: [JSS] Unknown at-rule @-moz-keyframes spin"
   // '@-moz-keyframes spin': {

@@ -1,5 +1,5 @@
 import { isDate, isObject, invoke } from 'lodash'
-import { format } from 'date-fns'
+import { format, distanceInWordsStrict } from "date-fns";
 
 /**
  * Convert date string or object into date object
@@ -46,6 +46,24 @@ export function formatDate(dateValue) {
  * @param  {Object|Date} dateValue - Date value which to format
  * @return {String} Formatted date
  */
-export function formatDateTime(dateValue) {
-  return format(getDateObject(dateValue), 'MM/DD/YY - h:mm:ss.SSS A')
+export function formatDateTime(dateValue, includeMilliseconds = false) {
+  return format(
+    getDateObject(dateValue),
+    `MM/DD/YY - h:mm:ss${includeMilliseconds ? '.SSS' : ''} A`
+  )
+}
+
+/**
+ * Get a string representation of date math.  This is strict, so the number is more precise than other methods
+ *
+ * @export
+ * @param {*} dateValue - The date that is being relative to now or later time
+ * @param {*} [compareToDateValue=new Date()] - The later time dateValue being cmpared to
+ * @returns {String} Relative time difference string
+ */
+export function strictDistanceInWords(dateValue, compareToDateValue = new Date()) {
+  return distanceInWordsStrict(
+    getDateObject(dateValue),
+    getDateObject(compareToDateValue)
+  )
 }
