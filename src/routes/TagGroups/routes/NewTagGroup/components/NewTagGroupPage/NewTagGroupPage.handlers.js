@@ -12,6 +12,10 @@ export function createNewTagGroup({ firestore, uid, projectId, router }) {
       console.error('UID is required to create tag group') // eslint-disable-line no-console
       return
     }
+    // If no projects provided, mark as global
+    if (!values.projects) {
+      values.global = true
+    }
     return firestore
       .add(TAG_GROUPS_DATA_PATH, {
         ...values,
