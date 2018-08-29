@@ -37,7 +37,7 @@ async function cleanupRunnerEvent(change, context) {
     )
     throw getDataErr
   }
-  console.log('job run data:', jobRunDataSnap.val())
+
   const { resourceUrl } = get(jobRunDataSnap.val(), 'instanceMeta', {})
 
   // Throw for missing resourceUrl (needed to delete instance)
@@ -72,6 +72,7 @@ async function cleanupRunnerEvent(change, context) {
     throw requestErr
   }
 
+  // Update job run meta with instanceDeleteStarted flag
   const [startedUpdateErr] = await to(
     testRunMetaRef.update({ instanceDeleteStarted: true })
   )
@@ -106,7 +107,7 @@ async function cleanupRunnerEvent(change, context) {
     throw responseErr
   }
 
-  // Update job run meta with finished
+  // Update job run meta with instanceDeleteFinished
   const [finishedUpdateErr] = await to(
     testRunMetaRef.update({ instanceDeleteFinished: true })
   )
@@ -131,4 +132,4 @@ async function cleanupRunnerEvent(change, context) {
  */
 export default functions.database
   .ref('/test_runs_meta/{projectId}/{jobRunKey}/runResult')
-  .onUpdate(cleanupRunnerEvent)
+  .onWrite(cleanupRunnerEvent)
