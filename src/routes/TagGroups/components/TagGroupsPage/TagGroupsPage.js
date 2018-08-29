@@ -9,7 +9,7 @@ import { TAG_GROUPS_PATH } from 'constants'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import TagGroupsTable from '../TagGroupsTable'
 
-export const TagGroupsPage = ({ tags, classes }) => (
+export const TagGroupsPage = ({ classes }) => (
   <div className={classes.root}>
     <div className={classes.titleBar}>
       <Typography variant="headline" component="h3">
@@ -35,8 +35,7 @@ export const TagGroupsPage = ({ tags, classes }) => (
 )
 
 TagGroupsPage.propTypes = {
-  classes: PropTypes.object.isRequired, // from enhancer (withStyles)
-  tags: PropTypes.object // from enhancer (firestoreConnect + connect)
+  classes: PropTypes.object.isRequired // from enhancer (withStyles)
 }
 
 export default TagGroupsPage

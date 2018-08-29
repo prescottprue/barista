@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
+import { map, get, find } from 'lodash'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
@@ -10,13 +11,26 @@ import Paper from '@material-ui/core/Paper'
 import SelectField from 'components/SelectField'
 import ImageBuildStatus from 'routes/Projects/routes/Project/components/ImageBuildStatus'
 import MostRecentImageInfo from 'routes/Projects/routes/Project/components/MostRecentImageInfo'
+import Chip from '@material-ui/core/Chip'
+import { TAGS_PATH } from 'constants'
 
 const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
+const ITEM_HEIGHT = 48
+const ITEM_PADDING_TOP = 8
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+}
 
 export const NewRunForm = ({
   classes,
   handleSubmit,
   buildsPath,
+  tagGroups,
   runsPath,
   pristine,
   projectId,
@@ -47,6 +61,54 @@ export const NewRunForm = ({
           name="environment"
           label="Select Run Environment"
         />
+        {tagGroups && tagGroups.map ? (
+          <div className={classes.tagGroups}>
+            <Typography>Tag Groups</Typography>
+            <SelectField
+              name="tagGroups"
+              placeholder="Select Tag Group(s)"
+              renderValue={selected => (
+                <div className={classes.chips}>
+                  {map(
+                    typeof selected === 'string'
+                      ? selected.split(',')
+                      : selected,
+                    (value, key) => {
+                      const tagGroup = find(tagGroups, { id: value })
+                      return (
+                        <Chip
+                          key={`TagGroup-${value}-${get(
+                            tagGroup,
+                            'name',
+                            value
+                          )}`}
+                          label={get(tagGroup, 'name', value)}
+                          className={classes.chip}
+                        />
+                      )
+                    }
+                  )}
+                </div>
+              )}
+              MenuProps={MenuProps}
+              options={tagGroups}
+              multiple
+            />
+          </div>
+        ) : (
+          <div className={classes.empty}>
+            <p>Tags Required To Create a Tag Group</p>
+            <Button
+              variant="outlined"
+              className={classes.createButton}
+              component={Link}
+              to={`${TAGS_PATH}/new`}>
+              Create New Tag
+            </Button>
+          </div>
+        )}
+      </div>
+      <div>
         <ImageBuildStatus projectId={projectId} />
         <MostRecentImageInfo projectId={projectId} />
         <div className={classes.button}>
@@ -61,6 +123,7 @@ export const NewRunForm = ({
 
 NewRunForm.propTypes = {
   projectId: PropTypes.string.isRequired,
+  tagGroups: PropTypes.array, // from enhancer (connect)
   buildsPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object, // from enhancer (withStyles)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)

@@ -1,12 +1,13 @@
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { LIST_PATH, RUNS_PATH } from 'constants'
+import { LIST_PATH, RUNS_PATH, PROJECTS_DATA_PATH } from 'constants'
 import { withHandlers, withStateHandlers, pure } from 'recompose'
 import { firestoreConnect } from 'react-redux-firebase'
 import { withNotifications } from 'modules/notification'
 import { withRouter, spinnerWhileLoading } from 'utils/components'
 import { UserIsAuthenticated } from 'utils/router'
 import { withChildren } from 'enhancers'
+import { getOrderedProjects } from 'selectors'
 
 export default compose(
   // redirect to /login if user is not logged in
@@ -16,17 +17,17 @@ export default compose(
   // Wait for uid to exist before going further
   spinnerWhileLoading(['uid']),
   withChildren,
-  // Create listeners based on current users UID
+  // Create listeners for data from firestore
   firestoreConnect(({ params, uid }) => [
-    // Listener for projects the current user created
+    // Listener for public projects (results go into redux state)
     {
-      collection: 'projects',
+      collection: PROJECTS_DATA_PATH,
       where: ['public', '==', true]
     }
   ]),
   // Map projects from state to props
-  connect(({ firestore: { ordered } }) => ({
-    projects: ordered.projects
+  connect((state, props) => ({
+    projects: getOrderedProjects(state, props)
   })),
   // Show loading spinner while projects and collabProjects are loading
   spinnerWhileLoading(['projects']),

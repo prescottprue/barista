@@ -33,5 +33,13 @@ export default theme => ({
     display: 'flex',
     justifyContent: 'center',
     marginTop: '2rem'
+  },
+  projects: {
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
+    display: 'flex',
+    flexDirection: 'column',
+    alignSelf: 'flex-start',
+    width: '40%'
   }
 })

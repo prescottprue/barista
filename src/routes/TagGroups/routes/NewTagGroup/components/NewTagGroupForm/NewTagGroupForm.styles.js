@@ -33,5 +33,13 @@ export default theme => ({
     display: 'flex',
     justifyContent: 'center',
     marginTop: '2rem'
+  },
+  empty: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
+    width: '100%'
   }
 })

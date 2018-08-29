@@ -1,4 +1,4 @@
-import { TAG_GROUP_DATA_PATH, TAGS_PATH } from 'constants'
+import { TAG_GROUPS_DATA_PATH, TAG_GROUPS_PATH } from 'constants'
 
 /**
  * Handler for starting test run. Works by pushing to requests/callRunner
@@ -6,13 +6,18 @@ import { TAG_GROUP_DATA_PATH, TAGS_PATH } from 'constants'
  * @param  {Object} props - Component props
  * @return {Function} Function which accepts form values and starts test run
  */
-export function createNewTagGroup({ firebase, projectId, router }) {
+export function createNewTagGroup({ firestore, uid, projectId, router }) {
   return values => {
-    return firebase
-      .pushWithMeta(TAG_GROUP_DATA_PATH, {
+    if (!uid) {
+      console.error('UID is required to create tag group') // eslint-disable-line no-console
+      return
+    }
+    return firestore
+      .add(TAG_GROUPS_DATA_PATH, {
         ...values,
-        project: projectId
+        createdBy: uid,
+        createdAt: firestore.FieldValue.serverTimestamp()
       })
-      .then(() => router.push(TAGS_PATH))
+      .then(() => router.push(TAG_GROUPS_PATH))
   }
 }

@@ -30,6 +30,7 @@ export const firebasePaths = {
 }
 
 /* --------------- Firestore Paths --------------- */
+export const PROJECTS_DATA_PATH = 'projects'
 export const CONTAINER_BUILDS_META_PATH = 'container_builds'
 export const TEST_RUNS_META_PATH = 'test_runs_meta'
 export const TEST_RUNS_DATA_PATH = 'test_runs_data'
@@ -41,6 +42,7 @@ export const TAG_GROUPS_DATA_PATH = 'tag_groups'
  * @type Object
  */
 export const firestorePaths = {
+  projects: PROJECTS_DATA_PATH,
   containerBuildsMeta: CONTAINER_BUILDS_META_PATH,
   tags: TAGS_DATA_PATH,
   tagGroups: TAG_GROUPS_DATA_PATH
