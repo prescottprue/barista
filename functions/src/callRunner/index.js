@@ -26,7 +26,8 @@ async function callRunnerEvent(snap, context) {
     jobRunKey,
     environment,
     baristaProject,
-    instanceTemplateName
+    instanceTemplateName,
+    buildId
   } = eventData
   const responseRef = rtdbRef(`${RESPONSES_PATH}/${CALL_RUNNER_PATH}/${pushId}`)
 
@@ -97,7 +98,8 @@ async function callRunnerEvent(snap, context) {
     zone,
     id,
     targetLink,
-    createdBy: responseData.user || null
+    createdBy: responseData.user || null,
+    buildId
   }
   const [writeErr] = await to(
     Promise.all([

@@ -3,9 +3,13 @@ server
 node_modules
 cypress/videos
 .eslintignore
+.eslintrc
+firestore.indexes.json
 .gitlab-ci.yml
-LICENSE
 .dockerignore
 Dockerfile
 npm-debug.log
 .git
+CONTRIBUTING.md
+README.md
+LICENSE

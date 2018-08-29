@@ -7,7 +7,13 @@ import { TEST_RUNS_META_PATH, CALL_RUNNER_REQUEST_PATH } from 'constants'
  * @param  {Object} props - Component props
  * @return {Function} Function which accepts form values and starts test run
  */
-export function startTestRun({ firebase, projectId, router, runsPagePath }) {
+export function startTestRun({
+  firebase,
+  projectId,
+  router,
+  runsPagePath,
+  buildId
+}) {
   return values => {
     const environment = get(values, 'environment', '')
     const instanceTemplateName = `test-${projectId}-${environment}`
@@ -25,7 +31,8 @@ export function startTestRun({ firebase, projectId, router, runsPagePath }) {
         jobRunKey: pushKey,
         environment,
         baristaProject: projectId,
-        instanceTemplateName
+        instanceTemplateName,
+        buildId
       })
       .then(() => {
         return router.push(`${runsPagePath}/${pushKey}`)
