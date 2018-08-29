@@ -1,13 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { get } from 'lodash'
+import { get, map } from 'lodash'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
-import { formatDate } from 'utils/formatters'
+import Chip from '@material-ui/core/Chip'
+import { formatDateTime } from 'utils/formatters'
 
 // Column cofiguration
 const tagGroupTableColumns = [
@@ -17,23 +18,51 @@ const tagGroupTableColumns = [
   },
   {
     value: 'projects',
-    format: projects => {
-      return projects ? Object.keys(projects).join('%0d%0a') : 'Global'
+    format: (projectKeys, { projects, classes }) => {
+      return projectKeys ? (
+        <div className={classes.chipRoot}>
+          {map(projectKeys, (_, projectKey) => {
+            return (
+              <Chip
+                className={classes.chip}
+                key={`Project-${projectKey}`}
+                label={get(projects, `${projectKey}.name`, projectKey)}
+              />
+            )
+          })}
+        </div>
+      ) : (
+        'Global'
+      )
     }
   },
   {
     value: 'tags',
-    format: tags => {
-      return tags ? Object.keys(tags).join(', ') : 'No Tags'
+    format: (tagKeys, { tags, classes }) => {
+      return tagKeys ? (
+        <div className={classes.chipRoot}>
+          {map(tagKeys, (_, tagKey) => {
+            return (
+              <Chip
+                className={classes.chip}
+                key={`Project-${tagKey}`}
+                label={get(tags, `${tagKey}.name`, tagKey)}
+              />
+            )
+          })}
+        </div>
+      ) : (
+        'No Tags'
+      )
     }
   },
   {
     value: 'createdAt',
-    format: dateObj => formatDate(dateObj)
+    format: dateObj => formatDateTime(dateObj)
   }
 ]
 
-export const TagGroupsTable = ({ tagGroups, classes }) => (
+export const TagGroupsTable = ({ tagGroups, tags, projects, classes }) => (
   <Paper className={classes.root}>
     <Table className={classes.table}>
       <TableHead>
@@ -58,7 +87,12 @@ export const TagGroupsTable = ({ tagGroups, classes }) => (
                       column.value
                     }-${columnInd}`}>
                     {column.format
-                      ? column.format(get(row, column.value), row)
+                      ? column.format(get(row, column.value), {
+                          projects,
+                          row,
+                          tags,
+                          classes
+                        })
                       : get(row, column.value, '-')}
                   </TableCell>
                 ))}
@@ -72,7 +106,9 @@ export const TagGroupsTable = ({ tagGroups, classes }) => (
 
 TagGroupsTable.propTypes = {
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
-  tagGroups: PropTypes.array // from enhancer (firestoreConnect + connect)
+  tagGroups: PropTypes.array, // from enhancer (firestoreConnect + connect)
+  tags: PropTypes.object, // from enhancer (firestoreConnect + connect)
+  projects: PropTypes.object // from enhancer (firestoreConnect + connect)
 }
 
 export default TagGroupsTable

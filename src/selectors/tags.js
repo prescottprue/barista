@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { firestorePaths } from 'constants'
+import { firestorePaths, TAGS_DATA_PATH } from 'constants'
 
 /**
  * @param {Object} state - Redux state (from connect)
@@ -22,7 +22,7 @@ export function getTagGroups(state, props) {
  * @param {Object} props - Component props
  */
 export function getOrderedTags(state, props) {
-  return get(state, `firestore.ordered.${firestorePaths.tags}`)
+  return get(state, `firestore.ordered.${TAGS_DATA_PATH}`)
 }
 
 /**
@@ -30,5 +30,5 @@ export function getOrderedTags(state, props) {
  * @param {Object} props - Component props
  */
 export function getTags(state, props) {
-  return get(state, `firestore.data.${firestorePaths.tags}`)
+  return get(state, `firestore.data.${TAGS_DATA_PATH}`)
 }
