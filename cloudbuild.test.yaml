@@ -42,14 +42,14 @@ steps:
   ]
   timeout: 500s
 # Push Barista E2E Test Image To Container Registry (For Use In Barista)
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args:
-  - '-c'
-  - |
-    echo "This step only pushes the latest image if this build was triggered by a push to master, otherwise it pushes branchname tag"
-    [[ "$BRANCH_NAME" == "master" ]] && docker push gcr.io/$PROJECT_ID/test-barista || gcr.io/$PROJECT_ID/test-barista:$BRANCH_NAME;
 # - name: 'gcr.io/cloud-builders/docker'
-#   args: ['push', 'gcr.io/$PROJECT_ID/test-barista']
-#   timeout: 500s
+#   entrypoint: 'bash'
+#   args:
+#   - '-c'
+#   - |
+#     echo "This step only pushes the latest image if this build was triggered by a push to master, otherwise it pushes branchname tag"
+#     [[ "$BRANCH_NAME" == "master" ]] && docker push gcr.io/$PROJECT_ID/test-barista || gcr.io/$PROJECT_ID/test-barista:$BRANCH_NAME;
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/test-barista']
+  timeout: 500s
 images: ['gcr.io/$PROJECT_ID/test-barista']
