@@ -3,12 +3,14 @@ FROM cypress/base:8
 ## Build Arguments
 # URL which Cypress will run tests against (with default)
 ARG test_url=https://barista-stage.firebaseapp.com
+# Arguments to add to the cypress run command
+ARG test_command_args=""
 
 ## Environment Variables
 # URL which Cypress will run tests against (defaults to test_url arg)
 ENV CYPRESS_baseUrl=$test_url
-
-ENV TEST_COMMAND="\$(npm\ bin)/cypress\ run\ --reporter\ barista-reporter"
+# Arguments to add to the cypress run command
+ENV TEST_ARGS "${test_command_args}"
 
 # Token used to auth firebase-tools for use in seeding/checking Firebase (RTDB + Firestore)
 ENV FIREBASE_TOKEN $FIREBASE_TOKEN
@@ -52,4 +54,4 @@ RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above) reporting results using Barista Reporter.
 # Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY 
-ENTRYPOINT $TEST_COMMAND; echo \"$?\" | bin/testsComplete.js
+ENTRYPOINT echo $(npm bin)/cypress run --reporter barista-reporter$TEST_ARGS; echo \"$?\" | bin/testsComplete.js
