@@ -117,7 +117,13 @@ export const getProjectOrderedProjectRunsMeta = createSelector(
  */
 export const getMostRecentBuildId = createSelector(
   [getMostRecentBuild],
-  mostRecentBuild => get(mostRecentBuild, 'buildData.attributes.buildId')
+  mostRecentBuild =>
+    get(
+      mostRecentBuild,
+      'id',
+      // TODO: Remove once old container images have been updated
+      get(mostRecentBuild, 'buildData.attributes.buildId')
+    )
 )
 
 /**
@@ -126,7 +132,12 @@ export const getMostRecentBuildId = createSelector(
  */
 export const getMostRecentBranchName = createSelector(
   [getMostRecentBuild],
-  mostRecentBuild => get(mostRecentBuild, 'buildData.branchName')
+  mostRecentBuild =>
+    get(
+      mostRecentBuild,
+      'branchName',
+      get(mostRecentBuild, 'buildData.branchName')
+    )
 )
 
 /**
@@ -135,7 +146,12 @@ export const getMostRecentBranchName = createSelector(
  */
 export const getMostRecentCommitSha = createSelector(
   [getMostRecentBuild],
-  mostRecentBuild => get(mostRecentBuild, 'buildData.commitSha')
+  mostRecentBuild =>
+    get(
+      mostRecentBuild,
+      'commitSha',
+      get(mostRecentBuild, 'buildData.commitSha')
+    )
 )
 
 /**

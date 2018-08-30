@@ -47,7 +47,7 @@ if (!process.env.BUILD_ID) {
 
   // Query for existing container build with matching build id
   return containerBuildsRef
-    .where('buildData.attributes.buildId', '==', process.env.BUILD_ID)
+    .doc(process.env.BUILD_ID)
     .get()
     .then(snap => {
       // Check results for matching doc

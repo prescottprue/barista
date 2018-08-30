@@ -35,7 +35,7 @@ export default compose(
     {
       collection: CONTAINER_BUILDS_META_PATH,
       orderBy: ['finishTime', 'desc'],
-      where: ['projectId', '==', projectId],
+      where: [['projectId', '==', projectId], ['status', '==', 'SUCCESS']],
       limit: 1,
       storeAs: `mostRecentBuild-${projectId}`
     },

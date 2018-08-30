@@ -23,6 +23,7 @@ function parseMessageBody(message) {
 }
 
 /**
+ * Handle incoming PubSub message containing data about Cloud Build Event
  * @param  {functions.Event} message - Cloud Pub Sub message
  * @return {Promise}
  */
@@ -45,21 +46,29 @@ async function callCloudBuildApiEvent(message) {
   }
 
   // Get info from message
-  const { attributes } = message
-  const { status } = attributes
+  const { attributes } = message || {}
+  const { status, buildId } = attributes || {}
   const { source, sourceProvenance } = messageBody
   const { branchName, repoName } = get(source, 'repoSource', {})
   const commitSha = get(sourceProvenance, 'resolvedRepoSource.commitSha', '')
-  const buildData = { attributes, source, branchName, commitSha }
+
+  // Handle repo name not existing within message
   if (!repoName) {
     const noRepoErr = 'No repo name found in message body'
     console.error(noRepoErr, messageBody)
     throw new Error(noRepoErr)
   }
+
+  const imageMetaData = { status, branchName, buildId, commitSha, repoName }
+
+  if (messageBody.finishTime) {
+    imageMetaData.finishTime = messageBody.finishTime
+  }
+
   // Strip prefix from repo name to get project (prefix is from cloud-build)
   const projectId = repoName.replace('github-reside-eng-', '')
 
-  console.log(`Build event status update for project: "${projectId}"`, {
+  console.log(`Build event status update for project : "${projectId}"`, {
     branchName,
     commitSha
   })
@@ -69,9 +78,7 @@ async function callCloudBuildApiEvent(message) {
     .ref(`${CONTAINER_BUILDS_STATUS_PATH}/${projectId}`)
 
   // Write status updates to RTDB (Failures, New Builds, etc)
-  const [statusSetErr] = await to(
-    statusRef.set({ status, branchName, buildData })
-  )
+  const [statusSetErr] = await to(statusRef.set(imageMetaData))
 
   // Handle errors writing status update to RTDB
   if (statusSetErr) {
@@ -82,22 +89,16 @@ async function callCloudBuildApiEvent(message) {
     throw statusSetErr
   }
 
-  // Exit for all status not a success (only successful builds written to
-  // Firestore)
-  if (status !== 'SUCCESS') {
-    return null
-  }
-
-  const imageMetaData = { projectId, buildData }
-  if (messageBody.finishTime) {
-    imageMetaData.finishTime = messageBody.finishTime
-  }
-
   // Write successful builds to container images collection
-  const imageMetaRef = admin.firestore().collection(CONTAINER_BUILDS_META_PATH)
+  const imageMetaRef = admin
+    .firestore()
+    .collection(CONTAINER_BUILDS_META_PATH)
+    .doc(buildId)
 
   // Write image metadata to Firestore
-  const [metaWriteErr] = await to(imageMetaRef.add(imageMetaData))
+  const [metaWriteErr] = await to(
+    imageMetaRef.set({ ...imageMetaData, projectId }, { merge: true })
+  )
 
   // Handle errors writing image meta data to Firestore
   if (metaWriteErr) {

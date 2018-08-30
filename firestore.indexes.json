@@ -13,6 +13,19 @@
         { "fieldPath": "projectId", "mode": "ASCENDING" },
         { "fieldPath": "finishTime", "mode": "DESCENDING" }
       ]
+    },
+    {
+      "collectionId": "container_builds",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "finishTime",
+          "mode": "DESCENDING"
+        }
+      ]
     }
   ]
 }
