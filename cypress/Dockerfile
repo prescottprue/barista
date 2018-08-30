@@ -16,8 +16,8 @@ ENV TEST_ARGS "${test_command_args}"
 ENV FIREBASE_TOKEN $FIREBASE_TOKEN
 # Key used to specifiy job
 ENV JOB_RUN_KEY $JOB_RUN_KEY
-
-RUN echo $TEST_COMMAND
+# Image Build Id (from Cloud Build) used in recording of test files
+ENV BUILD_ID $BUILD_ID
 
 # Prevent a large number messages during NPM install
 ENV npm_config_loglevel warn

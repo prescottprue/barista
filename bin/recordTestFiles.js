@@ -32,7 +32,7 @@ if (!process.env.BUILD_ID) {
   /* eslint-enable no-console */
   process.exit(1)
 } else {
-  const firestore = utils.initializeFirebase().firestore()
+  const fbInstance = utils.initializeFirebase()
   // Load all folders within dist directory (mirrors layout of src)
   const filePaths = glob.sync(testFolderPath + '/**/**/*.spec.js', {
     cwd: __dirname
@@ -43,10 +43,10 @@ if (!process.env.BUILD_ID) {
   )
   console.log(`Writing test files data to Firestore`, files) // eslint-disable-line no-console
   const filesMetaPath = `container_builds`
-  const resultsRef = firestore.collection(filesMetaPath)
+  const containerBuildsRef = fbInstance.firestore().collection(filesMetaPath)
 
   // Query for existing container build with matching build id
-  return resultsRef
+  return containerBuildsRef
     .where('buildData.attributes.buildId', '==', process.env.BUILD_ID)
     .get()
     .then(snap => {
@@ -56,15 +56,15 @@ if (!process.env.BUILD_ID) {
       if (matchingDoc) {
         console.log('Matching doc found for container image:', matchingDoc.id)
         // Update matching doc with files
-        return resultsRef.doc(matchingDoc.id).update({ files })
+        return containerBuildsRef.doc(matchingDoc.id).update({ files })
       }
 
       // Add new document with buildId and files
       console.log('Creating new document for container image files data')
-      return resultsRef.add({
+      return containerBuildsRef.add({
         buildId: process.env.BUILD_ID,
         files,
-        createdAt: admin.database.ServerValue.TIMESTAMP
+        createdAt: fbInstance.firestore.FieldValue.serverTimestamp()
       })
     })
     .then(() => {
