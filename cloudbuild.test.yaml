@@ -24,7 +24,7 @@ steps:
   args: [
     'build',
     '--build-arg',
-    'build_id=$BUILD_ID',
+    'build_id=${BUILD_ID}',
     '-t',
     'gcr.io/$PROJECT_ID/test-barista:$COMMIT_SHA',
     '-t',
