@@ -7,10 +7,15 @@ ARG test_url=https://barista-stage.firebaseapp.com
 ## Environment Variables
 # URL which Cypress will run tests against (defaults to test_url arg)
 ENV CYPRESS_baseUrl=$test_url
+
+ENV TEST_COMMAND="\$(npm\ bin)/cypress\ run\ --reporter\ barista-reporter"
+
 # Token used to auth firebase-tools for use in seeding/checking Firebase (RTDB + Firestore)
 ENV FIREBASE_TOKEN $FIREBASE_TOKEN
 # Key used to specifiy job
 ENV JOB_RUN_KEY $JOB_RUN_KEY
+
+RUN echo $TEST_COMMAND
 
 # Prevent a large number messages during NPM install
 ENV npm_config_loglevel warn
@@ -47,4 +52,4 @@ RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above) reporting results using Barista Reporter.
 # Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY 
-ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter; echo \"$?\" | bin/testsComplete.js
+ENTRYPOINT $TEST_COMMAND; echo \"$?\" | bin/testsComplete.js

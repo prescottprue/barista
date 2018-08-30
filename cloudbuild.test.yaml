@@ -24,7 +24,9 @@ steps:
   args: [
     'build',
     '-t',
-    'gcr.io/$PROJECT_ID/test-barista',
+    'gcr.io/$PROJECT_ID/test-barista:$COMMIT_SHA',
+    '-t',
+    'gcr.io/$PROJECT_ID/test-barista:$BRANCH',
     '-f',
     'cypress/Dockerfile',
     '.'
