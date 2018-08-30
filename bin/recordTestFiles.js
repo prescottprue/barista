@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 const glob = require('glob')
 const path = require('path')
+const admin = require('firebase-admin')
 const utils = require('./utils')
 const testFolderPath = path.join(__dirname, '..', 'cypress', 'integration')
 
@@ -63,7 +64,7 @@ if (!process.env.BUILD_ID) {
       return containerBuildsRef.add({
         buildId: process.env.BUILD_ID,
         files,
-        createdAt: fbInstance.firestore.FieldValue.serverTimestamp()
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
       })
     })
     .then(() => {
