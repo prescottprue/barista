@@ -59,4 +59,4 @@ RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above) reporting results using Barista Reporter.
 # Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY 
-ENTRYPOINT echo $(npm bin)/cypress run --reporter barista-reporter$TEST_ARGS; echo \"$?\" | bin/testsComplete.js
+ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter$TEST_ARGS; echo \"$?\" | bin/testsComplete.js

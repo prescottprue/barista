@@ -40,7 +40,7 @@ steps:
     'STAGE_FIREBASE_PROJECT_ID=barista-stage',
     'PROD_FIREBASE_PROJECT_ID=barista-836b4'
   ]
-  timeout: 500s
+  timeout: 660s
 # Push Barista E2E Test Image To Container Registry (For Use In Barista)
 # - name: 'gcr.io/cloud-builders/docker'
 #   entrypoint: 'bash'
@@ -51,5 +51,5 @@ steps:
 #     [[ "$BRANCH_NAME" == "master" ]] && docker push gcr.io/$PROJECT_ID/test-barista || gcr.io/$PROJECT_ID/test-barista:$BRANCH_NAME;
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/test-barista']
-  timeout: 500s
+  timeout: 660s
 images: ['gcr.io/$PROJECT_ID/test-barista']

@@ -6,24 +6,6 @@ const admin = require('firebase-admin')
 const utils = require('./utils')
 const testFolderPath = path.join(__dirname, '..', 'cypress', 'integration')
 
-/**
- * Create data object with values for each document with keys being doc.id.
- * @param  {firebase.database.DataSnapshot} snapshot - Data for which to create
- * an ordered array.
- * @return {Object|Null} Object documents from snapshot or null
- */
-function dataArrayFromSnap(snap) {
-  const data = []
-  if (snap.data && snap.exists) {
-    data.push({ id: snap.id, data: snap.data() })
-  } else if (snap.forEach) {
-    snap.forEach(doc => {
-      data.push({ id: doc.id, data: doc.data() || doc })
-    })
-  }
-  return data
-}
-
 if (!process.env.BUILD_ID) {
   /* eslint-disable no-console */
   console.log(
@@ -42,30 +24,32 @@ if (!process.env.BUILD_ID) {
     fileName => fileName && fileName.replace(`${testFolderPath}/`, '')
   )
   console.log(`Writing test files data to Firestore`, files) // eslint-disable-line no-console
-  const filesMetaPath = `container_builds`
-  const containerBuildsRef = fbInstance.firestore().collection(filesMetaPath)
-
-  // Query for existing container build with matching build id
-  return containerBuildsRef
+  const filesMetaPath = 'container_builds'
+  const containerBuildRef = fbInstance
+    .firestore()
+    .collection(filesMetaPath)
     .doc(process.env.BUILD_ID)
+  const containerBuildData = {
+    files,
+    filesAddedAt: admin.firestore.FieldValue.serverTimestamp()
+  }
+  // Query for existing container build with matching build id
+  return containerBuildRef
     .get()
     .then(snap => {
-      // Check results for matching doc
-      const [matchingDoc] = dataArrayFromSnap(snap)
-
-      if (matchingDoc) {
-        console.log('Matching doc found for container image:', matchingDoc.id)
+      if (snap.exists) {
+        console.log(
+          'Matching doc found for container image:',
+          process.env.BUILD_ID
+        )
         // Update matching doc with files
-        return containerBuildsRef.doc(matchingDoc.id).update({ files })
+        return containerBuildRef.update(containerBuildData)
       }
 
       // Add new document with buildId and files
-      console.log('Creating new document for container image files data')
-      return containerBuildsRef.add({
-        buildId: process.env.BUILD_ID,
-        files,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
-      })
+      console.log('Creating new document for container build')
+      containerBuildData.createdAt = admin.firestore.FieldValue.serverTimestamp()
+      return containerBuildRef.set(containerBuildData, { merge: true })
     })
     .then(() => {
       console.log('Files data successfully written to Firestore')
