@@ -26,7 +26,7 @@ steps:
     '-t',
     'gcr.io/$PROJECT_ID/test-barista:$COMMIT_SHA',
     '-t',
-    'gcr.io/$PROJECT_ID/test-barista:$BRANCH',
+    'gcr.io/$PROJECT_ID/test-barista:$BRANCH_NAME',
     '-f',
     'cypress/Dockerfile',
     '.'
