@@ -32,6 +32,9 @@ steps:
     '.'
   ]
   env: [
+    'BUILD_ID=$BUILD_ID',
+    'BRANCH_NAME=$BRANCH_NAME',
+    'PROJECT=$PROJECT_ID',
     'STAGE_FIREBASE_PROJECT_ID=barista-stage',
     'PROD_FIREBASE_PROJECT_ID=barista-836b4'
   ]

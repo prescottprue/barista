@@ -39,10 +39,13 @@ COPY cypress/ /cypress/
 RUN chmod +x bin/testsComplete.js
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11
+RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11 glob
 
 # Build Test Config
 RUN npm run build:testConfig
+
+# Record test files to firestore
+RUN bin/recordTestFiles.js
 
 # Install Cypress
 # Set CI=true to prevent a large number of messages during install of
