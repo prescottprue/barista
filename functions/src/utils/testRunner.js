@@ -18,6 +18,7 @@ import { REQUESTS_PATH, RESPONSES_PATH, CALL_GOOGLE_API_PATH } from 'constants'
  */
 function createRunRequest({
   cloudZone = 'us-west1-b',
+  commandArgsStr = '',
   instanceTemplateName,
   createdBy,
   jobRunKey,
@@ -27,6 +28,7 @@ function createRunRequest({
   meta = null
 }) {
   const cloudProjectId = getFirebaseConfig('projectId')
+  const imageVersion = 'CA-3337'
   // NOTE: requestId can not be used in name since it does not conform to
   // name field standards with Compute's API. Instead the requestId is used
   // as a tag. Error caused looked like so:
@@ -44,7 +46,7 @@ function createRunRequest({
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: test-${baristaProject}\n      image: gcr.io/${cloudProjectId}/test-${baristaProject}\n      env:\n        - name: JOB_RUN_KEY\n          value: ${baristaProject}/${jobRunKey}\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: test-${baristaProject}\n      image: gcr.io/${cloudProjectId}/test-${baristaProject}:${imageVersion}\n      env:\n        - name: JOB_RUN_KEY\n          value: ${baristaProject}/${jobRunKey}\n        - name: TEST_ARGS\n          value: "\\ ${commandArgsStr}"\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },
@@ -133,6 +135,7 @@ export async function callTestRunner({
   environment,
   baristaProject,
   createdBy,
+  commandArgsStr,
   instanceTemplateName = 'test-brawndo-stage'
 }) {
   const requestRef = rtdbRef(`${REQUESTS_PATH}/${CALL_GOOGLE_API_PATH}`).push()
@@ -144,6 +147,7 @@ export async function callTestRunner({
     requestKey: requestRef.key,
     jobRunKey,
     environment,
+    commandArgsStr,
     baristaProject,
     createdBy,
     meta

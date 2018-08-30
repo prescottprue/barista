@@ -27,6 +27,7 @@ async function callRunnerEvent(snap, context) {
     environment,
     baristaProject,
     instanceTemplateName,
+    commandArgsStr,
     buildId
   } = eventData
   const responseRef = rtdbRef(`${RESPONSES_PATH}/${CALL_RUNNER_PATH}/${pushId}`)
@@ -60,6 +61,7 @@ async function callRunnerEvent(snap, context) {
       createdBy,
       environment,
       baristaProject,
+      commandArgsStr,
       meta: { jobRunKey },
       instanceTemplateName
     })
