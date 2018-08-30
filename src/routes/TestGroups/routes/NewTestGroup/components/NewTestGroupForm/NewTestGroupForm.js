@@ -69,7 +69,10 @@ export const NewTestGroupForm = ({
                 <ListItem key={name} dense button className={classes.listItem}>
                   <ListItemText primary={name} />
                   <ListItemSecondaryAction>
-                    <Field name={`TestFile-${id}`} component={Checkbox} />
+                    <Field
+                      name={`filePaths.${id || name}`}
+                      component={Checkbox}
+                    />
                   </ListItemSecondaryAction>
                 </ListItem>
               ))}

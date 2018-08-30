@@ -22,6 +22,73 @@ function parseMessageBody(message) {
   }
 }
 
+async function updateContainerBuildStatus({ projectId, imageMetaData }) {
+  const statusRef = admin
+    .database()
+    .ref(`${CONTAINER_BUILDS_STATUS_PATH}/${projectId}`)
+
+  // Write status updates to RTDB (Failures, New Builds, etc)
+  const [statusSetErr] = await to(
+    statusRef.set({
+      ...imageMetaData,
+      updatedAt: admin.database.ServerValue.TIMESTAMP
+    })
+  )
+
+  // Handle errors writing status update to RTDB
+  if (statusSetErr) {
+    console.error(
+      `Error setting build event statues update to RTDB for project: "${projectId}"`,
+      statusSetErr
+    )
+    throw statusSetErr
+  }
+  console.log('Successfully wrote status update of container build to RTDB')
+}
+
+async function updateContainerBuildMeta({ projectId, buildId, imageMetaData }) {
+  // Write successful builds to container builds meta collection
+  const containerBuildMeta = admin
+    .firestore()
+    .collection(CONTAINER_BUILDS_META_PATH)
+    .doc(buildId)
+
+  // Write container build metadata to Firestore
+  const [imageMetaGetErr, imageMetaSnap] = await to(containerBuildMeta.get())
+
+  // Handle errors getting image meta data from Firestore
+  if (imageMetaGetErr) {
+    console.error(
+      'Error getting metadata of container build from Firestore: ',
+      imageMetaGetErr
+    )
+    throw imageMetaGetErr
+  }
+
+  // Check for existing doc, if one does not exist, add createdAt
+  if (!imageMetaSnap.exists) {
+    console.log(
+      'Metadata of container build does not already exist, adding createdAt'
+    )
+    imageMetaData.createdAt = admin.firestore.FieldValue.serverTimestamp()
+  }
+
+  // Write image metadata to Firestore
+  const [metaWriteErr] = await to(
+    containerBuildMeta.set({ ...imageMetaData, projectId }, { merge: true })
+  )
+
+  // Handle errors writing image meta data to Firestore
+  if (metaWriteErr) {
+    console.error(
+      'Error setting metadata of container build to Firestore: ',
+      metaWriteErr
+    )
+    throw metaWriteErr
+  }
+  console.log('Successfully wrote metadata of container build to Firestore')
+}
+
 /**
  * Handle incoming PubSub message containing data about Cloud Build Event
  * @param  {functions.Event} message - Cloud Pub Sub message
@@ -58,53 +125,38 @@ async function callCloudBuildApiEvent(message) {
     console.error(noRepoErr, messageBody)
     throw new Error(noRepoErr)
   }
-
-  const imageMetaData = { status, branchName, buildId, commitSha, repoName }
-
-  if (messageBody.finishTime) {
-    imageMetaData.finishTime = messageBody.finishTime
-  }
-
   // Strip prefix from repo name to get project (prefix is from cloud-build)
   const projectId = repoName.replace('github-reside-eng-', '')
 
   console.log(`Build event status update for project : "${projectId}"`, {
+    status,
     branchName,
     commitSha
   })
 
-  const statusRef = admin
-    .database()
-    .ref(`${CONTAINER_BUILDS_STATUS_PATH}/${projectId}`)
+  const imageMetaData = { status, branchName, buildId, commitSha, repoName }
 
-  // Write status updates to RTDB (Failures, New Builds, etc)
-  const [statusSetErr] = await to(statusRef.set(imageMetaData))
-
-  // Handle errors writing status update to RTDB
-  if (statusSetErr) {
-    console.error(
-      `Error setting build event statues update to RTDB for project: "${projectId}"`,
-      statusSetErr
-    )
-    throw statusSetErr
+  // Attach finishTime if it exists
+  if (messageBody.finishTime) {
+    imageMetaData.finishTime = messageBody.finishTime
   }
 
-  // Write successful builds to container images collection
-  const imageMetaRef = admin
-    .firestore()
-    .collection(CONTAINER_BUILDS_META_PATH)
-    .doc(buildId)
+  try {
+    // Update both status and build meta in parallel
+    await Promise.all([
+      updateContainerBuildStatus({ projectId, imageMetaData }),
+      updateContainerBuildMeta({ projectId, buildId, imageMetaData })
+    ])
+  } catch (err) {
+    console.error('Error in update of container build data:', err)
+    throw err
+  }
 
-  // Write image metadata to Firestore
-  const [metaWriteErr] = await to(
-    imageMetaRef.set({ ...imageMetaData, projectId }, { merge: true })
+  // Log success and return null
+  console.log(
+    'Container Build Status and Metadata succesfully updated with Cloud Build Event data'
   )
-
-  // Handle errors writing image meta data to Firestore
-  if (metaWriteErr) {
-    console.error('Error image metadata to Firestore')
-    throw metaWriteErr
-  }
+  return null
 }
 
 /**

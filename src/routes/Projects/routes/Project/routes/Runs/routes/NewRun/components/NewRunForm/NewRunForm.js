@@ -30,7 +30,7 @@ export const NewRunForm = ({
   classes,
   handleSubmit,
   buildsPath,
-  testGroups,
+  orderedTestGroups,
   runsPath,
   pristine,
   projectId,
@@ -61,7 +61,7 @@ export const NewRunForm = ({
           name="environment"
           label="Select Run Environment"
         />
-        {testGroups && testGroups.map ? (
+        {orderedTestGroups && orderedTestGroups.map ? (
           <div className={classes.testGroups}>
             <Typography>Test Groups</Typography>
             <SelectField
@@ -74,7 +74,7 @@ export const NewRunForm = ({
                       ? selected.split(',')
                       : selected,
                     (value, key) => {
-                      const tagGroup = find(testGroups, { id: value })
+                      const tagGroup = find(orderedTestGroups, { id: value })
                       return (
                         <Chip
                           key={`TestGroup-${value}-${get(
@@ -91,7 +91,7 @@ export const NewRunForm = ({
                 </div>
               )}
               MenuProps={MenuProps}
-              options={testGroups}
+              options={orderedTestGroups}
               multiple
             />
           </div>
@@ -123,7 +123,7 @@ export const NewRunForm = ({
 
 NewRunForm.propTypes = {
   projectId: PropTypes.string.isRequired,
-  testGroups: PropTypes.array, // from enhancer (connect)
+  orderedTestGroups: PropTypes.array, // from enhancer (connect)
   buildsPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object, // from enhancer (withStyles)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)

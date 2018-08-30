@@ -136,6 +136,7 @@ RunMetaItem.propTypes = {
   failures: PropTypes.number,
   formattedDuration: PropTypes.string, // from enhancer (withProps)
   status: PropTypes.string,
+  allTests: PropTypes.number, // from enhancer (flattenProp('runMeta'))
   environment: PropTypes.string,
   runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
@@ -143,8 +144,7 @@ RunMetaItem.propTypes = {
   formattedStart: PropTypes.func.isRequired, // from enhancer (withProps)
   startedAtToolTip: PropTypes.func.isRequired, // from enhancer (withProps)
   tests: PropTypes.func.isRequired, // from enhancer (flattenProp('stats'))
-  showProgress: PropTypes.func.isRequired, // from enhancer (withProps)
-  allTests: PropTypes.func.isRequired // from enhancer (flattenProp('runMeta'))
+  showProgress: PropTypes.func.isRequired // from enhancer (withProps)
 }
 
 export default RunMetaItem

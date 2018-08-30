@@ -10,7 +10,7 @@ import {
   TEST_GROUPS_DATA_PATH,
   paths
 } from 'constants'
-import { getMostRecentBuildId } from 'selectors'
+import { getMostRecentBuildId, getTestGroups } from 'selectors'
 import styles from './NewRunPage.styles'
 
 export default compose(
@@ -43,6 +43,7 @@ export default compose(
   ]),
   // pass along the build id
   connect((state, props) => ({
+    testGroups: getTestGroups(state, props),
     buildId: getMostRecentBuildId(state, props)
   })),
   // add handlers as props

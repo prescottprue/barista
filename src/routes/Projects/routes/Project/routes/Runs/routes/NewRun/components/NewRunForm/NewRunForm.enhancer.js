@@ -28,10 +28,10 @@ export default compose(
   })),
   // map redux state to props
   connect((state, props) => ({
-    testGroups: getOrderedTestGroups(state, props)
+    orderedTestGroups: getOrderedTestGroups(state, props)
   })),
   // show spinner while tags data is loading
-  spinnerWhileLoading(['testGroups']),
+  spinnerWhileLoading(['orderedTestGroups']),
   // add classes prop with classes from NewRunForm.styles.js
   withStyles(styles)
 )
