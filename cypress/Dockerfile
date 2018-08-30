@@ -5,6 +5,8 @@ FROM cypress/base:8
 ARG test_url=https://barista-stage.firebaseapp.com
 # Arguments to add to the cypress run command
 ARG test_command_args=""
+# Image Build Id (from Cloud Build) used in recording of test files
+ARG build_id
 
 ## Environment Variables
 # URL which Cypress will run tests against (defaults to test_url arg)
@@ -45,7 +47,7 @@ RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env l
 RUN npm run build:testConfig
 
 # Record test files to firestore
-RUN BUILD_ID=$BUILD_ID bin/recordTestFiles.js
+RUN bin/recordTestFiles.js
 
 # Install Cypress
 # Set CI=true to prevent a large number of messages during install of

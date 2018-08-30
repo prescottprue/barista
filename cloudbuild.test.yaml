@@ -23,6 +23,8 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: [
     'build',
+    '--build-arg',
+    'build_id=$BUILD_ID',
     '-t',
     'gcr.io/$PROJECT_ID/test-barista:$COMMIT_SHA',
     '-t',
