@@ -16,7 +16,10 @@ import {
   Replay as Rerun
 } from '@material-ui/icons'
 
-function iconFromStatus(status, classes) {
+function iconFromStatus({ status, runResult, classes }) {
+  if (runResult === 'failed') {
+    return <ErrorIcon color="error" />
+  }
   switch (status) {
     case 'failed':
       return <ErrorIcon color="error" />
@@ -39,6 +42,7 @@ export const RunMetaItem = ({
   formattedStart,
   startedAtToolTip,
   status,
+  runResult,
   environment,
   runDetailPath,
   reRunJob,
@@ -53,7 +57,7 @@ export const RunMetaItem = ({
         root: classes.summaryRoot
       }}>
       <Typography align="center" variant="body1" className={classes.data}>
-        {iconFromStatus(status, classes)}
+        {iconFromStatus({ status, classes, runResult })}
       </Typography>
       <Tooltip title="Run Id">
         <Typography align="center" variant="body1" className={classes.data}>
@@ -137,6 +141,7 @@ RunMetaItem.propTypes = {
   formattedDuration: PropTypes.string, // from enhancer (withProps)
   status: PropTypes.string,
   allTests: PropTypes.number, // from enhancer (flattenProp('runMeta'))
+  runResult: PropTypes.string, // from enhancer (flattenProp('runMeta'))
   environment: PropTypes.string,
   runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)

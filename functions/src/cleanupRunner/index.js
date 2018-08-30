@@ -131,4 +131,4 @@ async function cleanupRunnerEvent(change, context) {
  */
 export default functions.database
   .ref('/test_runs_meta/{projectId}/{jobRunKey}/runResult')
-  .onUpdate(cleanupRunnerEvent)
+  .onWrite(cleanupRunnerEvent)
