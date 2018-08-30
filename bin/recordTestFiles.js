@@ -2,7 +2,6 @@
 /* eslint-disable no-console */
 const glob = require('glob')
 const path = require('path')
-const admin = require('firebase-admin')
 const utils = require('./utils')
 const testFolderPath = path.join(__dirname, '..', 'cypress', 'integration')
 
