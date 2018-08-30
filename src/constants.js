@@ -4,11 +4,11 @@ export const LIST_PATH = '/projects'
 export const ACCOUNT_PATH = '/account'
 export const BUILDS_PATH = '/builds'
 export const TAGS_PATH = '/tags'
-export const TAG_GROUPS_PATH = '/tagGroups'
+export const TEST_GROUPS_PATH = '/testGroups'
 export const RUNS_PATH = 'runs'
 export const NEWRUN_PATH = 'new'
 export const NEW_TAG_PATH = 'new'
-export const NEW_TAG_GROUP_PATH = 'new'
+export const NEW_TEST_GROUP_PATH = 'new'
 export const RUN_PATH = ':runId'
 
 export const paths = {
@@ -18,7 +18,7 @@ export const paths = {
   newRun: NEWRUN_PATH,
   builds: BUILDS_PATH,
   tags: TAGS_PATH,
-  tagGroups: TAG_GROUPS_PATH
+  testGroups: TEST_GROUPS_PATH
 }
 
 /* --------------- RTDB Paths --------------- */
@@ -35,7 +35,7 @@ export const CONTAINER_BUILDS_META_PATH = 'container_builds'
 export const TEST_RUNS_META_PATH = 'test_runs_meta'
 export const TEST_RUNS_DATA_PATH = 'test_runs_data'
 export const TAGS_DATA_PATH = 'tags'
-export const TAG_GROUPS_DATA_PATH = 'tag_groups'
+export const TEST_GROUPS_DATA_PATH = 'tag_groups'
 
 /**
  * Firestore Paths
@@ -45,7 +45,7 @@ export const firestorePaths = {
   projects: PROJECTS_DATA_PATH,
   containerBuildsMeta: CONTAINER_BUILDS_META_PATH,
   tags: TAGS_DATA_PATH,
-  tagGroups: TAG_GROUPS_DATA_PATH
+  testGroups: TEST_GROUPS_DATA_PATH
 }
 
 /* --------------- Form Names --------------- */
@@ -55,7 +55,7 @@ export const SIGNUP_FORM_NAME = 'signup'
 export const NEW_PROJECT_FORM_NAME = 'newProject'
 export const NEW_JOB_RUN_FORM_NAME = 'newRun'
 export const NEW_TAG_FORM_NAME = 'newTag'
-export const NEW_TAG_GROUP_FORM_NAME = 'newTagGroup'
+export const NEW_TAG_GROUP_FORM_NAME = 'newTestGroup'
 
 /**
  * @type Object
@@ -66,7 +66,7 @@ export const formNames = {
   login: LOGIN_FORM_NAME,
   newProject: NEW_PROJECT_FORM_NAME,
   newTag: NEW_TAG_FORM_NAME,
-  newTagGroup: NEW_TAG_GROUP_FORM_NAME,
+  newTestGroup: NEW_TAG_GROUP_FORM_NAME,
   newJobRun: NEW_JOB_RUN_FORM_NAME
 }
 

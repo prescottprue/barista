@@ -30,7 +30,7 @@ export const NewRunForm = ({
   classes,
   handleSubmit,
   buildsPath,
-  tagGroups,
+  testGroups,
   runsPath,
   pristine,
   projectId,
@@ -61,11 +61,11 @@ export const NewRunForm = ({
           name="environment"
           label="Select Run Environment"
         />
-        {tagGroups && tagGroups.map ? (
-          <div className={classes.tagGroups}>
-            <Typography>Tag Groups</Typography>
+        {testGroups && testGroups.map ? (
+          <div className={classes.testGroups}>
+            <Typography>Test Groups</Typography>
             <SelectField
-              name="tagGroups"
+              name="testGroups"
               placeholder="Select Tag Group(s)"
               renderValue={selected => (
                 <div className={classes.chips}>
@@ -74,10 +74,10 @@ export const NewRunForm = ({
                       ? selected.split(',')
                       : selected,
                     (value, key) => {
-                      const tagGroup = find(tagGroups, { id: value })
+                      const tagGroup = find(testGroups, { id: value })
                       return (
                         <Chip
-                          key={`TagGroup-${value}-${get(
+                          key={`TestGroup-${value}-${get(
                             tagGroup,
                             'name',
                             value
@@ -91,7 +91,7 @@ export const NewRunForm = ({
                 </div>
               )}
               MenuProps={MenuProps}
-              options={tagGroups}
+              options={testGroups}
               multiple
             />
           </div>
@@ -123,7 +123,7 @@ export const NewRunForm = ({
 
 NewRunForm.propTypes = {
   projectId: PropTypes.string.isRequired,
-  tagGroups: PropTypes.array, // from enhancer (connect)
+  testGroups: PropTypes.array, // from enhancer (connect)
   buildsPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object, // from enhancer (withStyles)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)

@@ -39,7 +39,7 @@ export default theme => ({
     width: '100%',
     justifyContent: 'center'
   },
-  tagGroups: {
+  testGroups: {
     width: '100%',
     marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 2

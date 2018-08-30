@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { NEW_TAG_GROUP_FORM_NAME } from 'constants'
 import { getOrderedProjects, getOrderedTags } from 'selectors'
 import { spinnerWhileLoading } from 'utils/components'
-import styles from './NewTagGroupForm.styles'
+import styles from './NewTestGroupForm.styles'
 
 export default compose(
   // set proptypes used in enhancer
@@ -20,9 +20,10 @@ export default compose(
     // Clear the form for future use (creating another tag)
     onSubmitSuccess: (result, dispatch, props) => props.reset()
   }),
-  // Map redux state to props
+  // map redux state to props
   connect((state, props) => ({
     projects: getOrderedProjects(state, props),
+    testFiles: [{ name: 'Home.spec.js' }],
     tags: getOrderedTags(state, props)
   })),
   // show spinner while tags data is loading

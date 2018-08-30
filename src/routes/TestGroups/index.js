@@ -1,4 +1,4 @@
-import { TAG_GROUPS_PATH as path } from 'constants'
+import { TEST_GROUPS_PATH as path } from 'constants'
 
 export default store => ({
   path,
@@ -11,24 +11,24 @@ export default store => ({
       require => {
         /*  Webpack - use require callback to define
           dependencies for bundling   */
-        const TagGroupsPage = require('./components/TagGroupsPage').default
+        const TestGroupsPage = require('./components/TestGroupsPage').default
 
         /*  Return getComponent   */
-        cb(null, TagGroupsPage)
+        cb(null, TestGroupsPage)
 
         /* Webpack named bundle   */
       },
-      'TagGroupsPage'
+      'TestGroupsPage'
     )
   },
   getChildRoutes(partialNextState, cb) {
     require.ensure([], require => {
       /*  Webpack - use require callback to define
           dependencies for bundling   */
-      const NewTagGroup = require('./routes/NewTagGroup').default
+      const NewTestGroup = require('./routes/NewTestGroup').default
 
       /*  Return getComponent   */
-      cb(null, [NewTagGroup(store)])
+      cb(null, [NewTestGroup(store)])
     })
   }
 })

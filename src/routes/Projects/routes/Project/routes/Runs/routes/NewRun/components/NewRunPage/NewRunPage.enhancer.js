@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core'
 import * as handlers from './NewRunPage.handlers'
 import {
   CONTAINER_BUILDS_META_PATH,
-  TAG_GROUPS_DATA_PATH,
+  TEST_GROUPS_DATA_PATH,
   paths
 } from 'constants'
 import { getMostRecentBuildId } from 'selectors'
@@ -39,7 +39,7 @@ export default compose(
       limit: 1,
       storeAs: `mostRecentBuild-${projectId}`
     },
-    { collection: TAG_GROUPS_DATA_PATH }
+    { collection: TEST_GROUPS_DATA_PATH }
   ]),
   // pass along the build id
   connect((state, props) => ({

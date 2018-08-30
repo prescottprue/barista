@@ -4,9 +4,9 @@ import { withHandlers } from 'recompose'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { TAGS_DATA_PATH, PROJECTS_DATA_PATH } from 'constants'
-import styles from './NewTagGroupPage.styles'
+import styles from './NewTestGroupPage.styles'
 import { getAuthUid } from 'selectors'
-import * as handlers from './NewTagGroupPage.handlers'
+import * as handlers from './NewTestGroupPage.handlers'
 
 export default compose(
   // create listener for tags, results go into redux

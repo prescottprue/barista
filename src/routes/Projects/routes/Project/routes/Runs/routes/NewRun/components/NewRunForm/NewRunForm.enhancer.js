@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form'
 import { withProps, setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
-import { getOrderedTagGroups } from 'selectors'
+import { getOrderedTestGroups } from 'selectors'
 import { spinnerWhileLoading } from 'utils/components'
 import { NEW_JOB_RUN_FORM_NAME, paths } from 'constants'
 import styles from './NewRunForm.styles'
@@ -28,10 +28,10 @@ export default compose(
   })),
   // map redux state to props
   connect((state, props) => ({
-    tagGroups: getOrderedTagGroups(state, props)
+    testGroups: getOrderedTestGroups(state, props)
   })),
   // show spinner while tags data is loading
-  spinnerWhileLoading(['tagGroups']),
+  spinnerWhileLoading(['testGroups']),
   // add classes prop with classes from NewRunForm.styles.js
   withStyles(styles)
 )

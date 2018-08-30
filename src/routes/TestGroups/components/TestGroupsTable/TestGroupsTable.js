@@ -62,7 +62,7 @@ const tagGroupTableColumns = [
   }
 ]
 
-export const TagGroupsTable = ({ tagGroups, tags, projects, classes }) => (
+export const TestGroupsTable = ({ testGroups, tags, projects, classes }) => (
   <Paper className={classes.root}>
     <Table className={classes.table}>
       <TableHead>
@@ -75,8 +75,8 @@ export const TagGroupsTable = ({ tagGroups, tags, projects, classes }) => (
         </TableRow>
       </TableHead>
       <TableBody>
-        {tagGroups &&
-          tagGroups.map((row, rowIndex) => {
+        {testGroups &&
+          testGroups.map((row, rowIndex) => {
             return (
               <TableRow key={`${row.value}-${rowIndex}`}>
                 {tagGroupTableColumns.map((column, columnInd) => (
@@ -104,11 +104,11 @@ export const TagGroupsTable = ({ tagGroups, tags, projects, classes }) => (
   </Paper>
 )
 
-TagGroupsTable.propTypes = {
+TestGroupsTable.propTypes = {
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
-  tagGroups: PropTypes.array, // from enhancer (firestoreConnect + connect)
+  testGroups: PropTypes.array, // from enhancer (firestoreConnect + connect)
   tags: PropTypes.object, // from enhancer (firestoreConnect + connect)
   projects: PropTypes.object // from enhancer (firestoreConnect + connect)
 }
 
-export default TagGroupsTable
+export default TestGroupsTable

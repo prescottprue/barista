@@ -1,22 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography'
-import NewTagGroupForm from '../NewTagGroupForm'
+import NewTestGroupForm from '../NewTestGroupForm'
 
-export const NewTagGroupPage = ({ classes, createNewTagGroup }) => (
+export const NewTestGroupPage = ({ classes, createNewTestGroup }) => (
   <div className={classes.root}>
     <div className={classes.titleBar}>
       <Typography variant="headline" component="h3">
-        New Tag Group
+        New Test Group
       </Typography>
     </div>
-    <NewTagGroupForm onSubmit={createNewTagGroup} />
+    <NewTestGroupForm onSubmit={createNewTestGroup} />
   </div>
 )
 
-NewTagGroupPage.propTypes = {
+NewTestGroupPage.propTypes = {
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
-  createNewTagGroup: PropTypes.func.isRequired // from enhancer (withHandlers)
+  createNewTestGroup: PropTypes.func.isRequired // from enhancer (withHandlers)
 }
 
-export default NewTagGroupPage
+export default NewTestGroupPage

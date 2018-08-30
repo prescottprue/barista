@@ -1,4 +1,4 @@
-import { NEW_TAG_GROUP_PATH as path } from 'constants'
+import { NEW_TEST_GROUP_PATH as path } from 'constants'
 
 export default store => ({
   path,
@@ -11,14 +11,15 @@ export default store => ({
       require => {
         /*  Webpack - use require callback to define
           dependencies for bundling   */
-        const NewTagGroupPage = require('./components/NewTagGroupPage').default
+        const NewTestGroupPage = require('./components/NewTestGroupPage')
+          .default
 
         /*  Return getComponent   */
-        cb(null, NewTagGroupPage)
+        cb(null, NewTestGroupPage)
 
         /* Webpack named bundle   */
       },
-      'NewTagGroupPage'
+      'NewTestGroupPage'
     )
   }
 })

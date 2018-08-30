@@ -5,15 +5,15 @@ import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
-import { TAG_GROUPS_PATH } from 'constants'
 import BackIcon from '@material-ui/icons/ArrowBack'
-import TagGroupsTable from '../TagGroupsTable'
+import { TEST_GROUPS_PATH } from 'constants'
+import TestGroupsTable from '../TestGroupsTable'
 
-export const TagGroupsPage = ({ classes }) => (
+export const TestGroupsPage = ({ classes }) => (
   <div className={classes.root}>
     <div className={classes.titleBar}>
       <Typography variant="headline" component="h3">
-        Tag Groups
+        Test Groups
       </Typography>
     </div>
     <div className={classes.buttons}>
@@ -26,16 +26,16 @@ export const TagGroupsPage = ({ classes }) => (
         variant="outlined"
         className={classes.createButton}
         component={Link}
-        to={`${TAG_GROUPS_PATH}/new`}>
-        Create Tag Group
+        to={`${TEST_GROUPS_PATH}/new`}>
+        Create Test Group
       </Button>
     </div>
-    <TagGroupsTable />
+    <TestGroupsTable />
   </div>
 )
 
-TagGroupsPage.propTypes = {
+TestGroupsPage.propTypes = {
   classes: PropTypes.object.isRequired // from enhancer (withStyles)
 }
 
-export default TagGroupsPage
+export default TestGroupsPage

@@ -1,15 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
-import { paths } from 'constants'
+import { LIST_PATH, TAGS_PATH, TEST_GROUPS_PATH } from 'constants'
 import { startCase } from 'lodash'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 
 const links = [
-  { path: paths.list, value: 'projects' },
-  { path: paths.tags, value: 'tags' },
-  { path: paths.tagGroups, value: 'tagGroups' }
+  { path: LIST_PATH, value: 'projects' },
+  { path: TAGS_PATH, value: 'tags' },
+  { path: TEST_GROUPS_PATH, value: 'testGroups' }
 ]
 
 export const Home = ({ classes }) => (
