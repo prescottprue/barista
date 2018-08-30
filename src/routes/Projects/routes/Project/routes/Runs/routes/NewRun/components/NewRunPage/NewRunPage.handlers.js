@@ -33,8 +33,6 @@ export function startTestRun({
     )
     // Create Test Command option and value for use in test command
     const fileNamesArg = `-s ${fileNamesStr}`
-    // Create test command out of combination of options
-    const commandArgsStr = ` ${fileNamesArg}`
     const instanceTemplateName = `test-${projectId}-${environment}`
     const pushRef = firebase.pushWithMeta(
       `${TEST_RUNS_META_PATH}/${projectId}`,
@@ -49,7 +47,7 @@ export function startTestRun({
       .push(CALL_RUNNER_REQUEST_PATH, {
         jobRunKey: pushKey,
         environment,
-        commandArgsStr,
+        commandArgsStr: fileNamesArg,
         baristaProject: projectId,
         instanceTemplateName,
         buildId

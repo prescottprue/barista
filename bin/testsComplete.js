@@ -22,7 +22,7 @@ stdin.on('end', function() {
   } else {
     const testMetaPath = `test_runs_meta/${process.env.JOB_RUN_KEY}`
     const resultsRef = db.ref(testMetaPath)
-    const runResult = data === '0' || data === 0 ? 'complete' : 'error'
+    const runResult = data === '0' || data === 0 ? 'passed' : 'failed'
     console.log(`Writing status "${runResult}" to ${testMetaPath}`) // eslint-disable-line no-console
     return resultsRef
       .update({

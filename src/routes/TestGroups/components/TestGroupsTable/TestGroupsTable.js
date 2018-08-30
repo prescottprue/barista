@@ -68,7 +68,7 @@ export const TestGroupsTable = ({ testGroups, tags, projects, classes }) => (
       <TableHead>
         <TableRow>
           {tagGroupTableColumns.map((column, columnInd) => (
-            <TableCell key={`${column.value}-${columnInd}`}>
+            <TableCell component="th" key={`${column.value}-${columnInd}`}>
               {column.label || column.value}
             </TableCell>
           ))}
@@ -81,7 +81,6 @@ export const TestGroupsTable = ({ testGroups, tags, projects, classes }) => (
               <TableRow key={`${row.value}-${rowIndex}`}>
                 {tagGroupTableColumns.map((column, columnInd) => (
                   <TableCell
-                    component="th"
                     scope="row"
                     key={`${row.value}-${rowIndex}-${
                       column.value
