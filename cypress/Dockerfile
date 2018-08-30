@@ -19,7 +19,7 @@ ENV FIREBASE_TOKEN $FIREBASE_TOKEN
 # Key used to specifiy job
 ENV JOB_RUN_KEY $JOB_RUN_KEY
 # Image Build Id (from Cloud Build) used in recording of test files
-ENV BUILD_ID $BUILD_ID
+ENV BUILD_ID=$build_id
 
 # Prevent a large number messages during NPM install
 ENV npm_config_loglevel warn
