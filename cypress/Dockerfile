@@ -47,7 +47,7 @@ RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env l
 RUN npm run build:testConfig
 
 # Record test files to firestore
-RUN "BUILD_ID=${BUILD_ID} bin/recordTestFiles.js"
+RUN bin/recordTestFiles.js
 
 # Install Cypress
 # Set CI=true to prevent a large number of messages during install of
