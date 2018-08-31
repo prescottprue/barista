@@ -9,7 +9,7 @@ import { getOrderedProjects, getOrderedTags } from 'selectors'
 import { spinnerWhileLoading } from 'utils/components'
 import styles from './NewTestGroupForm.styles'
 
-const defaultTestFolderPath = 'cypress/integration'
+const defaultTestFolderPath = 'test/e2e/integration'
 
 const hardCodedFileOptions = [{ name: 'HomePage.spec.js' }].map(({ name }) => ({
   name: `${defaultTestFolderPath}/${name}`

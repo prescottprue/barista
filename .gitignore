@@ -19,9 +19,9 @@ functions/.runtimeconfig.json
 functions/serviceAccount.json
 
 # Tests
-cypress/videos
-cypress/screenshots
+test/e2e/videos
+test/e2e/screenshots
+test/e2e/config.json
 cypress.env.json
-cypress/config.json
-serviceAccount.*.json
+serviceAccount*.json
 serviceAccount.json

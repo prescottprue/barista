@@ -4,7 +4,13 @@ const admin = require('firebase-admin')
 const isString = require('lodash/isString')
 const fs = require('fs')
 const path = require('path')
-const localTestConfigPath = path.join(__dirname, '..', 'cypress', 'config.json')
+const localTestConfigPath = path.join(
+  __dirname,
+  '..',
+  'test',
+  'e2e',
+  'config.json'
+)
 const serviceAccountPath = path.join(__dirname, '..', 'serviceAccount.json')
 const prefixesByCiEnv = {
   staging: 'STAGE_',
@@ -60,7 +66,7 @@ function envVarBasedOnCIEnv(varNameRoot) {
     console.log(
       `Running in local environment, ${
         configObj[combined] ? combined : varNameRoot
-      } is being loaded from cypress/config.json`
+      } is being loaded from test/e2e/config.json`
     )
     return configObj[combined] || configObj[varNameRoot]
   }
@@ -176,7 +182,8 @@ function readFixture(fixturePath) {
   const pathToFixtureFile = path.join(
     __dirname,
     '..',
-    'cypress',
+    'test',
+    'e2e',
     'fixtures',
     fixturePath
   )

@@ -7,7 +7,8 @@ const testEnvFilePath = path.join(__dirname, '../..', 'cypress.env.json')
 const localTestConfigPath = path.join(
   __dirname,
   '../..',
-  'cypress',
+  'test',
+  'e2e',
   'config.json'
 )
 const serviceAccountPath = path.join(__dirname, '../..', 'serviceAccount.json')
@@ -43,7 +44,7 @@ function envVarBasedOnCIEnv(varNameRoot) {
     console.log(
       `${
         configObj[combined] ? combined : varNameRoot
-      } is being loaded from cypress/config.json`
+      } is being loaded from test/e2e/config.json`
     )
     return configObj[combined] || configObj[varNameRoot]
   }
@@ -120,13 +121,13 @@ function getServiceAccount() {
 async function createTestConfig() {
   const envPrefix = getEnvPrefix()
 
-  // Get UID from environment (falls back to cypress/config.json for local)
+  // Get UID from environment (falls back to test/e2e/config.json for local)
   const uid = envVarBasedOnCIEnv('TEST_UID')
 
   // Throw if UID is missing in environment
   if (!uid) {
     throw new Error(
-      `${envPrefix}TEST_UID is missing from environment. Confirm that cypress/config.json contains either ${envPrefix}TEST_UID or TEST_UID.`
+      `${envPrefix}TEST_UID is missing from environment. Confirm that test/e2e/config.json contains either ${envPrefix}TEST_UID or TEST_UID.`
     )
   }
   const FIREBASE_API_KEY = envVarBasedOnCIEnv('FIREBASE_API_KEY')

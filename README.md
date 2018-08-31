@@ -79,7 +79,7 @@ Before setting up make sure you have the following:
 
 ### Tests
 1. Make sure you have saved your service account to `serviceAccount.json`
-1. Create `cypress/config.json` that looks like so:
+1. Create `test/e2e/config.json` that looks like so:
     ```json
     {
       "FIREBASE_PROJECT_ID": "<- your projectId ->",

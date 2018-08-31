@@ -2,8 +2,11 @@ functions
 server
 src
 node_modules
-cypress/videos
+test/e2e/videos
+test/e2e/screenshots
 .eslintignore
+.eslintrc
+.firebaserc
 .gitlab-ci.yml
 LICENSE
 .dockerignore
