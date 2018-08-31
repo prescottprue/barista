@@ -9,6 +9,7 @@ globals:
   should: true
   functionsTest: true
   assert: true
+  mockFunctionsConfig: true
 
 rules:
   no-unused-expressions: 0

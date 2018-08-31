@@ -15,36 +15,36 @@ export function startTestRun({
   runsPagePath,
   buildId
 }) {
-  return values => {
-    const environment = get(values, 'environment', '')
-    const selectedTestGroups = get(values, 'testGroups', []).map(testGroupKey =>
+  return (values = {}) => {
+    const { appEnvironment, testCodeBranch, testGroups = [] } = values
+    const selectedTestGroups = testGroups.map(testGroupKey =>
       get(testGroups, testGroupKey, testGroupKey)
     )
     // Get list of file names as a string from all selected groups
     const fileNamesStr = reduce(
       selectedTestGroups,
       (acc, selectedTestGroup) => {
-        if (!selectedTestGroup.filePaths) {
+        if (
+          !selectedTestGroup ||
+          !selectedTestGroup.filePaths ||
+          !isArray(selectedTestGroup.filePaths)
+        ) {
           return acc
         }
-        if (isArray(selectedTestGroup.filePaths)) {
-          // File paths is an array
-          return compact(selectedTestGroup.filePaths)
-            .map(trim)
-            .join(',')
-        }
-        // TODO: Remove once array only
-        return acc.concat(Object.keys(selectedTestGroup.filePaths).join(','))
+        // File paths is a valid array
+        return compact(selectedTestGroup.filePaths)
+          .map(trim)
+          .join(',')
       },
       ''
     )
     // Create Test Command option and value for use in test command
     const fileNamesArg = `-s ${fileNamesStr}`
-    const instanceTemplateName = `test-${projectId}-${environment}`
+    const instanceTemplateName = `test-${projectId}`
     const pushRef = firebase.pushWithMeta(
       `${TEST_RUNS_META_PATH}/${projectId}`,
       {
-        environment,
+        appEnvironment,
         status: 'pending',
         instanceTemplateName
       }
@@ -53,7 +53,8 @@ export function startTestRun({
     return firebase
       .push(CALL_RUNNER_REQUEST_PATH, {
         jobRunKey: pushKey,
-        environment,
+        appEnvironment,
+        testCodeBranch,
         commandArgsStr: fileNamesArg,
         baristaProject: projectId,
         instanceTemplateName,

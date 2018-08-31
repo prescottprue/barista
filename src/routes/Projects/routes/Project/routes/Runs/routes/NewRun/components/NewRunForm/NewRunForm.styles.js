@@ -35,9 +35,7 @@ export default theme => ({
     width: '100%'
   },
   instructions: {
-    display: 'flex',
-    width: '100%',
-    justifyContent: 'center'
+    display: 'flex'
   },
   testGroups: {
     width: '100%',
@@ -55,5 +53,9 @@ export default theme => ({
   },
   chip: {
     margin: theme.spacing.unit / 4
+  },
+  optionSection: {
+    display: 'flex',
+    justifyContent: 'center'
   }
 })

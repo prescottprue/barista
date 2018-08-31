@@ -13,7 +13,6 @@ async function cleanupRunnerEvent(change, context) {
     params: { projectId, jobRunKey }
   } = context
   const status = change.after.val()
-  console.log('Status update:', { jobRunKey, projectId }, change.after.ref)
 
   // Skip cleanup if status is not "passed" or "failed"
   if (status !== 'passed' && status !== 'failed') {

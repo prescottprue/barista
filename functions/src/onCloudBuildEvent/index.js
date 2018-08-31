@@ -134,7 +134,13 @@ async function callCloudBuildApiEvent(message) {
     commitSha
   })
 
-  const imageMetaData = { status, branchName, buildId, commitSha, repoName }
+  const imageMetaData = {
+    status,
+    branchName,
+    buildId,
+    commitSha,
+    repoName: projectId
+  }
 
   // Attach finishTime if it exists
   if (messageBody.finishTime) {
