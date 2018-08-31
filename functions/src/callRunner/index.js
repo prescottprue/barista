@@ -106,7 +106,7 @@ async function callRunnerEvent(snap, context) {
         runStartResponse: testRunResponseSnap.val()
       }),
       // Update instanceMeta parameter on test_run_meta object
-      metaRef.child(instanceMeta).update(instanceMeta)
+      metaRef.update({ instanceMeta })
     ])
   )
 

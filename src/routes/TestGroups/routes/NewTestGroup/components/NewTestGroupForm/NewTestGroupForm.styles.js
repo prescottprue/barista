@@ -21,8 +21,8 @@ export default theme => ({
   inputs: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    width: '40%'
+    alignItems: 'flex-start',
+    width: '100%'
   },
   buttons: {
     display: 'flex',

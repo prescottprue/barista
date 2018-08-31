@@ -38,7 +38,7 @@ export default compose(
       projectId,
       runId,
       duration,
-      startedAt,
+      createdAt,
       totalTestCount,
       tests: testsRun,
       runMeta
@@ -46,9 +46,9 @@ export default compose(
       runDetailPath: `${LIST_PATH}/${projectId}/${RUNS_PATH}/${runId}`,
       // Convert duration into minutes
       formattedDuration: duration ? (duration / 1000).toFixed(3) : '-',
-      formattedStart: startedAt ? formatDateTime(startedAt) : '-',
-      startedAtToolTip: startedAt
-        ? `${strictDistanceInWords(startedAt)} ago`
+      formattedStart: createdAt ? formatDateTime(createdAt) : '-',
+      createdAtToolTip: createdAt
+        ? `${strictDistanceInWords(createdAt)} ago`
         : '-',
       showProgress:
         runMeta.status === 'pending' && totalTestCount > 0 && testsRun

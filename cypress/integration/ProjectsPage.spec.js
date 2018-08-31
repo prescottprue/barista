@@ -7,7 +7,7 @@ describe('Projects Page', () => {
   // Setup before tests including creating a server to listen for external requests
   before(() => {
     // Create a server to listen to requests sent out to Google Auth and Firestore
-    // cy.server()
+    // cy.server({ whitelist: xhr => xhr.url.includes('identitytoolkit') })
     //   // Google get google account info (periodically called by Firebase JS SDK)
     //   .route('POST', /identitytoolkit\/v3\/relyingparty\/getAccountInfo/)
     //   .as('getGoogleAccountInfo')
@@ -33,7 +33,7 @@ describe('Projects Page', () => {
     cy.visit('/projects')
   })
 
-  it('creates project when provided a valid name', () => {
+  it.skip('creates project when provided a valid name', () => {
     const newProjectTitle = 'Test project'
     cy.get(createSelector('new-project-tile')).click()
     // Type name of new project into input
@@ -42,8 +42,7 @@ describe('Projects Page', () => {
       .type(newProjectTitle)
     // Click on the new project button
     cy.get(createSelector('new-project-create-button')).click()
-    // Wait for request to Firebase to add project to return
-    cy.wait('@addProject')
+    // TODO: Use cy.callFirestore to confirm data
     // Confirm first project tile has title passed to new project input
     cy.get(createSelector('project-tile-name'))
       .first()

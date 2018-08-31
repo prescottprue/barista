@@ -8,19 +8,22 @@ import Typography from '@material-ui/core/Typography'
 
 const links = [
   { path: LIST_PATH, value: 'projects' },
-  { path: TAGS_PATH, value: 'tags' },
-  { path: TEST_GROUPS_PATH, value: 'testGroups' }
+  { path: TEST_GROUPS_PATH, value: 'testGroups' },
+  { path: TAGS_PATH, value: 'tags' }
 ]
 
 export const Home = ({ classes }) => (
   <div className={classes.root}>
-    <Paper className={classes.paper} elevation={1} data-test="features">
+    <Paper className={classes.paper} elevation={1} data-test="feature-links">
       <Typography variant="headline" component="h3">
         Remote Test Runner For Cypress and Mocha
       </Typography>
       <div className={classes.links}>
         {links.map((linkData, linkIndex) => (
-          <Link to={linkData.path} key={`${linkIndex}-${linkData.value}`}>
+          <Link
+            to={linkData.path}
+            key={`${linkIndex}-${linkData.value}`}
+            data-test={`feature-${linkData.value}`}>
             <p>{startCase(linkData.value)}</p>
           </Link>
         ))}

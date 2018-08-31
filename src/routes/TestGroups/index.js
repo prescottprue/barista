@@ -26,9 +26,10 @@ export default store => ({
       /*  Webpack - use require callback to define
           dependencies for bundling   */
       const NewTestGroup = require('./routes/NewTestGroup').default
+      const TestGroup = require('./routes/TestGroup').default
 
       /*  Return getComponent   */
-      cb(null, [NewTestGroup(store)])
+      cb(null, [NewTestGroup(store), TestGroup(store)])
     })
   }
 })

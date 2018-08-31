@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
-import { Field } from 'redux-form'
+import { Field, FieldArray } from 'redux-form'
+import { TextField, Checkbox } from 'redux-form-material-ui'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import BackIcon from '@material-ui/icons/ArrowBack'
@@ -12,8 +13,8 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
-import { TextField, Checkbox } from 'redux-form-material-ui'
 import { TEST_GROUPS_PATH, TAGS_PATH } from 'constants'
+import TestGroupFilePaths from 'routes/TestGroups/components/TestGroupFilePaths'
 
 export const NewTestGroupForm = ({
   classes,
@@ -22,6 +23,7 @@ export const NewTestGroupForm = ({
   testFiles,
   projects,
   pristine,
+  array,
   submitting
 }) => (
   <form onSubmit={handleSubmit} className={classes.root}>
@@ -61,35 +63,25 @@ export const NewTestGroupForm = ({
             ))}
           </List>
         </div>
+        <FieldArray name="filePaths" component={TestGroupFilePaths} />
         {testFiles && testFiles.map ? (
           <div>
-            <Typography>Test Files</Typography>
+            <Typography variant="subheading">File Suggestions</Typography>
+            <Typography component="p">Barista</Typography>
             <List>
               {testFiles.map(({ name = '', id }) => (
-                <ListItem key={name} dense button className={classes.listItem}>
+                <ListItem
+                  key={name}
+                  dense
+                  button
+                  className={classes.listItem}
+                  onClick={() => array.push('filePaths', name)}>
                   <ListItemText primary={name} />
-                  <ListItemSecondaryAction>
-                    <Field
-                      name={`filePaths.${id || name}`}
-                      component={Checkbox}
-                    />
-                  </ListItemSecondaryAction>
                 </ListItem>
               ))}
             </List>
           </div>
-        ) : (
-          <div className={classes.empty}>
-            <p>No Test Files Found</p>
-            <Button
-              variant="outlined"
-              className={classes.createButton}
-              component={Link}
-              to={`${TAGS_PATH}/new`}>
-              Create New Tag
-            </Button>
-          </div>
-        )}
+        ) : null}
         {tags && tags.map ? (
           <div>
             <Typography>Tags (not currently supported by Cypress)</Typography>
@@ -125,7 +117,8 @@ export const NewTestGroupForm = ({
 )
 
 NewTestGroupForm.propTypes = {
-  classes: PropTypes.object, // from enhancer (withStyles)
+  classes: PropTypes.object.isRequired, // from enhancer (withStyles)
+  array: PropTypes.object.isRequired, // from enhancer (reduxForm)
   tags: PropTypes.array, // from enhancer (connect)
   projects: PropTypes.array, // from enhancer (connect)
   testFiles: PropTypes.array, // from enhancer (connect)

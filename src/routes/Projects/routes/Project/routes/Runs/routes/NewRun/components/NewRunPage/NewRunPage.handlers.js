@@ -1,4 +1,4 @@
-import { get, reduce } from 'lodash'
+import { get, reduce, isArray, compact, trim } from 'lodash'
 import { TEST_RUNS_META_PATH, CALL_RUNNER_REQUEST_PATH } from 'constants'
 
 /**
@@ -27,6 +27,13 @@ export function startTestRun({
         if (!selectedTestGroup.filePaths) {
           return acc
         }
+        if (isArray(selectedTestGroup.filePaths)) {
+          // File paths is an array
+          return compact(selectedTestGroup.filePaths)
+            .map(trim)
+            .join(',')
+        }
+        // TODO: Remove once array only
         return acc.concat(Object.keys(selectedTestGroup.filePaths).join(','))
       },
       ''

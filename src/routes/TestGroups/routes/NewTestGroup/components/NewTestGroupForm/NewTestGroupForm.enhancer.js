@@ -4,7 +4,7 @@ import { reduxForm } from 'redux-form'
 import { connect } from 'react-redux'
 import { setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
-import { NEW_TAG_GROUP_FORM_NAME } from 'constants'
+import { NEW_TEST_GROUP_FORM_NAME } from 'constants'
 import { getOrderedProjects, getOrderedTags } from 'selectors'
 import { spinnerWhileLoading } from 'utils/components'
 import styles from './NewTestGroupForm.styles'
@@ -22,7 +22,7 @@ export default compose(
   }),
   // add form capabilities and props
   reduxForm({
-    form: NEW_TAG_GROUP_FORM_NAME,
+    form: NEW_TEST_GROUP_FORM_NAME,
     // Clear the form for future use (creating another tag)
     onSubmitSuccess: (result, dispatch, props) => props.reset()
   }),

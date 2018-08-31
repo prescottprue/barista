@@ -1,4 +1,5 @@
 export * from './projects'
 export * from './project'
 export * from './tags'
+export * from './testGroups'
 export * from './user'

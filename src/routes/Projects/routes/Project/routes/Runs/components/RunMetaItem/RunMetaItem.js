@@ -66,7 +66,7 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Passing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {passes || '-'}
+          {passes || status === 'failed' ? 0 : '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Failing Tests">
