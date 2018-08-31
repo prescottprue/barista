@@ -16,7 +16,7 @@ export const LoginMenu = ({ onSigninClick }) => (
   </div>
 )
 LoginMenu.propTypes = {
-  onSigninClick: PropTypes
+  onSigninClick: PropTypes.func.isRequired
 }
 
 export default LoginMenu

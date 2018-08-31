@@ -3,14 +3,23 @@ FROM cypress/base:8
 ## Build Arguments
 # URL which Cypress will run tests against (with default)
 ARG test_url=https://barista-stage.firebaseapp.com
+# Arguments to add to the cypress run command
+ARG test_command_args=""
+# Image Build Id (from Cloud Build) used in recording of test files
+ARG build_id
 
 ## Environment Variables
 # URL which Cypress will run tests against (defaults to test_url arg)
 ENV CYPRESS_baseUrl=$test_url
+# Arguments to add to the cypress run command
+ENV TEST_ARGS "${test_command_args}"
+
 # Token used to auth firebase-tools for use in seeding/checking Firebase (RTDB + Firestore)
 ENV FIREBASE_TOKEN $FIREBASE_TOKEN
 # Key used to specifiy job
 ENV JOB_RUN_KEY $JOB_RUN_KEY
+# Image Build Id (from Cloud Build) used in recording of test files
+ENV BUILD_ID=$build_id
 
 # Prevent a large number messages during NPM install
 ENV npm_config_loglevel warn
@@ -32,10 +41,13 @@ COPY cypress/ /cypress/
 RUN chmod +x bin/testsComplete.js
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11
+RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11 glob
 
 # Build Test Config
 RUN npm run build:testConfig
+
+# Record test files to firestore
+RUN bin/recordTestFiles.js
 
 # Install Cypress
 # Set CI=true to prevent a large number of messages during install of
@@ -47,4 +59,4 @@ RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above) reporting results using Barista Reporter.
 # Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY 
-ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter; echo \"$?\" | bin/testsComplete.js
+ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter$TEST_ARGS; echo \"$?\" | bin/testsComplete.js

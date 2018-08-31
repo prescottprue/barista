@@ -38,5 +38,22 @@ export default theme => ({
     display: 'flex',
     width: '100%',
     justifyContent: 'center'
+  },
+  testGroups: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2
+  },
+  formControl: {
+    margin: theme.spacing.unit,
+    minWidth: 120,
+    maxWidth: 300
+  },
+  chips: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  chip: {
+    margin: theme.spacing.unit / 4
   }
 })

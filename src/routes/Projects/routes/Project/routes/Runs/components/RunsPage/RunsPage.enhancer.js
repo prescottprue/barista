@@ -13,6 +13,7 @@ import {
   TEST_RUNS_DATA_PATH
 } from 'constants'
 import { getProjectOrderedProjectRunsMeta } from 'selectors'
+import { spinnerWhileLoading } from 'utils/components'
 import styles from './RunsPage.styles'
 
 export default compose(
@@ -43,6 +44,7 @@ export default compose(
   connect((state, props) => ({
     runMetaData: getProjectOrderedProjectRunsMeta(state, props)
   })),
+  spinnerWhileLoading(['runMetaData']),
   withChildren,
   // add classes prop with classes from RunMetaItem.styles.js
   withStyles(styles)

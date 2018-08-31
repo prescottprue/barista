@@ -1,46 +1,36 @@
+/* --------------- App Paths/Routes --------------- */
+export const HOME_PATH = '/'
 export const LIST_PATH = '/projects'
 export const ACCOUNT_PATH = '/account'
-export const LOGIN_PATH = '/login'
-export const SIGNUP_PATH = '/signup'
+export const BUILDS_PATH = '/builds'
+export const TAGS_PATH = '/tags'
+export const TAG_PATH = ':tagId'
+export const NEW_TAG_PATH = 'new'
+export const TEST_GROUPS_PATH = '/testGroups'
+export const TEST_GROUP_PATH = ':testGroupId'
+export const NEW_TEST_GROUP_PATH = 'new'
+export const RUNS_PATH = 'runs'
+export const NEWRUN_PATH = 'new'
+export const RUN_PATH = ':runId'
+
+/* --------------- RTDB Paths --------------- */
+export const CONTAINER_BUILDS_STATUS_PATH = 'container_build_statues'
+export const CALL_RUNNER_REQUEST_PATH = 'requests/callRunner'
+
+/* --------------- Firestore Paths --------------- */
+export const PROJECTS_DATA_PATH = 'projects'
+export const CONTAINER_BUILDS_META_PATH = 'container_builds'
+export const TEST_RUNS_META_PATH = 'test_runs_meta'
+export const TEST_RUNS_DATA_PATH = 'test_runs_data'
+export const TAGS_DATA_PATH = 'tags'
+export const TEST_GROUPS_DATA_PATH = 'test_groups'
+
+/* --------------- Form Names --------------- */
 export const ACCOUNT_FORM_NAME = 'account'
 export const LOGIN_FORM_NAME = 'login'
 export const SIGNUP_FORM_NAME = 'signup'
 export const NEW_PROJECT_FORM_NAME = 'newProject'
 export const NEW_JOB_RUN_FORM_NAME = 'newRun'
-export const RUNS_PATH = 'runs'
-export const NEWRUN_PATH = 'new'
-export const RUN_PATH = ':runId'
-export const BUILDS_PATH = 'builds'
-export const CONTAINER_BUILDS_META_PATH = 'container_builds'
-export const CONTAINER_BUILDS_STATUS_PATH = 'container_build_statues'
-export const TEST_RUNS_META_PATH = 'test_runs_meta'
-export const TEST_RUNS_DATA_PATH = 'test_runs_data'
-export const CALL_RUNNER_REQUEST_PATH = 'requests/callRunner'
-
-export const formNames = {
-  account: ACCOUNT_FORM_NAME,
-  signup: SIGNUP_FORM_NAME,
-  login: LOGIN_FORM_NAME,
-  newProject: NEW_PROJECT_FORM_NAME,
-  newJobRun: NEW_JOB_RUN_FORM_NAME
-}
-
-export const paths = {
-  list: LIST_PATH,
-  account: ACCOUNT_PATH,
-  login: LOGIN_PATH,
-  signup: SIGNUP_PATH,
-  runs: RUNS_PATH,
-  newRun: NEWRUN_PATH,
-  builds: BUILDS_PATH
-}
-
-export const firebasePaths = {
-  containerBuildStatuses: CONTAINER_BUILDS_STATUS_PATH
-}
-
-export const firestorePaths = {
-  containerBuildsMeta: CONTAINER_BUILDS_META_PATH
-}
-
-export default { ...paths, ...formNames }
+export const NEW_TAG_FORM_NAME = 'newTag'
+export const NEW_TEST_GROUP_FORM_NAME = 'newTestGroup'
+export const TEST_GROUP_FORM_NAME = 'testGroup'

@@ -16,7 +16,10 @@ import {
   Replay as Rerun
 } from '@material-ui/icons'
 
-function iconFromStatus(status, classes) {
+function iconFromStatus({ status, runResult, classes }) {
+  if (runResult === 'failed') {
+    return <ErrorIcon color="error" />
+  }
   switch (status) {
     case 'failed':
       return <ErrorIcon color="error" />
@@ -39,6 +42,7 @@ export const RunMetaItem = ({
   formattedStart,
   startedAtToolTip,
   status,
+  runResult,
   environment,
   runDetailPath,
   reRunJob,
@@ -53,7 +57,7 @@ export const RunMetaItem = ({
         root: classes.summaryRoot
       }}>
       <Typography align="center" variant="body1" className={classes.data}>
-        {iconFromStatus(status, classes)}
+        {iconFromStatus({ status, classes, runResult })}
       </Typography>
       <Tooltip title="Run Id">
         <Typography align="center" variant="body1" className={classes.data}>
@@ -62,7 +66,7 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Passing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {passes || '-'}
+          {passes || status === 'failed' ? 0 : '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Failing Tests">
@@ -135,16 +139,17 @@ RunMetaItem.propTypes = {
   passes: PropTypes.number,
   failures: PropTypes.number,
   formattedDuration: PropTypes.string, // from enhancer (withProps)
+  formattedStart: PropTypes.string, // from enhancer (withProps)
   status: PropTypes.string,
+  allTests: PropTypes.number, // from enhancer (flattenProp('runMeta'))
+  tests: PropTypes.number, // from enhancer (flattenProp('stats'))
+  runResult: PropTypes.string, // from enhancer (flattenProp('runMeta'))
+  showProgress: PropTypes.bool.isRequired,
   environment: PropTypes.string,
   runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   reRunJob: PropTypes.func.isRequired, // from enhancer (withHandlers)
-  formattedStart: PropTypes.func.isRequired, // from enhancer (withProps)
-  startedAtToolTip: PropTypes.func.isRequired, // from enhancer (withProps)
-  tests: PropTypes.func.isRequired, // from enhancer (flattenProp('stats'))
-  showProgress: PropTypes.func.isRequired, // from enhancer (withProps)
-  allTests: PropTypes.func.isRequired // from enhancer (flattenProp('runMeta'))
+  startedAtToolTip: PropTypes.string.isRequired // from enhancer (withProps)
 }
 
 export default RunMetaItem

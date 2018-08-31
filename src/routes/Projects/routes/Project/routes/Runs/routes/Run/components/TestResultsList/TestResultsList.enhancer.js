@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
+import { size } from 'lodash'
 import { connect } from 'react-redux'
 import { setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
@@ -17,8 +18,9 @@ export default compose(
   connect((state, props) => ({
     runData: getSuitesWithTests(state, props)
   })),
+  // Show loading spinner while tests are running
   renderWhile(
-    ({ runData }) => !runData,
+    ({ runData }) => !size(runData),
     withStyles(styles)(TestResultsNotFound)
   ),
   // add props.clases from RunPage.styles
