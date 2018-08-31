@@ -8,7 +8,8 @@ import * as handlers from './NewRunPage.handlers'
 import {
   CONTAINER_BUILDS_META_PATH,
   TEST_GROUPS_DATA_PATH,
-  paths
+  LIST_PATH,
+  RUNS_PATH
 } from 'constants'
 import { getMostRecentBuildId, getTestGroups } from 'selectors'
 import styles from './NewRunPage.styles'
@@ -28,7 +29,7 @@ export default compose(
   // add custom props
   withProps(({ params: { projectId } }) => ({
     projectId,
-    runsPagePath: `${paths.list}/${projectId}/${paths.runs}`
+    runsPagePath: `${LIST_PATH}/${projectId}/${RUNS_PATH}`
   })),
   // ensure that we are getting the the build object of the last build image
   firestoreConnect(({ projectId }) => [

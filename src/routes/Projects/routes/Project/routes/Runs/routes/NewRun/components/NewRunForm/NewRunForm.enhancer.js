@@ -2,11 +2,11 @@ import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { reduxForm } from 'redux-form'
-import { withProps, setPropTypes } from 'recompose'
+import { setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import { getOrderedTestGroups } from 'selectors'
 import { spinnerWhileLoading } from 'utils/components'
-import { NEW_JOB_RUN_FORM_NAME, paths } from 'constants'
+import { NEW_JOB_RUN_FORM_NAME } from 'constants'
 import styles from './NewRunForm.styles'
 
 export default compose(
@@ -21,11 +21,6 @@ export default compose(
     // Clear the form for future use (creating another project)
     onSubmitSuccess: (result, dispatch, props) => props.reset()
   }),
-  // add custom props
-  withProps(({ projectId }) => ({
-    runsPath: `${paths.list}/${projectId}/${paths.runs}`,
-    buildsPath: `${paths.list}/${projectId}/${paths.builds}`
-  })),
   // map redux state to props
   connect((state, props) => ({
     orderedTestGroups: getOrderedTestGroups(state, props)

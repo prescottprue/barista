@@ -45,7 +45,7 @@ export default compose(
     }) => ({
       runDetailPath: `${LIST_PATH}/${projectId}/${RUNS_PATH}/${runId}`,
       // Convert duration into minutes
-      formattedDuration: duration ? (duration / 60000).toFixed(3) : '-',
+      formattedDuration: duration ? (duration / 1000).toFixed(3) : '-',
       formattedStart: startedAt ? formatDateTime(startedAt) : '-',
       startedAtToolTip: startedAt
         ? `${strictDistanceInWords(startedAt)} ago`

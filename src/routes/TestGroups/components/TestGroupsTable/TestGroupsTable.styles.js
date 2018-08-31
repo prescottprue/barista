@@ -15,5 +15,14 @@ export default theme => ({
   },
   table: {
     minWidth: 700
+  },
+  empty: {
+    ...theme.mixins.gutters(),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    minHeight: theme.spacing.unit * 20
   }
 })

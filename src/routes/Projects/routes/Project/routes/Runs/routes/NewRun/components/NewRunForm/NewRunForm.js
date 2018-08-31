@@ -12,7 +12,7 @@ import SelectField from 'components/SelectField'
 import ImageBuildStatus from 'routes/Projects/routes/Project/components/ImageBuildStatus'
 import MostRecentImageInfo from 'routes/Projects/routes/Project/components/MostRecentImageInfo'
 import Chip from '@material-ui/core/Chip'
-import { TAGS_PATH } from 'constants'
+import { TAGS_PATH, LIST_PATH, RUNS_PATH, BUILDS_PATH } from 'constants'
 
 const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
 const ITEM_HEIGHT = 48
@@ -29,9 +29,7 @@ const MenuProps = {
 export const NewRunForm = ({
   classes,
   handleSubmit,
-  buildsPath,
   orderedTestGroups,
-  runsPath,
   pristine,
   projectId,
   submitting
@@ -39,7 +37,9 @@ export const NewRunForm = ({
   <form onSubmit={handleSubmit} className={classes.root}>
     <div className={classes.buttons}>
       <Tooltip title="Back To Runs">
-        <IconButton component={Link} to={runsPath}>
+        <IconButton
+          component={Link}
+          to={`${LIST_PATH}/${projectId}/${RUNS_PATH}`}>
           <BackIcon />
         </IconButton>
       </Tooltip>
@@ -112,7 +112,10 @@ export const NewRunForm = ({
         <ImageBuildStatus projectId={projectId} />
         <MostRecentImageInfo projectId={projectId} />
         <div className={classes.button}>
-          <Button component={Link} variant="outlined" to={buildsPath}>
+          <Button
+            component={Link}
+            variant="outlined"
+            to={`${LIST_PATH}/${projectId}/${BUILDS_PATH}`}>
             Go To Builds
           </Button>
         </div>
@@ -124,12 +127,10 @@ export const NewRunForm = ({
 NewRunForm.propTypes = {
   projectId: PropTypes.string.isRequired,
   orderedTestGroups: PropTypes.array, // from enhancer (connect)
-  buildsPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object, // from enhancer (withStyles)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)
   pristine: PropTypes.bool.isRequired, // from enhancer (reduxForm)
-  submitting: PropTypes.bool.isRequired, // from enhancer (reduxForm)
-  runsPath: PropTypes.string.isRequired // from enhancer (withProps)
+  submitting: PropTypes.bool.isRequired // from enhancer (reduxForm)
 }
 
 export default NewRunForm

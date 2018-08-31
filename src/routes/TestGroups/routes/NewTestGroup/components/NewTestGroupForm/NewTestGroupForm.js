@@ -36,7 +36,7 @@ export const NewTestGroupForm = ({
         color="primary"
         disabled={pristine || submitting}
         type="submit">
-        Submit New Group
+        Save New Group
       </Button>
     </div>
     <Paper className={classes.paper}>
@@ -65,7 +65,7 @@ export const NewTestGroupForm = ({
           <div>
             <Typography>Test Files</Typography>
             <List>
-              {testFiles.map(({ name, id }) => (
+              {testFiles.map(({ name = '', id }) => (
                 <ListItem key={name} dense button className={classes.listItem}>
                   <ListItemText primary={name} />
                   <ListItemSecondaryAction>
@@ -94,9 +94,12 @@ export const NewTestGroupForm = ({
           <div>
             <Typography>Tags (not currently supported by Cypress)</Typography>
             <List>
-              {tags.map(({ name, id }) => (
+              {tags.map(({ name, value, id }) => (
                 <ListItem key={name} dense button className={classes.listItem}>
-                  <ListItemText primary={name} />
+                  <ListItemText
+                    primary={name}
+                    secondary={`(${value || name})`}
+                  />
                   <ListItemSecondaryAction>
                     <Field name={`tags.${id}`} component={Checkbox} />
                   </ListItemSecondaryAction>

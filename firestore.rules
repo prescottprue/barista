@@ -41,7 +41,7 @@ service cloud.firestore {
         allow read, write: if request.auth.uid != null;
       }
     }
-    match /tag_groups/{tagGroupId} {
+    match /test_groups/{tagGroupId} {
       // Only logged in users can view/edit tags groups
       allow read, write: if request.auth.uid != null;
       // Rules apply to all child collections

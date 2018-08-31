@@ -9,6 +9,12 @@ import { getOrderedProjects, getOrderedTags } from 'selectors'
 import { spinnerWhileLoading } from 'utils/components'
 import styles from './NewTestGroupForm.styles'
 
+const defaultTestFolderPath = 'cypress/integration'
+
+const hardCodedFileOptions = [{ name: 'HomePage.spec.js' }].map(({ name }) => ({
+  name: `${defaultTestFolderPath}/${name}`
+}))
+
 export default compose(
   // set proptypes used in enhancer
   setPropTypes({
@@ -23,7 +29,7 @@ export default compose(
   // map redux state to props
   connect((state, props) => ({
     projects: getOrderedProjects(state, props),
-    testFiles: [{ name: 'Home.spec.js' }],
+    testFiles: hardCodedFileOptions,
     tags: getOrderedTags(state, props)
   })),
   // show spinner while tags data is loading
