@@ -5,13 +5,19 @@
       "fields": [
         { "fieldPath": "projectId", "mode": "ASCENDING" },
         { "fieldPath": "finishTime", "mode": "ASCENDING" }
+        { "fieldPath": "buildId", "mode": "ASCENDING" },
+        { "fieldPath": "commitSha", "mode": "ASCENDING" },
+        { "fieldPath": "branchName", "mode": "ASCENDING" },
       ]
     },
     {
       "collectionId": "container_builds",
       "fields": [
         { "fieldPath": "projectId", "mode": "ASCENDING" },
-        { "fieldPath": "finishTime", "mode": "DESCENDING" }
+        { "fieldPath": "finishTime", "mode": "DESCENDING" },
+        { "fieldPath": "buildId", "mode": "DESCENDING" },
+        { "fieldPath": "commitSha", "mode": "DESCENDING" },
+        { "fieldPath": "branchName", "mode": "DESCENDING" },
       ]
     }
   ]
