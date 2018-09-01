@@ -1,15 +1,14 @@
 import { get, pickBy } from 'lodash'
-import { CONTAINER_BUILDS_STATUS_PATH } from 'constants'
+import {
+  flow,
+  map as fpMap,
+  filter as fpFilter,
+  uniq as fpUniq,
+  sortBy as fpSortBy
+} from 'lodash/fp'
+import { PROJECTS_DATA_PATH } from 'constants'
 import { createSelector } from 'reselect'
-
-/**
- * Get status of container image build
- * @param {Object} state - Redux state (from connect)
- * @param {Object} props - Component props
- */
-export function getBuildStatuses(state) {
-  return state.firebase.data[CONTAINER_BUILDS_STATUS_PATH]
-}
+import { getBuildStatuses } from './builds'
 
 /**
  * @param {Object} state - Redux state (from connect)
@@ -24,7 +23,7 @@ export function getProjectId(state, props) {
  * @param {Object} props - Component props
  */
 export function getProject(state, props) {
-  return get(state, `firestore.projects.${props.projectid}`)
+  return get(state, `firestore.${PROJECTS_DATA_PATH}.${props.projectid}`)
 }
 
 /**
@@ -161,4 +160,43 @@ export const getMostRecentCommitSha = createSelector(
 export const getProjectImageBuildStatus = createSelector(
   [getBuildStatuses, getProjectId],
   (buildStatuses, projectId) => get(buildStatuses, `${projectId}`)
+)
+
+/**
+ * @param {Object} state - Redux state (from connect)
+ * @param {Object} props - Component props
+ */
+export function getProjectBuilds(state, props) {
+  return state.firestore.data[`builds-${props.projectId}`]
+}
+
+/**
+ * @param {Object} state - Redux state (from connect)
+ * @param {Object} props - Component props
+ */
+export function getOrderedProjectBuilds(state, props) {
+  return state.firestore.ordered[`builds-${props.projectId}`]
+}
+
+/**
+ * Get a list of branch names from all of the container builds
+ * for the current project. TODO: Replace this with a selector
+ * at the new path once onCloudBuildEvent cloud function handles
+ * writing branches.
+ * @param {Object} state - Redux state (from connect)
+ * @param {Object} props - Component props
+ */
+export const getProjectBranchNames = createSelector(
+  [getOrderedProjectBuilds],
+  (orderedBuilds, projectId) => {
+    const branchNamesOrderedByDefault = flow(
+      fpFilter('branchName'), // filter to project with branchName
+      fpMap('branchName'), // map objects to branchNames
+      fpUniq, // remove duplicates
+      fpSortBy(branchName => branchName !== 'master') // place master at the top
+    )(orderedBuilds || [])
+    return branchNamesOrderedByDefault && branchNamesOrderedByDefault.length
+      ? branchNamesOrderedByDefault
+      : ['master']
+  }
 )

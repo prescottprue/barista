@@ -16,10 +16,10 @@ export function rtdbRef(refPath) {
  * @return {Promise} Resolves with request snapshot after completed === true
  */
 export function waitForValue(ref) {
-  console.log(`waiting for value at ref: ${ref.path}`)
   return new Promise((resolve, reject) => {
     const EVENT_TYPE = 'value'
-    const requestListener = ref.on(
+    let requestListener
+    requestListener = ref.on(
       EVENT_TYPE,
       responseSnap => {
         if (responseSnap.val()) {
@@ -28,6 +28,7 @@ export function waitForValue(ref) {
           if (requestVal.status === 'error' || requestVal.error) {
             reject(responseSnap.val().error)
           } else {
+            // Unset listener
             ref.off(EVENT_TYPE, requestListener)
             resolve(responseSnap)
           }

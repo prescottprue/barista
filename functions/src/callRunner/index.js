@@ -11,6 +11,7 @@ const CALL_RUNNER_PATH = 'callRunner'
 /**
  * @param  {functions.Event} event - Function event
  * @param {functions.Context} context - Functions context
+ * @param  {String} [instanceTemplateName='test-barista-stage'}] [description]
  * @return {Promise}
  */
 async function callRunnerEvent(snap, context) {
@@ -23,9 +24,10 @@ async function callRunnerEvent(snap, context) {
   const {
     createdBy = uid,
     jobRunKey,
-    environment,
+    environment = 'stage',
+    testCodeBranch = 'master',
     baristaProject,
-    instanceTemplateName,
+    instanceTemplateName = 'test-brawndo',
     commandArgsStr,
     buildId
   } = eventData
@@ -55,6 +57,7 @@ async function callRunnerEvent(snap, context) {
       jobRunKey,
       createdBy,
       environment,
+      testCodeBranch,
       baristaProject,
       commandArgsStr,
       meta: { jobRunKey },

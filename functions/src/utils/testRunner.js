@@ -8,7 +8,7 @@ import { REQUESTS_PATH, RESPONSES_PATH, CALL_GOOGLE_API_PATH } from 'constants'
  * @param  {String} [cloudZone='us-west1-b'] - Zone in which compute engine
  * VM should be created
  * @param {String} environment - Environment to be tested. This value is
- * used to determine which container to use and which test url to pass.
+ * used to determine which test url to pass to the container.
  * @param {String} baristaProject - Name of barista project to be tested. This
  * value is used to determine which container to use and which test url to pass.
  * @param {String} createdAt - UID of user creating VM instance
@@ -22,13 +22,13 @@ function createRunRequest({
   instanceTemplateName,
   createdBy,
   jobRunKey,
-  environment,
+  testCodeBranch,
   baristaProject,
   requestKey,
+  // environment,
   meta = null
 }) {
   const cloudProjectId = getFirebaseConfig('projectId')
-  const imageVersion = 'CA-3337'
   // NOTE: requestId can not be used in name since it does not conform to
   // name field standards with Compute's API. Instead the requestId is used
   // as a tag. Error caused looked like so:
@@ -46,7 +46,7 @@ function createRunRequest({
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: test-${baristaProject}\n      image: gcr.io/${cloudProjectId}/test-${baristaProject}:${imageVersion}\n      env:\n        - name: JOB_RUN_KEY\n          value: ${baristaProject}/${jobRunKey}\n        - name: TEST_ARGS\n          value: "\\ ${commandArgsStr}"\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: test-${baristaProject}\n      image: gcr.io/${cloudProjectId}/test-${baristaProject}:${testCodeBranch}\n      env:\n        - name: JOB_RUN_KEY\n          value: ${baristaProject}/${jobRunKey}\n        - name: TEST_ARGS\n          value: "\\ ${commandArgsStr}"\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },
@@ -124,37 +124,30 @@ function createRunRequest({
 /**
  * Start test run with specified template by creating request to callGoogleApi
  * function.
- * @param  {String} requestId - id of original
- * @param  {String} createdBy - UID of request creator
- * @param  {String} [instanceTemplateName='test-barista-stage'}] [description]
+ * @param  {Object} runOpts - Options for test run
+ * @param  {String} [runOpts.cloudZone='us-west1-b'] - Zone in which compute engine
+ * VM should be created
+ * @param {String} runOpts.environment - Environment to be tested. This value is
+ * used to determine which test url to pass to the container.
+ * @param {String} runOpts.baristaProject - Name of barista project to be tested. This
+ * value is used to determine which container to use and which test url to pass.
+ * @param {String} runOpts.createdAt - UID of user creating VM instance
+ * @param {String} runOpts.requestKey - Key of original test run request
  * @return {Promise}
  */
-export async function callTestRunner({
-  meta,
-  jobRunKey,
-  environment,
-  baristaProject,
-  createdBy,
-  commandArgsStr,
-  instanceTemplateName = 'test-brawndo-stage'
-}) {
+export async function callTestRunner(runOpts) {
   const requestRef = rtdbRef(`${REQUESTS_PATH}/${CALL_GOOGLE_API_PATH}`).push()
   const responseRef = rtdbRef(
     `${RESPONSES_PATH}/${CALL_GOOGLE_API_PATH}/${requestRef.key}`
   )
-  const runRequest = createRunRequest({
-    instanceTemplateName,
-    requestKey: requestRef.key,
-    jobRunKey,
-    environment,
-    commandArgsStr,
-    baristaProject,
-    createdBy,
-    meta
-  })
+
+  // Create compute request object (to be passed to callGoogleApi)
+  const runRequest = createRunRequest(runOpts)
+
   // Push request to call google api function (set used since push is used
   // syncrounously earlier to create key)
   const [requestErr] = await to(requestRef.set(runRequest))
+
   // Handle errors writing request to RTDB
   if (requestErr) {
     console.error(
@@ -163,7 +156,9 @@ export async function callTestRunner({
     )
     throw requestErr
   }
+  // Wait for response from callGoogleApi request to create test runner
   const [responseErr, responseSnap] = await to(waitForValue(responseRef))
+
   // Handle errors waiting for response from RTDB
   if (responseErr) {
     console.error(

@@ -17,15 +17,15 @@ import {
 } from '@material-ui/icons'
 
 function iconFromStatus({ status, runResult, classes }) {
-  if (runResult === 'failed') {
-    return <ErrorIcon color="error" />
-  }
   switch (status) {
     case 'failed':
       return <ErrorIcon color="error" />
     case 'passed':
       return <CheckCircle className={classes.pass} />
     case 'pending':
+      if (runResult === 'failed') {
+        return <ErrorIcon color="error" />
+      }
       return <Rerun color="disabled" className={classes.pending} />
     default:
       return <Warning />
@@ -36,17 +36,17 @@ export const RunMetaItem = ({
   classes,
   runId,
   pending,
-  passes,
-  failures,
+  testsPassed,
+  testsFailed,
   formattedDuration,
   formattedStart,
-  startedAtToolTip,
+  createdAtTooltip,
   status,
   runResult,
   environment,
   runDetailPath,
   reRunJob,
-  tests,
+  totalTests,
   showProgress,
   allTests
 }) => (
@@ -66,12 +66,12 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Passing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {passes || status === 'failed' ? 0 : '-'}
+          {totalTests ? `${testsPassed}/${totalTests}` : '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Failing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {failures || '-'}
+          {totalTests ? `${testsFailed}/${totalTests}` : '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Duration">
@@ -79,7 +79,7 @@ export const RunMetaItem = ({
           {formattedDuration}
         </Typography>
       </Tooltip>
-      <Tooltip title={startedAtToolTip}>
+      <Tooltip title={createdAtTooltip}>
         <Typography
           align="center"
           variant="body1"
@@ -125,7 +125,7 @@ export const RunMetaItem = ({
         <LinearProgress
           className={classnames(classes.progressBar)}
           variant="determinate"
-          value={tests}
+          value={totalTests}
           valueBuffer={allTests}
         />
       ) : null}
@@ -135,21 +135,21 @@ export const RunMetaItem = ({
 
 RunMetaItem.propTypes = {
   runId: PropTypes.string.isRequired,
-  pending: PropTypes.number,
-  passes: PropTypes.number,
-  failures: PropTypes.number,
+  showProgress: PropTypes.bool.isRequired,
+  pending: PropTypes.bool, // from enhancer (connect)
+  status: PropTypes.string, // from enhancer (connect)
+  environment: PropTypes.string, // from enhancer (connect)
+  testsPassed: PropTypes.number, // from enhancer (mapProps)
+  testsFailed: PropTypes.number, // from enhancer (mapProps)
+  totalTests: PropTypes.number, // from enhancer (mapProps)
   formattedDuration: PropTypes.string, // from enhancer (withProps)
   formattedStart: PropTypes.string, // from enhancer (withProps)
-  status: PropTypes.string,
   allTests: PropTypes.number, // from enhancer (flattenProp('runMeta'))
-  tests: PropTypes.number, // from enhancer (flattenProp('stats'))
   runResult: PropTypes.string, // from enhancer (flattenProp('runMeta'))
-  showProgress: PropTypes.bool.isRequired,
-  environment: PropTypes.string,
   runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   reRunJob: PropTypes.func.isRequired, // from enhancer (withHandlers)
-  startedAtToolTip: PropTypes.string.isRequired // from enhancer (withProps)
+  createdAtTooltip: PropTypes.string.isRequired // from enhancer (withProps)
 }
 
 export default RunMetaItem

@@ -65,12 +65,14 @@ async function updateContainerBuildMeta({ projectId, buildId, imageMetaData }) {
     throw imageMetaGetErr
   }
 
-  // Check for existing doc, if one does not exist, add createdAt
+  // Check for existing doc, if one does not exist, add createdAt otherwise add updatedAt
   if (!imageMetaSnap.exists) {
     console.log(
       'Metadata of container build does not already exist, adding createdAt'
     )
     imageMetaData.createdAt = admin.firestore.FieldValue.serverTimestamp()
+  } else {
+    imageMetaData.updatedAt = admin.firestore.FieldValue.serverTimestamp()
   }
 
   // Write image metadata to Firestore
@@ -134,7 +136,13 @@ async function callCloudBuildApiEvent(message) {
     commitSha
   })
 
-  const imageMetaData = { status, branchName, buildId, commitSha, repoName }
+  const imageMetaData = {
+    status,
+    branchName,
+    buildId,
+    commitSha,
+    repoName: projectId
+  }
 
   // Attach finishTime if it exists
   if (messageBody.finishTime) {
