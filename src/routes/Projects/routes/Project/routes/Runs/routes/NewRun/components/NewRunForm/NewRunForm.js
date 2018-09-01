@@ -70,7 +70,7 @@ export const NewRunForm = ({
           <Grid item xs={12} sm={3}>
             <SelectField
               options={environmentOptions}
-              name="appEnvironment"
+              name="environment"
               label="App Environment"
               classes={{ root: classes.optionSection }}
             />

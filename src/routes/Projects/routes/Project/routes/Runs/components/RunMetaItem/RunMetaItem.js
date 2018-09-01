@@ -36,8 +36,8 @@ export const RunMetaItem = ({
   classes,
   runId,
   pending,
-  passes,
-  failures,
+  testsPassed,
+  testsFailed,
   formattedDuration,
   formattedStart,
   createdAtTooltip,
@@ -46,7 +46,7 @@ export const RunMetaItem = ({
   environment,
   runDetailPath,
   reRunJob,
-  tests,
+  totalTests,
   showProgress,
   allTests
 }) => (
@@ -66,12 +66,12 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Passing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {tests ? `${passes}/${tests}` : '-'}
+          {totalTests ? `${testsPassed}/${totalTests}` : '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Failing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {tests ? `${failures}/${tests}` : '-'}
+          {totalTests ? `${testsFailed}/${totalTests}` : '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Duration">
@@ -125,7 +125,7 @@ export const RunMetaItem = ({
         <LinearProgress
           className={classnames(classes.progressBar)}
           variant="determinate"
-          value={tests}
+          value={totalTests}
           valueBuffer={allTests}
         />
       ) : null}
@@ -135,17 +135,17 @@ export const RunMetaItem = ({
 
 RunMetaItem.propTypes = {
   runId: PropTypes.string.isRequired,
-  pending: PropTypes.number,
-  passes: PropTypes.number,
-  failures: PropTypes.number,
+  showProgress: PropTypes.bool.isRequired,
+  pending: PropTypes.bool, // from enhancer (connect)
+  status: PropTypes.string, // from enhancer (connect)
+  environment: PropTypes.string, // from enhancer (connect)
+  testsPassed: PropTypes.number, // from enhancer (mapProps)
+  testsFailed: PropTypes.number, // from enhancer (mapProps)
+  totalTests: PropTypes.number, // from enhancer (mapProps)
   formattedDuration: PropTypes.string, // from enhancer (withProps)
   formattedStart: PropTypes.string, // from enhancer (withProps)
-  status: PropTypes.string,
   allTests: PropTypes.number, // from enhancer (flattenProp('runMeta'))
-  tests: PropTypes.number, // from enhancer (flattenProp('stats'))
   runResult: PropTypes.string, // from enhancer (flattenProp('runMeta'))
-  showProgress: PropTypes.bool.isRequired,
-  environment: PropTypes.string,
   runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   reRunJob: PropTypes.func.isRequired, // from enhancer (withHandlers)

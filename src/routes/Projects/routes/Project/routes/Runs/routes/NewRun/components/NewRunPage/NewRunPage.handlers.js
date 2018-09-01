@@ -38,7 +38,7 @@ export function startTestRun({
 }) {
   return (values = {}) => {
     const {
-      appEnvironment,
+      environment,
       testCodeBranch,
       testGroups: selectedTestGroupKeys
     } = values
@@ -51,7 +51,7 @@ export function startTestRun({
     const metaRef = firebase.pushWithMeta(
       `${TEST_RUNS_META_PATH}/${projectId}`,
       {
-        appEnvironment,
+        environment,
         status: 'pending',
         instanceTemplateName
       }
@@ -61,7 +61,7 @@ export function startTestRun({
     return firebase
       .push(CALL_RUNNER_REQUEST_PATH, {
         jobRunKey: pushKey,
-        appEnvironment,
+        environment,
         testCodeBranch,
         commandArgsStr,
         baristaProject: projectId,

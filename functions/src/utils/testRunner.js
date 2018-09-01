@@ -7,8 +7,8 @@ import { REQUESTS_PATH, RESPONSES_PATH, CALL_GOOGLE_API_PATH } from 'constants'
  * Create body of request to create a VM on Google Compute Engine
  * @param  {String} [cloudZone='us-west1-b'] - Zone in which compute engine
  * VM should be created
- * @param {String} appEnvironment - Environment to be tested. This value is
- * used to determine which container to use and which test url to pass.
+ * @param {String} environment - Environment to be tested. This value is
+ * used to determine which test url to pass to the container.
  * @param {String} baristaProject - Name of barista project to be tested. This
  * value is used to determine which container to use and which test url to pass.
  * @param {String} createdAt - UID of user creating VM instance
@@ -22,10 +22,10 @@ function createRunRequest({
   instanceTemplateName,
   createdBy,
   jobRunKey,
-  appEnvironment,
   testCodeBranch,
   baristaProject,
   requestKey,
+  // environment,
   meta = null
 }) {
   const cloudProjectId = getFirebaseConfig('projectId')
@@ -127,8 +127,8 @@ function createRunRequest({
  * @param  {Object} runOpts - Options for test run
  * @param  {String} runOpts.[cloudZone='us-west1-b'] - Zone in which compute engine
  * VM should be created
- * @param {String} runOpts.appEnvironment - Environment to be tested. This value is
- * used to determine which container to use and which test url to pass.
+ * @param {String} runOpts.environment - Environment to be tested. This value is
+ * used to determine which test url to pass to the container.
  * @param {String} runOpts.baristaProject - Name of barista project to be tested. This
  * value is used to determine which container to use and which test url to pass.
  * @param {String} runOpts.createdAt - UID of user creating VM instance

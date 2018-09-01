@@ -24,7 +24,7 @@ async function callRunnerEvent(snap, context) {
   const {
     createdBy = uid,
     jobRunKey,
-    appEnvironment = 'stage',
+    environment = 'stage',
     testCodeBranch = 'master',
     baristaProject,
     instanceTemplateName = 'test-brawndo',
@@ -56,7 +56,7 @@ async function callRunnerEvent(snap, context) {
       requestId: pushId,
       jobRunKey,
       createdBy,
-      appEnvironment,
+      environment,
       testCodeBranch,
       baristaProject,
       commandArgsStr,
