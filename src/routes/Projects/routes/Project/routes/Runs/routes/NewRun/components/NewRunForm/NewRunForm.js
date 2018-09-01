@@ -18,7 +18,8 @@ import { TAGS_PATH, LIST_PATH, RUNS_PATH, BUILDS_PATH } from 'constants'
 const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
 const branchOptions = [
   { value: 'master', label: 'master' },
-  { value: 'e2e', label: 'e2e' }
+  { value: 'e2e', label: 'e2e' },
+  { value: 'run-branch', label: 'run-branch' }
 ]
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8

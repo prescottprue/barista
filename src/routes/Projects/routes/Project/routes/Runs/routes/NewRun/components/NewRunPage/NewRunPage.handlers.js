@@ -1,5 +1,26 @@
-import { get, reduce, isArray, compact, trim } from 'lodash'
+import { get, reduce, isArray, compact, trim, uniq } from 'lodash'
 import { TEST_RUNS_META_PATH, CALL_RUNNER_REQUEST_PATH } from 'constants'
+
+function createCommandArgs({ testGroups, selectedTestGroupKeys }) {
+  // Get list of file names as a string from all selected groups
+  const fileNamesStr = reduce(
+    selectedTestGroupKeys,
+    (acc, selectedTestGroupKey) => {
+      const filePaths = get(testGroups, `${selectedTestGroupKey}.filePaths`)
+      if (!isArray(filePaths)) {
+        return acc
+      }
+      // File paths is a valid array
+      const cleanedPaths = compact(filePaths).map(trim)
+      // Join into string removing duplicates
+      return uniq(cleanedPaths).join(',')
+    },
+    ''
+  )
+  // Create Test Command option and value for use in test command
+  const finalCommand = `${fileNamesStr.length ? `-s ${fileNamesStr}` : ''}`
+  return finalCommand.length ? finalCommand : ''
+}
 
 /**
  * Handler for starting test run. Works by pushing to requests/callRunner
@@ -16,32 +37,18 @@ export function startTestRun({
   buildId
 }) {
   return (values = {}) => {
-    const { appEnvironment, testCodeBranch, testGroups = [] } = values
-    const selectedTestGroups = testGroups.map(testGroupKey =>
-      get(testGroups, testGroupKey, testGroupKey)
-    )
-    // Get list of file names as a string from all selected groups
-    const fileNamesStr = reduce(
-      selectedTestGroups,
-      (acc, selectedTestGroup) => {
-        if (
-          !selectedTestGroup ||
-          !selectedTestGroup.filePaths ||
-          !isArray(selectedTestGroup.filePaths)
-        ) {
-          return acc
-        }
-        // File paths is a valid array
-        return compact(selectedTestGroup.filePaths)
-          .map(trim)
-          .join(',')
-      },
-      ''
-    )
-    // Create Test Command option and value for use in test command
-    const fileNamesArg = `-s ${fileNamesStr}`
+    const {
+      appEnvironment,
+      testCodeBranch,
+      testGroups: selectedTestGroupKeys
+    } = values
+    const commandArgsStr = createCommandArgs({
+      selectedTestGroupKeys,
+      testGroups
+    })
     const instanceTemplateName = `test-${projectId}`
-    const pushRef = firebase.pushWithMeta(
+    // Push pending status to meta path
+    const metaRef = firebase.pushWithMeta(
       `${TEST_RUNS_META_PATH}/${projectId}`,
       {
         appEnvironment,
@@ -49,18 +56,20 @@ export function startTestRun({
         instanceTemplateName
       }
     )
-    const pushKey = pushRef.key
+    const pushKey = metaRef.key
+    // Push request to callRunner Cloud Function with the key from metaRef
     return firebase
       .push(CALL_RUNNER_REQUEST_PATH, {
         jobRunKey: pushKey,
         appEnvironment,
         testCodeBranch,
-        commandArgsStr: fileNamesArg,
+        commandArgsStr,
         baristaProject: projectId,
         instanceTemplateName,
         buildId
       })
       .then(() => {
+        // Go to new job detail page
         return router.push(`${runsPagePath}/${pushKey}`)
       })
   }

@@ -35,12 +35,18 @@ export const Builds = ({ builds, buildStatuses, projectId, classes }) => (
             return (
               <TableRow key={build.id}>
                 <TableCell>
-                  {get(build, 'buildData.attributes.buildId')}
+                  {get(
+                    build,
+                    'buildId',
+                    get(build, 'buildData.attributes.buildId')
+                  )}
                 </TableCell>
                 <TableCell>
                   {formatDateTime(get(build, 'finishTime'))}
                 </TableCell>
-                <TableCell>{get(build, 'buildData.branchName')}</TableCell>
+                <TableCell>
+                  {get(build, 'branchName', get(build, 'buildData.branchName'))}
+                </TableCell>
               </TableRow>
             )
           })}

@@ -1,15 +1,7 @@
 import { get, pickBy } from 'lodash'
-import { CONTAINER_BUILDS_STATUS_PATH } from 'constants'
+import { PROJECTS_DATA_PATH } from 'constants'
 import { createSelector } from 'reselect'
-
-/**
- * Get status of container image build
- * @param {Object} state - Redux state (from connect)
- * @param {Object} props - Component props
- */
-export function getBuildStatuses(state) {
-  return state.firebase.data[CONTAINER_BUILDS_STATUS_PATH]
-}
+import { getBuildStatuses } from './builds'
 
 /**
  * @param {Object} state - Redux state (from connect)
@@ -24,7 +16,7 @@ export function getProjectId(state, props) {
  * @param {Object} props - Component props
  */
 export function getProject(state, props) {
-  return get(state, `firestore.projects.${props.projectid}`)
+  return get(state, `firestore.${PROJECTS_DATA_PATH}.${props.projectid}`)
 }
 
 /**

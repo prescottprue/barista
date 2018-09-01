@@ -44,10 +44,10 @@ export default compose(
       runMeta
     }) => ({
       runDetailPath: `${LIST_PATH}/${projectId}/${RUNS_PATH}/${runId}`,
-      // Convert duration into minutes
+      // Convert duration into seconds
       formattedDuration: duration ? (duration / 1000).toFixed(3) : '-',
       formattedStart: createdAt ? formatDateTime(createdAt) : '-',
-      createdAtToolTip: createdAt
+      createdAtTooltip: createdAt
         ? `${strictDistanceInWords(createdAt)} ago`
         : '-',
       showProgress:

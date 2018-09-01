@@ -17,15 +17,15 @@ import {
 } from '@material-ui/icons'
 
 function iconFromStatus({ status, runResult, classes }) {
-  if (runResult === 'failed') {
-    return <ErrorIcon color="error" />
-  }
   switch (status) {
     case 'failed':
       return <ErrorIcon color="error" />
     case 'passed':
       return <CheckCircle className={classes.pass} />
     case 'pending':
+      if (runResult === 'failed') {
+        return <ErrorIcon color="error" />
+      }
       return <Rerun color="disabled" className={classes.pending} />
     default:
       return <Warning />
@@ -40,7 +40,7 @@ export const RunMetaItem = ({
   failures,
   formattedDuration,
   formattedStart,
-  startedAtToolTip,
+  createdAtTooltip,
   status,
   runResult,
   environment,
@@ -66,12 +66,12 @@ export const RunMetaItem = ({
       </Tooltip>
       <Tooltip title="Passing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {passes || status === 'failed' ? 0 : '-'}
+          {tests ? `${passes}/${tests}` : '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Failing Tests">
         <Typography align="center" variant="body1" className={classes.data}>
-          {failures || '-'}
+          {tests ? `${failures}/${tests}` : '-'}
         </Typography>
       </Tooltip>
       <Tooltip title="Duration">
@@ -79,7 +79,7 @@ export const RunMetaItem = ({
           {formattedDuration}
         </Typography>
       </Tooltip>
-      <Tooltip title={startedAtToolTip}>
+      <Tooltip title={createdAtTooltip}>
         <Typography
           align="center"
           variant="body1"
@@ -149,7 +149,7 @@ RunMetaItem.propTypes = {
   runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   reRunJob: PropTypes.func.isRequired, // from enhancer (withHandlers)
-  startedAtToolTip: PropTypes.string.isRequired // from enhancer (withProps)
+  createdAtTooltip: PropTypes.string.isRequired // from enhancer (withProps)
 }
 
 export default RunMetaItem
