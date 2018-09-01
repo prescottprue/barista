@@ -17,7 +17,7 @@ export function getBuildStatuses(state) {
  * @param {Object} props - Component props
  */
 export function getBuilds(state, props) {
-  return state.firestore.ordered[CONTAINER_BUILDS_META_PATH]
+  return state.firestore.data[CONTAINER_BUILDS_META_PATH]
 }
 
 /**

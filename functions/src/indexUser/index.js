@@ -46,11 +46,11 @@ async function indexUser(change, context) {
     return null
   }
 
-  const data = change.before.data()
-  const previousData = change.after.data()
+  const previousData = change.before.data()
+  const newData = change.after.data()
 
   // Check to see if displayName has changed
-  if (data.displayName === previousData.displayName) {
+  if (previousData.displayName === newData.displayName) {
     console.log(
       `displayName parameter did not change for user with id: ${userId}, no need to update index. Exiting...`
     )
@@ -60,7 +60,7 @@ async function indexUser(change, context) {
   // Update displayName within index
   const [nameUpdateErr] = await to(
     publicProfileRef.update({
-      displayName: data.displayName
+      displayName: newData.displayName
     })
   )
 
@@ -73,5 +73,5 @@ async function indexUser(change, context) {
     throw nameUpdateErr
   }
 
-  return data
+  return newData
 }

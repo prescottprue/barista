@@ -33,6 +33,8 @@ export default compose(
   })),
   // ensure that we are getting the the build object of the last build image
   firestoreConnect(({ projectId }) => [
+    // Listener for most recent container build for the current project
+    // (used for current image info in NewRunForm)
     {
       collection: CONTAINER_BUILDS_META_PATH,
       orderBy: ['finishTime', 'desc'],
@@ -40,6 +42,14 @@ export default compose(
       limit: 1,
       storeAs: `mostRecentBuild-${projectId}`
     },
+    // Listener for all project container builds (used for branchNames in NewRunForm)
+    {
+      collection: CONTAINER_BUILDS_META_PATH,
+      orderBy: ['finishTime', 'desc'],
+      where: ['projectId', '==', projectId],
+      storeAs: `builds-${projectId}`
+    },
+    // Listener for test groups (used in NewRunForm)
     { collection: TEST_GROUPS_DATA_PATH }
   ]),
   // pass along the build id

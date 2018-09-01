@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { capitalize } from 'lodash'
+import { capitalize, isString } from 'lodash'
 import { Field } from 'redux-form'
 import FormControl from '@material-ui/core/FormControl'
 import { Select } from 'redux-form-material-ui'
@@ -38,7 +38,11 @@ export const SelectField = ({
             value={option.value || option.id}
             disabled={option.disabled}>
             <ListItemText
-              primary={option.name || option.label || capitalize(option.value)}
+              primary={
+                isString(option)
+                  ? option
+                  : option.name || option.label || capitalize(option.value)
+              }
             />
           </MenuItem>
         ))}

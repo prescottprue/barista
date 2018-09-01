@@ -3,8 +3,20 @@ import * as admin from 'firebase-admin'
 describe('onCloudBuildEvent RTDB Cloud Function (onCreate)', () => {
   let adminInitStub
   let onCloudBuildEvent
+  let setStub
+  let getStub
+  let refStub
+  let docStub
+  let collectionStub
 
-  before(() => {
+  beforeEach(() => {
+    setStub = sinon.stub().returns(Promise.resolve({}))
+    getStub = sinon.stub().returns(Promise.resolve({}))
+    refStub = sinon.stub().returns({ set: setStub })
+    docStub = sinon.stub().returns({ set: setStub, get: getStub })
+    collectionStub = sinon
+      .stub()
+      .returns({ add: sinon.stub().returns(Promise.resolve({})), doc: docStub })
     /* eslint-disable global-require */
     adminInitStub = sinon.stub(admin, 'initializeApp')
     // Set GCLOUD_PROJECT to env
@@ -15,7 +27,7 @@ describe('onCloudBuildEvent RTDB Cloud Function (onCreate)', () => {
     /* eslint-enable global-require */
   })
 
-  after(() => {
+  afterEach(() => {
     adminInitStub.restore()
     functionsTest.cleanup()
     process.env.GCLOUD_PROJECT = undefined
@@ -29,17 +41,23 @@ describe('onCloudBuildEvent RTDB Cloud Function (onCreate)', () => {
     }
   })
 
-  it('throws if there is no repo name in the message body', async () => {
-    const fakeMessage = {
-      attributes: { buildId: 'testing' },
-      body: {}
-    }
-    const fakeMessageEvent = {
-      json: JSON.stringify(fakeMessage.body),
-      attributes: fakeMessage.attributes
-    }
+  it('throws if message does not contain message body', async () => {
     try {
-      await onCloudBuildEvent(fakeMessageEvent)
+      await onCloudBuildEvent({ attributes: {} })
+    } catch (err) {
+      expect(err).to.have.property(
+        'message',
+        'The message does not have a body'
+      )
+    }
+  })
+
+  it('throws if there is no repo name in the message body', async () => {
+    try {
+      await onCloudBuildEvent({
+        json: {},
+        attributes: {}
+      })
     } catch (err) {
       expect(err).to.have.property(
         'message',
@@ -49,13 +67,6 @@ describe('onCloudBuildEvent RTDB Cloud Function (onCreate)', () => {
   })
 
   it('writes status updates to RTDB', async () => {
-    const setStub = sinon.stub().returns(Promise.resolve({}))
-    const getStub = sinon.stub().returns(Promise.resolve({}))
-    const refStub = sinon.stub().returns({ set: setStub })
-    const docStub = sinon.stub().returns({ set: setStub, get: getStub })
-    const collectionStub = sinon
-      .stub()
-      .returns({ add: sinon.stub().returns(Promise.resolve({})), doc: docStub })
     // Apply stubs as admin.database()
     const databaseStub = sinon.stub().returns({ ref: refStub })
     databaseStub.ServerValue = { TIMESTAMP: 'test' }
@@ -91,6 +102,50 @@ describe('onCloudBuildEvent RTDB Cloud Function (onCreate)', () => {
         repoName,
         branchName,
         commitSha
+      },
+      { merge: true }
+    )
+  })
+
+  it('includes finishTime in update', async () => {
+    // Apply stubs as admin.database()
+    const databaseStub = sinon.stub().returns({ ref: refStub })
+    databaseStub.ServerValue = { TIMESTAMP: 'test' }
+    sinon.stub(admin, 'database').get(() => databaseStub)
+    // Apply stubs as admin.firestore()
+    const firestoreStub = sinon
+      .stub()
+      .returns({ doc: docStub, collection: collectionStub })
+    sinon.stub(admin, 'firestore').get(() => firestoreStub)
+    const createdAt = 'timestamp'
+    const finishTime = 'timestamp'
+    const status = 'SUCCESS'
+    const commitSha = 'asdf'
+    const branchName = 'master'
+    const repoName = 'testing'
+    const buildId = 'myBuildId'
+    admin.firestore.FieldValue = { serverTimestamp: () => createdAt }
+    const fakeMessage = {
+      attributes: { buildId, status },
+      json: {
+        source: { repoSource: { repoName, branchName } },
+        sourceProvenance: { resolvedRepoSource: { commitSha } },
+        finishTime
+      }
+    }
+    const res = await onCloudBuildEvent(fakeMessage)
+    expect(res).to.be.null
+    // Confirm that RTDB is updated with object containing finishTime
+    expect(setStub).to.be.calledWith(
+      {
+        createdAt,
+        status,
+        buildId,
+        projectId: repoName,
+        repoName,
+        branchName,
+        commitSha,
+        finishTime
       },
       { merge: true }
     )

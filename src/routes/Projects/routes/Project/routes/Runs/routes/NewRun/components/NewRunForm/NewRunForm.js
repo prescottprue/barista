@@ -16,11 +16,6 @@ import Chip from '@material-ui/core/Chip'
 import { TAGS_PATH, LIST_PATH, RUNS_PATH, BUILDS_PATH } from 'constants'
 
 const environmentOptions = [{ value: 'stage' }, { value: 'int' }]
-const branchOptions = [
-  { value: 'master', label: 'master' },
-  { value: 'e2e', label: 'e2e' },
-  { value: 'run-branch', label: 'run-branch' }
-]
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
 const MenuProps = {
@@ -35,6 +30,7 @@ const MenuProps = {
 export const NewRunForm = ({
   classes,
   handleSubmit,
+  branchNames,
   orderedTestGroups,
   pristine,
   invalid,
@@ -77,7 +73,7 @@ export const NewRunForm = ({
           </Grid>
           <Grid item xs={12} sm={3}>
             <SelectField
-              options={branchOptions}
+              options={branchNames}
               name="testCodeBranch"
               label="Test Code Branch"
               classes={{ root: classes.optionSection }}
@@ -163,6 +159,7 @@ NewRunForm.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)
   pristine: PropTypes.bool.isRequired, // from enhancer (reduxForm)
+  branchNames: PropTypes.array.isRequired,
   submitting: PropTypes.bool.isRequired, // from enhancer (reduxForm)
   invalid: PropTypes.bool.isRequired // from enhancer (reduxForm)
 }

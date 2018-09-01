@@ -125,7 +125,7 @@ function createRunRequest({
  * Start test run with specified template by creating request to callGoogleApi
  * function.
  * @param  {Object} runOpts - Options for test run
- * @param  {String} runOpts.[cloudZone='us-west1-b'] - Zone in which compute engine
+ * @param  {String} [runOpts.cloudZone='us-west1-b'] - Zone in which compute engine
  * VM should be created
  * @param {String} runOpts.environment - Environment to be tested. This value is
  * used to determine which test url to pass to the container.
