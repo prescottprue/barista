@@ -41,6 +41,8 @@ Before setting up make sure you have the following:
 
     }
 
+    export const publicVapidKey = '<- your firebase messaging vapid key ->'
+
     export const googleApis = {
       apiKey: '<- your firebase apiKey ->'
     }
