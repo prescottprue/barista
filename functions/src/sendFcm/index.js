@@ -87,7 +87,7 @@ async function sendFcmEvent(snap, context) {
       googleResponseErr
     )
 
-    // Write e
+    // Write error to response
     const [writeErr] = await to(
       responseRef.set({
         complete: true,

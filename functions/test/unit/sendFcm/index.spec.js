@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin'
+import { to } from 'utils/async'
 const userId = 1
 const refParam = `users_public/${userId}`
 
@@ -7,11 +8,16 @@ describe('sendFcm RTDB Cloud Function (onCreate)', () => {
   let sendFcm
 
   before(() => {
-    /* eslint-disable global-require */
     adminInitStub = sinon.stub(admin, 'initializeApp')
-    // Syntax may change when this issue is addressed
-    // [#2](https://github.com/firebase/firebase-functions-test/issues/2)
-    sendFcm = functionsTest.wrap(require(`${__dirname}/../../index`).sendFcm)
+    // Set GCLOUD_PROJECT to env
+    process.env.GCLOUD_PROJECT = 'test'
+    // Stub Firebase's config environment var
+    process.env.FIREBASE_CONFIG = JSON.stringify({
+      databaseURL: 'https://some-project.firebaseio.com',
+      storageBucket: 'some-bucket.appspot.com'
+    })
+    /* eslint-disable global-require */
+    sendFcm = functionsTest.wrap(require(`${__dirname}/../../../index`).sendFcm)
     /* eslint-enable global-require */
   })
 
@@ -20,7 +26,7 @@ describe('sendFcm RTDB Cloud Function (onCreate)', () => {
     functionsTest.cleanup()
   })
 
-  it('handles event', async () => {
+  it('throws if userId is not provided', async () => {
     const databaseStub = sinon.stub()
     const refStub = sinon.stub()
     const removeStub = sinon.stub()
@@ -36,7 +42,36 @@ describe('sendFcm RTDB Cloud Function (onCreate)', () => {
       params: { filePath: 'testing', userId: 1 }
     }
 
-    const res = await sendFcm(snap, fakeContext)
-    expect(res).to.be.null
+    const [err] = await to(sendFcm(snap, fakeContext))
+    expect(err).to.have.property(
+      'message',
+      'userId is required to send FCM message'
+    )
+  })
+
+  it('throws if user profile does not contain messaging id', async () => {
+    const userId = 'asdf'
+    const refStub = sinon.stub().returns({})
+    const databaseStub = sinon.stub().returns({ ref: refStub })
+    const getStub = sinon.stub().returns(Promise.resolve({ data: () => ({}) }))
+    const docStub = sinon.stub().returns({ get: getStub })
+    const collectionStub = sinon.stub().returns({ doc: docStub })
+    // Apply stubs as admin.firestore()
+    const firestoreStub = sinon
+      .stub()
+      .returns({ doc: docStub, collection: collectionStub })
+    sinon.stub(admin, 'firestore').get(() => firestoreStub)
+    sinon.stub(admin, 'database').get(() => databaseStub)
+    const snap = {
+      val: () => ({ userId })
+    }
+    const fakeContext = {
+      params: { filePath: 'testing', userId: 1 }
+    }
+    const [err] = await to(sendFcm(snap, fakeContext))
+    expect(err).to.have.property(
+      'message',
+      `Messaging token not found for uid: "${userId}"`
+    )
   })
 })
