@@ -27,8 +27,6 @@ describe.skip('callGoogleApi RTDB Cloud Function (onCreate)', () => {
     setStub.returns(Promise.resolve({ ref: 'new_ref' }))
     databaseStub = sinon.stub(admin, 'database').returns({ ref: refStub })
     // admin.database.ServerValue = { TIMESTAMP: { '.sv': 'timestamp' } }
-    // Syntax may change when this issue is addressed
-    // [#2](https://github.com/firebase/firebase-functions-test/issues/2)
     callGoogleApi = functionsTest.wrap(
       require(`${__dirname}/../../../index`).callGoogleApi
     )

@@ -87,14 +87,19 @@ async function cleanupRunnerEvent(change, context) {
 
   // Watch delete request response for results from callGoogleApi function
   const [responseErr] = await to(waitForValue(removeResponseRef))
+
   if (responseErr) {
     console.error(
       `Error in cleanup request: ${responseErr.message || ''}`,
       responseErr
     )
+
+    // Write response error to RTDB
     const [errorUpdateErr] = await to(
       testRunMetaRef.update({ instanceDeleteFailed: true })
     )
+
+    // Handle errors writing error to RTDB
     if (errorUpdateErr) {
       console.error(
         `Error updating test run meta with instanceDeleteFailed: ${errorUpdateErr.message ||
