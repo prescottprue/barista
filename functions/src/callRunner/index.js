@@ -1,5 +1,4 @@
 import * as functions from 'firebase-functions'
-import * as admin from 'firebase-admin'
 import { to } from 'utils/async'
 import { callTestRunner } from 'utils/testRunner'
 import { contextToAuthUid } from 'utils/firebaseFunctions'
@@ -12,38 +11,37 @@ const CALL_RUNNER_PATH = 'callRunner'
 /**
  * @param  {functions.Event} event - Function event
  * @param {functions.Context} context - Functions context
+ * @param  {String} [instanceTemplateName='test-barista-stage'}] [description]
  * @return {Promise}
  */
 async function callRunnerEvent(snap, context) {
   const uid = contextToAuthUid(context)
   const {
     params: { pushId },
-    timestamp
+    timestamp: requestCreatedAt
   } = context
   const eventData = snap.val()
   const {
     createdBy = uid,
     jobRunKey,
-    environment,
+    environment = 'stage',
+    testCodeBranch = 'master',
     baristaProject,
-    instanceTemplateName,
+    instanceTemplateName = 'test-brawndo',
+    commandArgsStr,
     buildId
   } = eventData
   const responseRef = rtdbRef(`${RESPONSES_PATH}/${CALL_RUNNER_PATH}/${pushId}`)
+  const metaRef = rtdbRef(`test_runs_meta/${baristaProject}/${jobRunKey}`)
 
-  // Write test run document to Firestore
+  // Write runnerRequestMeta to test_run_meta in RTDB
   const [metaAddErr] = await to(
-    admin
-      .firestore()
-      .collection('test_runs')
-      .add({
-        createdBy,
-        createdAt: timestamp,
-        meta: { callRunnerRequestId: pushId }
-      })
+    metaRef.update({
+      runnerRequestMeta: { requestId: pushId, requestCreatedAt }
+    })
   )
 
-  // Handle errors writing test run document to firestore
+  // Handle errors writing runnerRequestMeta to test_run_meta in RTDB
   if (metaAddErr) {
     console.error(
       `Error writing metadata to Firestore: ${metaAddErr.message || ''}`,
@@ -59,7 +57,9 @@ async function callRunnerEvent(snap, context) {
       jobRunKey,
       createdBy,
       environment,
+      testCodeBranch,
       baristaProject,
+      commandArgsStr,
       meta: { jobRunKey },
       instanceTemplateName
     })
@@ -109,9 +109,7 @@ async function callRunnerEvent(snap, context) {
         runStartResponse: testRunResponseSnap.val()
       }),
       // Update instanceMeta parameter on test_run_meta object
-      rtdbRef(
-        `test_runs_meta/${baristaProject}/${jobRunKey}/instanceMeta`
-      ).update(instanceMeta)
+      metaRef.update({ instanceMeta })
     ])
   )
 

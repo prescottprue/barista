@@ -13,7 +13,6 @@ async function cleanupRunnerEvent(change, context) {
     params: { projectId, jobRunKey }
   } = context
   const status = change.after.val()
-  console.log('Status update:', { jobRunKey, projectId }, change.after.ref)
 
   // Skip cleanup if status is not "passed" or "failed"
   if (status !== 'passed' && status !== 'failed') {
@@ -37,7 +36,7 @@ async function cleanupRunnerEvent(change, context) {
     )
     throw getDataErr
   }
-  console.log('job run data:', jobRunDataSnap.val())
+
   const { resourceUrl } = get(jobRunDataSnap.val(), 'instanceMeta', {})
 
   // Throw for missing resourceUrl (needed to delete instance)
@@ -72,6 +71,7 @@ async function cleanupRunnerEvent(change, context) {
     throw requestErr
   }
 
+  // Update job run meta with instanceDeleteStarted flag
   const [startedUpdateErr] = await to(
     testRunMetaRef.update({ instanceDeleteStarted: true })
   )
@@ -87,14 +87,19 @@ async function cleanupRunnerEvent(change, context) {
 
   // Watch delete request response for results from callGoogleApi function
   const [responseErr] = await to(waitForValue(removeResponseRef))
+
   if (responseErr) {
     console.error(
       `Error in cleanup request: ${responseErr.message || ''}`,
       responseErr
     )
+
+    // Write response error to RTDB
     const [errorUpdateErr] = await to(
       testRunMetaRef.update({ instanceDeleteFailed: true })
     )
+
+    // Handle errors writing error to RTDB
     if (errorUpdateErr) {
       console.error(
         `Error updating test run meta with instanceDeleteFailed: ${errorUpdateErr.message ||
@@ -106,7 +111,7 @@ async function cleanupRunnerEvent(change, context) {
     throw responseErr
   }
 
-  // Update job run meta with finished
+  // Update job run meta with instanceDeleteFinished
   const [finishedUpdateErr] = await to(
     testRunMetaRef.update({ instanceDeleteFinished: true })
   )
@@ -131,4 +136,4 @@ async function cleanupRunnerEvent(change, context) {
  */
 export default functions.database
   .ref('/test_runs_meta/{projectId}/{jobRunKey}/runResult')
-  .onUpdate(cleanupRunnerEvent)
+  .onWrite(cleanupRunnerEvent)

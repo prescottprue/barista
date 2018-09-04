@@ -2,17 +2,21 @@ import * as admin from 'firebase-admin'
 const userId = 1
 const refParam = `users_public/${userId}`
 
-describe('callRunner RTDB Cloud Function (onCreate)', () => {
+describe('messageRunnerResult RTDB Cloud Function (onWrite)', () => {
   let adminInitStub
-  let callRunner
+  let messageRunnerResult
 
   before(() => {
-    /* eslint-disable global-require */
     adminInitStub = sinon.stub(admin, 'initializeApp')
-    // Syntax may change when this issue is addressed
-    // [#2](https://github.com/firebase/firebase-functions-test/issues/2)
-    callRunner = functionsTest.wrap(
-      require(`${__dirname}/../../index`).callRunner
+    process.env.GCLOUD_PROJECT = 'test'
+    // Stub Firebase's config environment var
+    process.env.FIREBASE_CONFIG = JSON.stringify({
+      databaseURL: 'https://some-project.firebaseio.com',
+      storageBucket: 'some-bucket.appspot.com'
+    })
+    /* eslint-disable global-require */
+    messageRunnerResult = functionsTest.wrap(
+      require(`${__dirname}/../../../index`).messageRunnerResult
     )
     /* eslint-enable global-require */
   })
@@ -38,7 +42,7 @@ describe('callRunner RTDB Cloud Function (onCreate)', () => {
       params: { filePath: 'testing', userId: 1 }
     }
 
-    const res = await callRunner(snap, fakeContext)
+    const res = await messageRunnerResult({ after: snap }, fakeContext)
     expect(res).to.be.null
   })
 })

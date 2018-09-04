@@ -4,7 +4,12 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { firebaseConnect } from 'react-redux-firebase'
 import { withHandlers, withProps, setPropTypes } from 'recompose'
-import { paths, TEST_RUNS_META_PATH, TEST_RUNS_DATA_PATH } from 'constants'
+import {
+  LIST_PATH,
+  RUNS_PATH,
+  TEST_RUNS_META_PATH,
+  TEST_RUNS_DATA_PATH
+} from 'constants'
 import { getProjectRunMeta } from 'selectors'
 import * as handlers from './RunPage.handlers'
 import styles from './RunPage.styles'
@@ -29,7 +34,7 @@ export default compose(
   withProps(({ params: { projectId, runId } }) => ({
     projectId,
     runId,
-    runsPagePath: `${paths.list}/${projectId}/${paths.runs}`
+    runsPagePath: `${LIST_PATH}/${projectId}/${RUNS_PATH}`
   })),
   // add handlers as props
   withHandlers(handlers),

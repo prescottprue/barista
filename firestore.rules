@@ -6,9 +6,15 @@ service cloud.firestore {
     function isOwnerOrPublic(res) {
       return isOwner(res) || res.data.public == true
     }
+    // Private user profiles
     match /users/{userId} {
+      // Only the user can edit their user object
+      allow read, write: if request.auth.uid == userId;
+    }
+    // Public user profiles
+    match /users_public/{userId} {
       allow read;
-      allow write: if request.auth.uid == userId;
+      allow write: if false; // only written to by indexUser cloud function
     }
     match /projects/{projectId} {
       // Only projects you own can be viewed
@@ -20,7 +26,23 @@ service cloud.firestore {
       }
     }
     match /container_builds/{buildId} {
-      // Only projects you own can be viewed
+      // Only logged in users can read container builds (writing is done by onCloudBuildEvent function)
+      allow read: if request.auth.uid != null;
+      // Rules apply to all child collections
+      match /{allChildren=**} {
+        allow read: if request.auth.uid != null;
+      }
+    }
+    match /tags/{tagId} {
+      // Only logged in users can view/edit tags
+      allow read, write: if request.auth.uid != null;
+      // Rules apply to all child collections
+      match /{allChildren=**} {
+        allow read, write: if request.auth.uid != null;
+      }
+    }
+    match /test_groups/{tagGroupId} {
+      // Only logged in users can view/edit tags groups
       allow read, write: if request.auth.uid != null;
       // Rules apply to all child collections
       match /{allChildren=**} {

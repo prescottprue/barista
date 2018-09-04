@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
-import { setPropTypes, withProps } from 'recompose'
+import { setPropTypes, mapProps } from 'recompose'
 import { connect } from 'react-redux'
 import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
 import { withStyles } from '@material-ui/core/styles'
@@ -9,8 +9,16 @@ import {
   CONTAINER_BUILDS_STATUS_PATH
 } from 'constants'
 import styles from './Builds.styles'
+import { getBuildStatuses, getOrderedBuilds } from 'selectors'
 
 export default compose(
+  // set proptypes used in handlers
+  setPropTypes({
+    params: PropTypes.shape({
+      projectId: PropTypes.string.isRequired
+    })
+  }),
+  mapProps(({ params: { projectId } }) => ({ projectId })),
   // create listener for builds, results go into redux
   firestoreConnect(({ projectId }) => [
     {
@@ -24,17 +32,10 @@ export default compose(
       path: CONTAINER_BUILDS_STATUS_PATH
     }
   ]),
-  // set proptypes used in handlers
-  setPropTypes({
-    params: PropTypes.shape({
-      projectId: PropTypes.string.isRequired
-    })
-  }),
-  withProps(({ params }) => ({ projectId: params.projectId })),
   // map redux state to props
-  connect(state => ({
-    buildStatuses: state.firebase.data[CONTAINER_BUILDS_STATUS_PATH],
-    builds: state.firestore.ordered[CONTAINER_BUILDS_META_PATH]
+  connect((state, props) => ({
+    buildStatuses: getBuildStatuses(state, props),
+    builds: getOrderedBuilds(state, props)
   })),
   withStyles(styles)
 )

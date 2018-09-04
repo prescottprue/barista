@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
+import { get } from 'lodash'
 import {
   withHandlers,
   flattenProp,
@@ -30,25 +31,28 @@ export default compose(
   })),
   // flatten runMeta into pending, stats, status, environment,
   flattenProp('runMeta'),
-  // flatten stats into duration, passes, failures, end
-  flattenProp('stats'),
   // add custom props
   withProps(
     ({
       projectId,
       runId,
-      duration,
-      startedAt,
+      createdAt,
       totalTestCount,
       tests: testsRun,
+      stats,
       runMeta
     }) => ({
+      testsPassed: get(stats, 'passes'),
+      testsFailed: get(stats, 'failures'),
+      totalTests: get(stats, 'tests'),
       runDetailPath: `${LIST_PATH}/${projectId}/${RUNS_PATH}/${runId}`,
-      // Convert duration into minutes
-      formattedDuration: duration ? (duration / 60000).toFixed(3) : '-',
-      formattedStart: startedAt ? formatDateTime(startedAt) : '-',
-      startedAtToolTip: startedAt
-        ? `${strictDistanceInWords(startedAt)} ago`
+      // Convert duration into seconds
+      formattedDuration: get(stats, 'duration')
+        ? (get(stats, 'duration') / 1000).toFixed(3)
+        : '-',
+      formattedStart: createdAt ? formatDateTime(createdAt) : '-',
+      createdAtTooltip: createdAt
+        ? `${strictDistanceInWords(createdAt)} ago`
         : '-',
       showProgress:
         runMeta.status === 'pending' && totalTestCount > 0 && testsRun

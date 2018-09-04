@@ -19,6 +19,19 @@
         { "fieldPath": "commitSha", "mode": "DESCENDING" },
         { "fieldPath": "branchName", "mode": "DESCENDING" },
       ]
+    },
+    {
+      "collectionId": "container_builds",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "finishTime",
+          "mode": "DESCENDING"
+        }
+      ]
     }
   ]
 }

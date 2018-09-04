@@ -9,6 +9,8 @@ import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/firestore'
+import 'firebase/messaging'
+import { initializeMessaging } from 'utils/messaging'
 import { firebase as fbConfig, reduxFirebase as rrfConfig } from '../config'
 import { version } from '../../package.json'
 import { updateLocation } from './location'
@@ -44,7 +46,13 @@ export default (initialState = {}) => {
     useFirestoreForProfile: true,
     useFirestoreForStorageMeta: true,
     presence: 'presence',
-    sessions: null
+    sessions: null,
+    onAuthStateChanged: (auth, firebase, dispatch) => {
+      if (auth) {
+        // Initalize messaging with dispatch
+        initializeMessaging(dispatch)
+      }
+    }
   }
 
   const combinedConfig = rrfConfig
@@ -67,7 +75,7 @@ export default (initialState = {}) => {
     initialState,
     compose(
       applyMiddleware(...middleware),
-      reduxFirestore(firebase),
+      reduxFirestore(window.fbInstance || firebase),
       reactReduxFirebase(window.fbInstance || firebase, combinedConfig),
       ...enhancers
     )
