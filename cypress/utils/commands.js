@@ -121,7 +121,7 @@ export function buildFirestoreCommand(
       if (opts.recursive) {
         argsWithDefaults.push('-m')
       }
-      return `${FIREBASE_EXTRA_PATH} firestore ${action} ${actionPath}${getArgsString(
+      return `./${FIREBASE_EXTRA_PATH} firestore ${action} ${actionPath}${getArgsString(
         argsWithDefaults
       )}`
     }

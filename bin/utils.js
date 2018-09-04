@@ -141,5 +141,6 @@ function initializeFirebase() {
 }
 
 module.exports = {
-  initializeFirebase
+  initializeFirebase,
+  getParsedEnvVar
 }
