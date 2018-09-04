@@ -26,6 +26,7 @@ export const Notifications = ({
       <Snackbar
         key={id}
         open
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         action={
           <IconButton
             onClick={() => dismissNotification(id)}

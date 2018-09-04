@@ -3,6 +3,7 @@ import * as admin from 'firebase-admin'
 import { get } from 'lodash'
 import { to } from 'utils/async'
 import { getFirebaseConfig } from 'utils/firebaseFunctions'
+import { waitForValue } from '../utils/rtdb'
 
 /**
  * @param  {functions.Event} event - Function event
@@ -12,26 +13,55 @@ import { getFirebaseConfig } from 'utils/firebaseFunctions'
 async function sendFcmEvent(snap, context) {
   const {
     params: { pushId }
-  } = context // contains auth and timestamp
+  } = context
   const { userId, message = '', title = 'Fireadmin' } = snap.val() || {}
+
   if (!userId) {
-    throw new Error('userId is required')
+    const missingUserIdErr = 'userId is required to send FCM message'
+    console.error(missingUserIdErr)
+    throw new Error(missingUserIdErr)
   }
-  const userRef = admin
-    .firestore()
-    .collection('users')
-    .doc(userId)
+
+  const responseRef = admin.database().ref(`responses/${pushId}`)
+  // Get user profile
+  const [getProfileErr, userProfileSnap] = await to(
+    admin
+      .firestore()
+      .collection('users')
+      .doc(userId)
+      .get()
+  )
+
+  // Handle errors getting user profile
+  if (getProfileErr) {
+    console.error('Error getting user profile: ', getProfileErr)
+    throw getProfileErr
+  }
+
+  const messagingToken = get(
+    userProfileSnap.data(),
+    'messaging.mostRecentToken'
+  )
+
+  // Handle messaging token not being found on user object
+  if (!messagingToken) {
+    const missingTokenMsg = `Messaging token not found for uid: "${userId}"`
+    console.error(missingTokenMsg)
+    throw new Error(missingTokenMsg)
+  }
+
+  const projectId = getFirebaseConfig('projectId')
+
   const callGoogleApiRequestRef = admin
     .database()
     .ref(`requests/callGoogleApi`)
     .push()
-  const responseRef = admin.database().ref(`responses/${pushId}`)
-  // Get user profile
-  const userProfile = await userRef.get()
-  const messagingToken = get(userProfile, 'messaging.mostRecentToken')
-  const projectId = getFirebaseConfig()
+  const callGoogleApiResponseRef = admin
+    .database()
+    .ref(`responses/callGoogleApi/${callGoogleApiRequestRef.key}`)
+
   // Call Google API with message send
-  callGoogleApiRequestRef.set({
+  await callGoogleApiRequestRef.set({
     apiUrl: `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
     method: 'POST',
     body: {
@@ -44,12 +74,60 @@ async function sendFcmEvent(snap, context) {
       }
     }
   })
-  //
-  const [writeErr, response] = await to(responseRef.set({ complete: true }))
+
+  // Wait for response from callGoogleApi request to FCM API
+  const [googleResponseErr, googleResponseSnap] = await to(
+    waitForValue(callGoogleApiResponseRef)
+  )
+
+  // Handle errors getting response to sendFcm Request
+  if (googleResponseErr) {
+    console.error(
+      `Error writing response: ${googleResponseErr.message || ''}`,
+      googleResponseErr
+    )
+
+    // Write e
+    const [writeErr] = await to(
+      responseRef.set({
+        complete: true,
+        status: 'error',
+        error: googleResponseErr.message || 'Error',
+        completedAt: admin.database.ServerValue.TIMESTAMP
+      })
+    )
+
+    // Log errors writing error to RTDB
+    if (writeErr) {
+      console.error(
+        `Error writing error to RTDB: ${writeErr.message || ''}`,
+        writeErr
+      )
+    }
+
+    throw googleResponseErr
+  }
+
+  // Set response to original sendFcm
+  const [writeErr, response] = await to(
+    responseRef.set({
+      complete: true,
+      status: 'success',
+      completedAt: admin.database.ServerValue.TIMESTAMP,
+      googleApiResponse: get(googleResponseSnap.val(), 'responseData', null),
+      callGoogleApiRequestKey: callGoogleApiRequestRef.key
+    })
+  )
+
+  // Handle errors writing response to sendFcm Request
   if (writeErr) {
-    console.error(`Error writing response: ${writeErr.message || ''}`, writeErr)
+    console.error(
+      `Error writing response to RTDB: ${writeErr.message || ''}`,
+      writeErr
+    )
     throw writeErr
   }
+
   return response
 }
 
