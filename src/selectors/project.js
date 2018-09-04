@@ -1,4 +1,4 @@
-import { get, pickBy } from 'lodash'
+import { get, pickBy, get, pickBy, reduce } from 'lodash'
 import {
   flow,
   map as fpMap,
@@ -6,7 +6,7 @@ import {
   uniq as fpUniq,
   sortBy as fpSortBy
 } from 'lodash/fp'
-import { PROJECTS_DATA_PATH } from 'constants'
+import { PROJECTS_DATA_PATH, CONTAINER_BUILDS_STATUS_PATH } from 'constants'
 import { createSelector } from 'reselect'
 import { getBuildStatuses } from './builds'
 
@@ -200,3 +200,20 @@ export const getProjectBranchNames = createSelector(
       : ['master']
   }
 )
+export const getRunBuildId = createSelector([getProjectRunMeta], runMeta =>
+  get(runMeta, 'instanceMeta.buildId', '')
+)
+
+/**
+ * Selector when there is only one build item that should be returned
+ * @export
+ * @param {Object} state - Redux state (from connect)
+ * @param {Object} props - Component props
+ */
+export function getRunBuildData(state, props) {
+  return reduce(
+    get(state, `firestore.data.buildId${props.runId}`, {}),
+    (acc, buildData, key) => ({ ...buildData, key }),
+    {}
+  )
+}

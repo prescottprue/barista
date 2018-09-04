@@ -6,13 +6,16 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import BackIcon from '@material-ui/icons/ArrowBack'
 import TestResultsList from '../TestResultsList'
+import TestSummary from '../TestSummary'
 
 export const RunPage = ({
   classes,
   runsPagePath,
   metaData,
   projectId,
-  runId
+  buildId,
+  runId,
+  ...other
 }) => (
   <div className={classes.root}>
     <div className={classes.titleBar}>
@@ -27,6 +30,7 @@ export const RunPage = ({
         </IconButton>
       </Tooltip>
     </div>
+    <TestSummary projectId={projectId} runId={runId} buildId={buildId} />
     <TestResultsList projectId={projectId} runId={runId} />
   </div>
 )
@@ -36,7 +40,8 @@ RunPage.propTypes = {
   projectId: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   runsPagePath: PropTypes.string.isRequired, // from enhancer (withProps)
-  runId: PropTypes.string.isRequired // from enhancer (withProps)
+  runId: PropTypes.string.isRequired, // from enhancer (withProps)
+  buildId: PropTypes.string.isRequired // from enhancer (withProps)
 }
 
 export default RunPage
