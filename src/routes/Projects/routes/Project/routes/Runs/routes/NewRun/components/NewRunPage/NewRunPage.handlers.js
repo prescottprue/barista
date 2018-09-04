@@ -59,7 +59,7 @@ export function startTestRun({
     const pushKey = metaRef.key
     // Push request to callRunner Cloud Function with the key from metaRef
     return firebase
-      .push(CALL_RUNNER_REQUEST_PATH, {
+      .pushWithMeta(CALL_RUNNER_REQUEST_PATH, {
         jobRunKey: pushKey,
         environment,
         testCodeBranch,

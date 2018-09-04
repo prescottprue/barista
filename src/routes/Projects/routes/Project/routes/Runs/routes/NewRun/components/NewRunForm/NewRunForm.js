@@ -103,7 +103,7 @@ export const NewRunForm = ({
                               key={`TestGroup-${value}-${get(
                                 tagGroup,
                                 'name',
-                                value
+                                key
                               )}`}
                               label={get(tagGroup, 'name', value)}
                               className={classes.chip}

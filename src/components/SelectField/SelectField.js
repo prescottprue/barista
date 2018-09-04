@@ -35,7 +35,7 @@ export const SelectField = ({
         {options.map((option, idx) => (
           <MenuItem
             key={`Option-${name}-${option.value}-${idx}`}
-            value={option.value || option.id}
+            value={isString(option) ? option : option.value || option.id}
             disabled={option.disabled}>
             <ListItemText
               primary={
