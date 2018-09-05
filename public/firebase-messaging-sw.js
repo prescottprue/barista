@@ -6,8 +6,13 @@
 importScripts('https://www.gstatic.com/firebasejs/5.4.1/firebase-app.js')
 importScripts('https://www.gstatic.com/firebasejs/5.4.1/firebase-messaging.js')
 
+const STAGE_MESSAGING_ID = '109344700598'
+const PROD_MESSAGING_ID = '438807155877'
+
 firebase.initializeApp({
-  messagingSenderId: '109344700598'
+  messagingSenderId: self.location.hostname.includes('barista-836b4')
+    ? PROD_MESSAGING_ID
+    : STAGE_MESSAGING_ID
 })
 
 const messaging = firebase.messaging()

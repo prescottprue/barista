@@ -17,6 +17,7 @@
         },
         "segmentId": "${STAGE_SEGMENT_ID}",
         "sentryDsn": "${SENTRY_DSN}",
+        "publicVapidKey": "${STAGE_PUBLIC_VAPID_KEY}",
         "googleApis": {
           "apiKey": "${STAGE_GOOGLE_API_KEY}"
         }
@@ -32,6 +33,7 @@
         },
         "segmentId": "${PROD_SEGMENT_ID}",
         "sentryDsn": "${SENTRY_DSN}",
+        "publicVapidKey": "${PROD_PUBLIC_VAPID_KEY}",
         "googleApis": {
           "apiKey": "${PROD_GOOGLE_API_KEY}"
         }
