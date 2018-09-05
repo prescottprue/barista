@@ -1,8 +1,6 @@
 import { createSelector } from '../utils'
 
 describe('Projects Page', () => {
-  let openSpy // eslint-disable-line no-unused-vars
-
   before(() => {
     // Login using custom token
     cy.login()
@@ -19,14 +17,16 @@ describe('Projects Page', () => {
       .type(newProjectTitle)
     // Click on the new project button
     cy.get(createSelector('new-project-create-button')).click()
+    // Query database for the just created project
     cy.callFirestore('get', 'projects', {
       where: [
         ['createdBy', '==', Cypress.env('TEST_UID')],
         ['name', '==', 'Test project']
       ],
       limit: 1
-    }).then(res => {
-      cy.wrap(res)
+    }).then(([project]) => {
+      // Confirm project has name
+      cy.wrap(project)
         .its('data.name')
         .should('equal', 'Test project')
     })
