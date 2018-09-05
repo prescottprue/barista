@@ -4,15 +4,15 @@ import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-export const TestResultsNotFound = ({ classes }) => (
+export const RunResultsNotFound = ({ classes }) => (
   <Paper className={classes.empty}>
     <CircularProgress />
     <Typography className={classes.progressMsg}>Running...</Typography>
   </Paper>
 )
 
-TestResultsNotFound.propTypes = {
+RunResultsNotFound.propTypes = {
   classes: PropTypes.object.isRequired // from enhancer (withStyles)
 }
 
-export default TestResultsNotFound
+export default RunResultsNotFound

@@ -5,8 +5,8 @@ import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import BackIcon from '@material-ui/icons/ArrowBack'
-import TestResultsList from '../TestResultsList'
-import TestSummary from '../TestSummary'
+import RunResultsList from '../RunResultsList'
+import RunSummary from '../RunSummary'
 
 export const RunPage = ({
   classes,
@@ -30,8 +30,8 @@ export const RunPage = ({
         </IconButton>
       </Tooltip>
     </div>
-    <TestSummary projectId={projectId} runId={runId} buildId={buildId} />
-    <TestResultsList projectId={projectId} runId={runId} />
+    <RunSummary projectId={projectId} runId={runId} buildId={buildId} />
+    <RunResultsList projectId={projectId} runId={runId} />
   </div>
 )
 
