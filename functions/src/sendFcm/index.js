@@ -22,7 +22,7 @@ async function sendFcmEvent(snap, context) {
     throw new Error(missingUserIdErr)
   }
 
-  const responseRef = admin.database().ref(`responses/${pushId}`)
+  const responseRef = admin.database().ref(`responses/sendFcm/${pushId}`)
   // Get user profile
   const [getProfileErr, userProfileSnap] = await to(
     admin
