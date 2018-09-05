@@ -1,4 +1,4 @@
-import { get, pickBy, get, pickBy, reduce } from 'lodash'
+import { get, pickBy, reduce } from 'lodash'
 import {
   flow,
   map as fpMap,
@@ -9,6 +9,7 @@ import {
 import { PROJECTS_DATA_PATH, CONTAINER_BUILDS_STATUS_PATH } from 'constants'
 import { createSelector } from 'reselect'
 import { getBuildStatuses } from './builds'
+import { addDurationToNow, strictDistanceInWords } from 'utils/formatters'
 
 /**
  * @param {Object} state - Redux state (from connect)
@@ -200,6 +201,7 @@ export const getProjectBranchNames = createSelector(
       : ['master']
   }
 )
+
 export const getRunBuildId = createSelector([getProjectRunMeta], runMeta =>
   get(runMeta, 'instanceMeta.buildId', '')
 )
@@ -217,3 +219,11 @@ export function getRunBuildData(state, props) {
     {}
   )
 }
+
+export const getRunDurationWords = createSelector(
+  [getProjectRunMeta],
+  runMeta => {
+    const durationMilliseconds = get(runMeta, 'stats.duration', 0)
+    return strictDistanceInWords(addDurationToNow(durationMilliseconds))
+  }
+)

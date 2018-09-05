@@ -1,5 +1,5 @@
 import { isDate, isObject, invoke } from 'lodash'
-import { format, distanceInWordsStrict } from 'date-fns'
+import { format, distanceInWordsStrict, addMilliseconds } from 'date-fns'
 
 /**
  * Convert date string or object into date object
@@ -69,4 +69,13 @@ export function strictDistanceInWords(
     getDateObject(dateValue),
     getDateObject(compareToDateValue)
   )
+}
+
+export function addDurationToNow(duration = 0, type = 'milli') {
+  const now = new Date()
+  switch (true) {
+    case type === 'milli':
+    default:
+      return addMilliseconds(now, duration)
+  }
 }
