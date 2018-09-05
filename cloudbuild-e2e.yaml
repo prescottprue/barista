@@ -1,11 +1,11 @@
 steps:
-# Unencrypt cypress/config.json.enc using Cloud KMS
+# Unencrypt test/e2e/config.json.enc using Cloud KMS
 - name: gcr.io/cloud-builders/gcloud
   args:
   - kms
   - decrypt
   - --ciphertext-file=build/enc/config.json.enc
-  - --plaintext-file=cypress/config.json
+  - --plaintext-file=test/e2e/config.json
   - --location=global
   - --keyring=first
   - --key=keyOne
@@ -26,11 +26,11 @@ steps:
     '--build-arg',
     'build_id=${BUILD_ID}',
     '-t',
-    'gcr.io/$PROJECT_ID/test-barista:$COMMIT_SHA',
+    'gcr.io/$PROJECT_ID/barista-test-e2e:$COMMIT_SHA',
     '-t',
-    'gcr.io/$PROJECT_ID/test-barista:$BRANCH_NAME',
+    'gcr.io/$PROJECT_ID/barista-test-e2e:$BRANCH_NAME',
     '-f',
-    'cypress/Dockerfile',
+    'test/e2e/Dockerfile',
     '.'
   ]
   env: [
@@ -47,7 +47,7 @@ steps:
 #   - '-c'
 #   - |
 #     echo "This step only pushes the latest image if this build was triggered by a push to master, otherwise it pushes branchname tag"
-#     [[ "$BRANCH_NAME" == "master" ]] && docker push gcr.io/$PROJECT_ID/test-barista || gcr.io/$PROJECT_ID/test-barista:$BRANCH_NAME;
+#     [[ "$BRANCH_NAME" == "master" ]] && docker push gcr.io/$PROJECT_ID/barista-test-e2e || gcr.io/$PROJECT_ID/barista-test-e2e:$BRANCH_NAME;
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/test-barista']
-images: ['gcr.io/$PROJECT_ID/test-barista']
+  args: ['push', 'gcr.io/$PROJECT_ID/barista-test-e2e']
+images: ['gcr.io/$PROJECT_ID/barista-test-e2e']

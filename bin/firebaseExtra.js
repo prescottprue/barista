@@ -4,7 +4,14 @@ const admin = require('firebase-admin')
 const isString = require('lodash/isString')
 const fs = require('fs')
 const path = require('path')
-const localTestConfigPath = path.join(__dirname, '..', 'cypress', 'config.json')
+const TEST_FOLDER = 'test/e2e'
+
+const localTestConfigPath = path.join(
+  __dirname,
+  '..',
+  TEST_FOLDER,
+  'config.json'
+)
 const serviceAccountPath = path.join(__dirname, '..', 'serviceAccount.json')
 const prefixesByCiEnv = {
   staging: 'STAGE_',
@@ -176,7 +183,7 @@ function readFixture(fixturePath) {
   const pathToFixtureFile = path.join(
     __dirname,
     '..',
-    'cypress',
+    TEST_FOLDER,
     'fixtures',
     fixturePath
   )

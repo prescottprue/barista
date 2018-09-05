@@ -7,7 +7,8 @@ const testEnvFilePath = path.join(__dirname, '../..', 'cypress.env.json')
 const localTestConfigPath = path.join(
   __dirname,
   '../..',
-  'cypress',
+  'test',
+  'e2e',
   'config.json'
 )
 const serviceAccountPath = path.join(__dirname, '../..', 'serviceAccount.json')
@@ -43,7 +44,7 @@ function envVarBasedOnCIEnv(varNameRoot) {
     console.log(
       `${
         configObj[combined] ? combined : varNameRoot
-      } is being loaded from cypress/config.json`
+      } is being loaded from test/env/config.json`
     )
     return configObj[combined] || configObj[varNameRoot]
   }

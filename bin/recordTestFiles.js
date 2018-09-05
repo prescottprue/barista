@@ -4,7 +4,9 @@ const glob = require('glob')
 const path = require('path')
 const admin = require('firebase-admin')
 const utils = require('./utils')
-const testFolderPath = path.join(__dirname, '..', 'cypress', 'integration')
+const TEST_FOLDER = 'test/e2e'
+
+const testFolderPath = path.join(__dirname, '..', TEST_FOLDER, 'integration')
 
 if (!process.env.BUILD_ID) {
   /* eslint-disable no-console */

@@ -2,7 +2,7 @@ functions
 server
 src
 node_modules
-cypress/videos
+test/e2e/videos
 .eslintignore
 .gitlab-ci.yml
 LICENSE

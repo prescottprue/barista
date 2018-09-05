@@ -35,7 +35,7 @@ COPY package*.json cypress.json serviceAccount.json ./
 ### Directories
 COPY build/ /build/
 COPY bin/ /bin/
-COPY cypress/ /cypress/
+COPY test/e2e/ /test/e2e/
 
 ## Add executable permission to tests complete script
 RUN chmod +x bin/testsComplete.js
@@ -58,5 +58,5 @@ RUN CI=true npm install cypress
 RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above) reporting results using Barista Reporter.
-# Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY 
+# Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY
 ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter$TEST_ARGS; echo \"$?\" | bin/testsComplete.js
