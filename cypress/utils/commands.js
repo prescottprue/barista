@@ -31,7 +31,7 @@ export function getArgsString(args) {
 }
 
 // Path to Firebase Extra Command Line tool (wrapper for firebase-tools)
-const FIREBASE_EXTRA_PATH = 'bin/firebaseExtra'
+const FIREBASE_EXTRA_PATH = 'bin/firebaseExtra.js'
 // Argument used to automatically approve the firebase-tools action
 const FIREBASE_TOOLS_YES_ARGUMENT = '-y'
 // NPX is used so that globally installed firebase-tools is used first, then
@@ -121,9 +121,9 @@ export function buildFirestoreCommand(
       if (opts.recursive) {
         argsWithDefaults.push('-m')
       }
-      return `./${FIREBASE_EXTRA_PATH} firestore ${action} ${actionPath}${getArgsString(
+      return `${FIREBASE_EXTRA_PATH} firestore ${action} ${actionPath}${getArgsString(
         argsWithDefaults
-      )}`
+      )} '${JSON.stringify(options)}'`
     }
   }
 }
