@@ -90,7 +90,7 @@ function getParsedArg(unparsed) {
  */
 function firestoreAction(action = 'set', actionPath, fixturePath, withMeta) {
   const fbInstance = utils.initializeFirebase()
-  const ref = slashPathToFirestoreRef(fbInstance.firestore(), actionPath)
+  let ref = slashPathToFirestoreRef(fbInstance.firestore(), actionPath)
 
   // Confirm ref has action as a method
   if (typeof ref[action] !== 'function') {
@@ -101,7 +101,7 @@ function firestoreAction(action = 'set', actionPath, fixturePath, withMeta) {
   let options
   const parsedPath = getParsedArg(fixturePath)
 
-  if (isString()) {
+  if (isString(parsedPath)) {
     fixtureData = readFixture(fixturePath)
     // Add meta if withMeta option exists
     if (withMeta) {
@@ -116,18 +116,17 @@ function firestoreAction(action = 'set', actionPath, fixturePath, withMeta) {
   } else {
     options = parsedPath
   }
+  if (options && options.limit) {
+    ref = ref.limit(options.limit)
+  }
   try {
     // Call action with fixture data
     return ref[action](fixtureData).then(res => {
       const dataArray = dataArrayFromSnap(res)
-      console.log('limit1:', options && options.limit)
-      const limitTo1 = options && options.limit === '1'
       if (action === 'get') {
-        process.stdout.write(
-          JSON.stringify(limitTo1 ? dataArray[0] : dataArray)
-        )
+        process.stdout.write(JSON.stringify(dataArray))
       }
-      return limitTo1 ? dataArrayFromSnap(res)[0] : dataArrayFromSnap(res)
+      return dataArray
     })
   } catch (err) {
     console.log(`Error with ${action} at path "${actionPath}": `, err)

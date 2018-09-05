@@ -36,11 +36,6 @@ function envVarBasedOnCIEnv(varNameRoot) {
   const combined = `${prefix}${varNameRoot}`
   if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
     const configObj = require(localTestConfigPath)
-    console.log(
-      `Running in local environment, ${
-        configObj[combined] ? combined : varNameRoot
-      } is being loaded from cypress/config.json`
-    )
     return configObj[combined] || configObj[varNameRoot]
   }
   return process.env[combined] || process.env[varNameRoot]
@@ -82,12 +77,8 @@ function getParsedEnvVar(varNameRoot) {
 function getServiceAccount() {
   // Check for local service account file (Local dev)
   if (fs.existsSync(serviceAccountPath)) {
-    console.log('local service account being loaded from ./serviceAccount.json')
     return require(serviceAccountPath)
   }
-  console.log(
-    'Service Account file does not exist locally, falling back to environment variables'
-  )
   // Use environment variables (CI)
   return {
     type: 'service_account',
@@ -121,10 +112,6 @@ function initializeFirebase() {
         console.error(missingAccountErr)
         throw new Error(missingAccountErr)
       }
-      console.log(
-        'service account exists, project id: ',
-        serviceAccount.project_id
-      )
       adminInstance = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
         databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`

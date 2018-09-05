@@ -8,6 +8,7 @@ import {
   buildRtdbCommand,
   buildFirestoreCommand
 } from '../utils/commands'
+import { isObject, isArray } from 'lodash'
 
 const projectId = Cypress.env('FIREBASE_PROJECT_ID')
 
@@ -148,7 +149,14 @@ Cypress.Commands.add(
       fixturePath,
       opts
     )
+    const options = isObject(fixturePath) ? fixturePath : opts
     cy.log(`Calling Firestore command:\n${firestoreCommand}`)
-    return cy.exec(firestoreCommand)
+    cy.exec(firestoreCommand, { timeout: 100000 }).then(res => {
+      const val =
+        isArray(JSON.parse(res.stdout)) && (options && options.limit === 1)
+          ? JSON.parse(res.stdout)[0]
+          : JSON.parse(res.stdout)
+      return val
+    })
   }
 )
