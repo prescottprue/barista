@@ -10,9 +10,9 @@ const config = require('../project.config')
 
 /**
  * Create data object with values for each document with keys being doc.id.
- * @param  { firebase.database.DataSnapshot } snapshot - Data for which to create
+ * @param  {firebase.database.DataSnapshot} snapshot - Data for which to create
  * an ordered array.
- * @return { Object| Null } Object documents from snapshot or null
+ * @return {Object|Null} Object documents from snapshot or null
  */
 function dataArrayFromSnap(snap) {
   const data = []
