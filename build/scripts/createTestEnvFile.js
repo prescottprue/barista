@@ -3,12 +3,14 @@ import * as admin from 'firebase-admin'
 import { pickBy, isUndefined, size, keys, isString } from 'lodash'
 import fs from 'fs'
 import path from 'path'
+import config from '../../project.config'
+
 const testEnvFilePath = path.join(__dirname, '../..', 'cypress.env.json')
+
 const localTestConfigPath = path.join(
   __dirname,
   '../..',
-  'test',
-  'e2e',
+  config.e2eTestDir,
   'config.json'
 )
 const serviceAccountPath = path.join(__dirname, '../..', 'serviceAccount.json')
@@ -121,13 +123,15 @@ function getServiceAccount() {
 async function createTestConfig() {
   const envPrefix = getEnvPrefix()
 
-  // Get UID from environment (falls back to cypress/config.json for local)
+  // Get UID from environment (falls back to test/e2e/config.json for local)
   const uid = envVarBasedOnCIEnv('TEST_UID')
 
   // Throw if UID is missing in environment
   if (!uid) {
     throw new Error(
-      `${envPrefix}TEST_UID is missing from environment. Confirm that cypress/config.json contains either ${envPrefix}TEST_UID or TEST_UID.`
+      `${envPrefix}TEST_UID is missing from environment. Confirm that ${
+        config.e2eTestDir
+      }/config.json contains either ${envPrefix}TEST_UID or TEST_UID.`
     )
   }
   const FIREBASE_API_KEY = envVarBasedOnCIEnv('FIREBASE_API_KEY')

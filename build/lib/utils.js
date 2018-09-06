@@ -5,8 +5,7 @@ const admin = require('firebase-admin') // eslint-disable-line import/no-extrane
 const isString = require('lodash/isString')
 const fs = require('fs')
 const path = require('path')
-
-const TEST_FOLDER = 'test/e2e'
+const config = require('../../project.config')
 
 const prefixesByCiEnv = {
   staging: 'STAGE_',
@@ -40,7 +39,7 @@ function envVarBasedOnCIEnv(varNameRoot) {
     const localTestConfigPath = path.join(
       __dirname,
       '..',
-      TEST_FOLDER,
+      config.e2eTestDir,
       'config.json'
     )
     const configObj = require(localTestConfigPath) // eslint-disable-line global-require, import/no-dynamic-require
@@ -173,5 +172,6 @@ function slashPathToFirestoreRef(firestoreInstance, slashPath) {
 module.exports = {
   initializeFirebase,
   dataArrayFromSnap,
-  slashPathToFirestoreRef
+  slashPathToFirestoreRef,
+  envVarBasedOnCIEnv
 }
