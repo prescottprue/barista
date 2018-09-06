@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-import { get } from 'lodash'
+import { get, last } from 'lodash'
 import { to } from 'utils/async'
 import {
   CONTAINER_BUILDS_META_PATH,
@@ -91,6 +91,17 @@ async function updateContainerBuildMeta({ projectId, buildId, imageMetaData }) {
   console.log('Successfully wrote metadata of container build to Firestore')
 }
 
+function projectIdFromRepoName(repoName) {
+  // Strip prefix from repo name to get project (prefix is from cloud-build)
+  const projectId = repoName.replace('github-reside-eng-', '').replace('')
+  // Strip google cloud source prefix
+  const googleSourcePath = 'https://source.developers.google.com/p/'
+  if (projectId.includes(googleSourcePath)) {
+    return last(projectId.replace(googleSourcePath, '').split('/'))
+  }
+  return projectId
+}
+
 /**
  * Handle incoming PubSub message containing data about Cloud Build Event
  * @param  {functions.Event} message - Cloud Pub Sub message
@@ -127,9 +138,8 @@ async function callCloudBuildApiEvent(message) {
     console.error(noRepoErr, messageBody)
     throw new Error(noRepoErr)
   }
-  // Strip prefix from repo name to get project (prefix is from cloud-build)
-  const projectId = repoName.replace('github-reside-eng-', '')
-
+  // Strip prefixes from repoName to get projectId
+  const projectId = projectIdFromRepoName(repoName)
   console.log(`Build event status update for project : "${projectId}"`, {
     status,
     branchName,
