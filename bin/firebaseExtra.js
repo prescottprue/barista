@@ -2,10 +2,12 @@
 /* eslint-disable no-console */
 const fs = require('fs')
 const path = require('path')
-const utils = require('./utils')
 const drop = require('lodash/drop')
 const isString = require('lodash/isString')
-const fixturesPath = path.join(__dirname, '..', 'cypress', 'fixtures')
+const utils = require('../build/lib/utils')
+const config = require('../project.config')
+const fixturesPath = path.join(config.basePath, config.e2eTestDir, 'cypress', 'fixtures')
+
 /**
  * Create data object with values for each document with keys being doc.id.
  * @param  {firebase.database.DataSnapshot} snapshot - Data for which to create

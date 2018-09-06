@@ -79,7 +79,7 @@ export function buildRtdbCommand(action, actionPath, fixturePath, opts = {}) {
     case 'delete':
       return `${FIREBASE_TOOLS_BASE_COMMAND} database:${action} ${actionPath}${argsStr}`
     default: {
-      const fullPathToFixture = `cypress/fixtures/${fixturePath}`
+      const fullPathToFixture = `test/e2e/fixtures/${fixturePath}`
       return `${FIREBASE_TOOLS_BASE_COMMAND} database:${action} /${actionPath} ${fullPathToFixture}${argsStr}`
     }
   }

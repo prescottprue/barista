@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-const admin = require('firebase-admin')
+const admin = require('firebase-admin') // eslint-disable-line import/no-extraneous-dependencies
 const isString = require('lodash/isString')
 const fs = require('fs')
 const path = require('path')
-const localTestConfigPath = path.join(__dirname, '..', 'cypress', 'config.json')
-const serviceAccountPath = path.join(__dirname, '..', 'serviceAccount.json')
+const config = require('../../project.config')
+
 const prefixesByCiEnv = {
   staging: 'STAGE_',
   production: 'PROD_'
@@ -34,10 +34,17 @@ function getEnvPrefix() {
 function envVarBasedOnCIEnv(varNameRoot) {
   const prefix = getEnvPrefix()
   const combined = `${prefix}${varNameRoot}`
+  // Config file used for environment (local, containers)
   if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
-    const configObj = require(localTestConfigPath)
+    const localTestConfigPath = path.join(
+      config.basePath,
+      config.e2eTestDir,
+      'config.json'
+    )
+    const configObj = require(localTestConfigPath) // eslint-disable-line global-require, import/no-dynamic-require
     return configObj[combined] || configObj[varNameRoot]
   }
+  // CI Environment (environment variables loaded directly)
   return process.env[combined] || process.env[varNameRoot]
 }
 
@@ -75,9 +82,10 @@ function getParsedEnvVar(varNameRoot) {
  * @return {Object} Service account object
  */
 function getServiceAccount() {
+  const serviceAccountPath = path.join(config.basePath, 'serviceAccount.json')
   // Check for local service account file (Local dev)
   if (fs.existsSync(serviceAccountPath)) {
-    return require(serviceAccountPath)
+    return require(serviceAccountPath) // eslint-disable-line global-require, import/no-dynamic-require
   }
   // Use environment variables (CI)
   return {
@@ -104,14 +112,8 @@ let adminInstance
 function initializeFirebase() {
   try {
     // Get service account from local file falling back to environment variables
-    const serviceAccount = getServiceAccount()
-
     if (!adminInstance) {
-      if (!fs.existsSync(serviceAccountPath)) {
-        const missingAccountErr = `Service account not found, check: ${serviceAccountPath}`
-        console.error(missingAccountErr)
-        throw new Error(missingAccountErr)
-      }
+      const serviceAccount = getServiceAccount()
       adminInstance = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
         databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
@@ -127,7 +129,49 @@ function initializeFirebase() {
   }
 }
 
+/**
+ * Create data object with values for each document with keys being doc.id.
+ * @param  {firebase.database.DataSnapshot} snapshot - Data for which to create
+ * an ordered array.
+ * @return {Object|Null} Object documents from snapshot or null
+ */
+function dataArrayFromSnap(snap) {
+  const data = []
+  if (snap.data && snap.exists) {
+    data.push({ id: snap.id, data: snap.data() })
+  } else if (snap.forEach) {
+    snap.forEach(doc => {
+      data.push({ id: doc.id, data: doc.data() || doc })
+    })
+  }
+  return data
+}
+/**
+ * Convert slash path to Firestore reference
+ * @param  {firestore.Firestore} firestoreInstance - Instance on which to
+ * create ref
+ * @param  {String} slashPath - Path to convert into firestore refernce
+ * @return {firestore.CollectionReference|firestore.DocumentReference}
+ */
+function slashPathToFirestoreRef(firestoreInstance, slashPath) {
+  let ref = firestoreInstance
+  const srcPathArr = slashPath.split('/')
+  srcPathArr.forEach(pathSegment => {
+    if (ref.collection) {
+      ref = ref.collection(pathSegment)
+    } else if (ref.doc) {
+      ref = ref.doc(pathSegment)
+    } else {
+      throw new Error(`Invalid slash path: ${slashPath}`)
+    }
+  })
+  return ref
+}
+
 module.exports = {
   initializeFirebase,
-  getParsedEnvVar
+  getParsedEnvVar,
+  dataArrayFromSnap,
+  slashPathToFirestoreRef,
+  envVarBasedOnCIEnv
 }
