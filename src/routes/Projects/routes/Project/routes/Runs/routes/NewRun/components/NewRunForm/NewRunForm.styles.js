@@ -38,9 +38,7 @@ export default theme => ({
     display: 'flex'
   },
   testGroups: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2
+    width: '100%'
   },
   formControl: {
     margin: theme.spacing.unit,
@@ -57,5 +55,8 @@ export default theme => ({
   optionSection: {
     display: 'flex',
     justifyContent: 'center'
+  },
+  section: {
+    marginBottom: theme.spacing.unit * 4
   }
 })

@@ -19,9 +19,15 @@ function iconFromStatus(status) {
 
 export const ImageBuildStatus = ({ branchName, buildStatus, classes }) => (
   <div className={classes.root}>
-    <Typography variant="subheading">Image Build Status</Typography>
-    <div>Status: {iconFromStatus(get(buildStatus, 'status'))}</div>
-    <div>Branch: {get(buildStatus, 'branchName')}</div>
+    <Typography>
+      Current Image Build Status: {iconFromStatus(get(buildStatus, 'status'))}
+    </Typography>
+    <Typography>
+      {get(buildStatus, 'status') === 'WORKING'
+        ? 'Currently Building '
+        : 'Most Recent Built '}{' '}
+      Branch: {get(buildStatus, 'branchName')}
+    </Typography>
   </div>
 )
 

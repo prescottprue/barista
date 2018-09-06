@@ -49,6 +49,14 @@ async function indexUser(change, context) {
   const previousData = change.before.data()
   const newData = change.after.data()
 
+  // Exit if update does not contain displayName
+  if (!newData.displayName) {
+    console.log(
+      `displayName parameter is being removed for user: ${userId}, no need to update index. Exiting...`
+    )
+    return null
+  }
+
   // Check to see if displayName has changed
   if (previousData.displayName === newData.displayName) {
     console.log(

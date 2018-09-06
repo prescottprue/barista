@@ -57,12 +57,12 @@ export const NewRunForm = ({
     <Paper className={classes.paper}>
       <div className={classes.instructions} />
       <div className={classes.inputs}>
-        <Grid container spacing={24}>
+        <Grid container spacing={24} className={classes.section}>
           <Grid item xs={12} sm={12}>
-            <Typography>Environment Options</Typography>
+            <Typography component="h3" variant="headline">
+              Environment Options
+            </Typography>
           </Grid>
-        </Grid>
-        <Grid container spacing={24}>
           <Grid item xs={12} sm={3}>
             <SelectField
               options={environmentOptions}
@@ -80,7 +80,36 @@ export const NewRunForm = ({
             />
           </Grid>
         </Grid>
-        <Grid container spacing={24}>
+        <Grid container spacing={24} className={classes.section}>
+          <Grid item xs={12} sm={12}>
+            <Typography component="h3" variant="headline">
+              Image Information
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <MostRecentImageInfo projectId={projectId} />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <ImageBuildStatus projectId={projectId} />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Button
+              component={Link}
+              variant="outlined"
+              to={`${LIST_PATH}/${projectId}/${BUILDS_PATH}`}>
+              Go To Builds
+            </Button>
+          </Grid>
+        </Grid>
+        <Grid container spacing={24} className={classes.section}>
+          <Grid item xs={12} sm={12}>
+            <Typography component="h3" variant="headline">
+              Filters
+            </Typography>
+            <Typography component="p" variant="subheading">
+              Any options selected below will change which tests are run
+            </Typography>
+          </Grid>
           <Grid item xs={12} sm={3}>
             {orderedTestGroups && orderedTestGroups.map ? (
               <div className={classes.testGroups}>
@@ -132,22 +161,6 @@ export const NewRunForm = ({
             )}
           </Grid>
         </Grid>
-      </div>
-      <Grid container spacing={24}>
-        <Grid item xs={12} sm={3}>
-          <ImageBuildStatus projectId={projectId} />
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <MostRecentImageInfo projectId={projectId} />
-        </Grid>
-      </Grid>
-      <div className={classes.button}>
-        <Button
-          component={Link}
-          variant="outlined"
-          to={`${LIST_PATH}/${projectId}/${BUILDS_PATH}`}>
-          Go To Builds
-        </Button>
       </div>
     </Paper>
   </form>

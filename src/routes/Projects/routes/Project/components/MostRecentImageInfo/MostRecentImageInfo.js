@@ -10,9 +10,6 @@ export const MostRecentImageInfo = ({
   classes
 }) => (
   <div className={classes.root}>
-    <Typography variant="subheading" className={classes.subheader}>
-      Current Image Info
-    </Typography>
     <Typography>Build Id: {buildId}</Typography>
     <Typography>Branch Name: {branchName}</Typography>
     <Typography>Commit Sha: {commitSha}</Typography>
