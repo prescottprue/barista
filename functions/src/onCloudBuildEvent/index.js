@@ -22,6 +22,12 @@ function parseMessageBody(message) {
   }
 }
 
+/**
+ * Update RTDB with container build status
+ * @param {Object} data
+ * @param {String} data.projectId
+ * @param {Object} data.imageMetaData
+ */
 async function updateContainerBuildStatus({ projectId, imageMetaData }) {
   const statusRef = admin
     .database()
@@ -46,6 +52,12 @@ async function updateContainerBuildStatus({ projectId, imageMetaData }) {
   console.log('Successfully wrote status update of container build to RTDB')
 }
 
+/**
+ * Update Firestore with container build meta data document
+ * @param {Object} data
+ * @param {String} data.projectId
+ * @param {Object} data.imageMetaData
+ */
 async function updateContainerBuildMeta({ projectId, buildId, imageMetaData }) {
   // Write successful builds to container builds meta collection
   const containerBuildMeta = admin
@@ -91,9 +103,14 @@ async function updateContainerBuildMeta({ projectId, buildId, imageMetaData }) {
   console.log('Successfully wrote metadata of container build to Firestore')
 }
 
+/**
+ * Get projectId from repo name (from Cloud Build). Needed since build
+ * can be triggered from multiple sources (i.e. manual build in console, git push)
+ * @param {String} repoName
+ */
 function projectIdFromRepoName(repoName) {
   // Strip prefix from repo name to get project (prefix is from cloud-build)
-  const projectId = repoName.replace('github-reside-eng-', '').replace('')
+  const projectId = repoName.replace('github-reside-eng-', '')
   // Strip google cloud source prefix
   const googleSourcePath = 'https://source.developers.google.com/p/'
   if (projectId.includes(googleSourcePath)) {
@@ -138,11 +155,14 @@ async function callCloudBuildApiEvent(message) {
     console.error(noRepoErr, messageBody)
     throw new Error(noRepoErr)
   }
-  // Strip prefixes from repoName to get projectId
+
+  // Strip prefixes from repoName to get projectId (handle multiple trigger types)
   const projectId = projectIdFromRepoName(repoName)
+
   console.log(`Build event status update for project : "${projectId}"`, {
     status,
     branchName,
+    repoName,
     commitSha
   })
 
