@@ -1,5 +1,10 @@
 service cloud.firestore {
   match /databases/{database}/documents {
+    // User is logged in and approved (has approved: true)
+    function userIsApproved() {
+      return request.auth.uid != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true;
+    }
     function isOwner(res) {
       return res.data.createdBy == request.auth.uid
     }
@@ -8,8 +13,7 @@ service cloud.firestore {
     }
     // Private user profiles
     match /users/{userId} {
-      // Only the user can edit their user object
-      allow read, write: if request.auth.uid == userId;
+      allow read, write: if request.auth.uid == userId && userIsApproved();
     }
     // Public user profiles
     match /users_public/{userId} {
