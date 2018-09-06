@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const admin = require('firebase-admin')
-const utils = require('./utils')
+const utils = require('../build/lib/utils')
 const stdin = process.openStdin()
 
 let data = ''
