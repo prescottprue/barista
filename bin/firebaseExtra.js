@@ -1,10 +1,35 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
+const isString = require('lodash/isString')
 const fs = require('fs')
 const path = require('path')
+const yargs = require('yargs') // eslint-disable-line import/no-extraneous-dependencies
+const drop = require('lodash/drop')
 const utils = require('../build/lib/utils')
 const config = require('../project.config')
 
+/**
+ * Create data object with values for each document with keys being doc.id.
+ * @param  {firebase.database.DataSnapshot} snapshot - Data for which to create
+ * an ordered array.
+ * @return {Object|Null} Object documents from snapshot or null
+ */
+function dataArrayFromSnap(snap) {
+  const data = []
+  if (snap.data && snap.exists) {
+    data.push({ id: snap.id, data: snap.data() })
+  } else if (snap.forEach) {
+    snap.forEach(doc => {
+      data.push({ id: doc.id, data: doc.data() || doc })
+    })
+  }
+  return data
+}
+
+/**
+ * Load fixture and parse into JSON
+ * @param {String} fixturePath - Fixture's path from root
+ */
 function readJsonFixture(fixturePath) {
   const fixtureString = fs.readFileSync(fixturePath)
   try {
@@ -15,14 +40,14 @@ function readJsonFixture(fixturePath) {
   }
 }
 
+/**
+ * Read fixture file provided relative path
+ * @param {String} fixturePath - Relative path of fixture file
+ */
 function readFixture(fixturePath) {
+  const fixturesPath = path.join(config.basePath, config.e2eTestDir, 'fixtures')
   // Confirm fixture exists
-  const pathToFixtureFile = path.join(
-    config.basePath,
-    config.e2eTestDir,
-    'fixtures',
-    fixturePath
-  )
+  const pathToFixtureFile = path.join(fixturesPath, fixturePath)
 
   if (!fs.existsSync(pathToFixtureFile)) {
     throw new Error(`Fixture not found at path: ${fixturePath}`)
@@ -37,45 +62,79 @@ function readFixture(fixturePath) {
 }
 
 /**
- * @param  {functions.Event} event - Function event
- * @param {functions.Context} context - Functions context
- * @return {Promise}
+ * Parse fixture path string into JSON with error handling
+ * @param {String} unparsed - Unparsed string to be parsed into JSON
  */
-async function firestoreAction({
-  action = 'set',
-  actionPath,
-  fixturePath,
-  withMeta
-}) {
+function parseFixturePath(unparsed) {
+  if (isString(unparsed)) {
+    try {
+      return JSON.parse(unparsed)
+    } catch (err) {
+      console.log('Error parsing fixture to JSON:', err)
+      return unparsed
+    }
+  }
+  return unparsed
+}
+
+/**
+ *
+ * @param {String} action - Firestore action to run
+ * @param {String} actionPath - Path at which Firestore action should be run
+ * @param {String} thirdArg - Either path to fixture or string containing object
+ * of options (parsed by cy.callFirestore custom Cypress command)
+ * @param {String} withMeta -
+ */
+function firestoreAction(action = 'set', actionPath, thirdArg, withMeta) {
   const fbInstance = utils.initializeFirebase()
-  const ref = utils.slashPathToFirestoreRef(fbInstance.firestore(), actionPath)
+
+  let fixtureData
+  let options = {}
+  const parsedVal = parseFixturePath(thirdArg)
+
+  // Check to see if parsedVal is fixture path
+  if (isString(parsedVal)) {
+    fixtureData = readFixture(thirdArg)
+    // Add meta if withMeta option exists
+    if (withMeta) {
+      const actionPrefix = action === 'update' ? 'updated' : 'created'
+      fixtureData[`${actionPrefix}By`] = utils.envVarBasedOnCIEnv('TEST_UID')
+      /* eslint-disable standard/computed-property-even-spacing */
+      fixtureData[
+        `${actionPrefix}At`
+      ] = fbInstance.firestore.FieldValue.serverTimestamp()
+      /* eslint-enable standard/computed-property-even-spacing */
+    }
+  } else {
+    // Otherwise handle third argument as an options object
+    options = parsedVal
+  }
+
+  // Create ref from slash and any provided query options
+  const ref = utils.slashPathToFirestoreRef(
+    fbInstance.firestore(),
+    actionPath,
+    options
+  )
 
   // Confirm ref has action as a method
   if (typeof ref[action] !== 'function') {
     const missingActionErr = `Ref at provided path "${actionPath}" does not have action "${action}"`
-    console.log(missingActionErr)
     throw new Error(missingActionErr)
-  }
-
-  const fixtureData = readFixture(fixturePath)
-
-  // Add meta if withMeta option exists
-  if (withMeta) {
-    const actionPrefix = action === 'update' ? 'updated' : 'created'
-    fixtureData[`${actionPrefix}By`] = utils.envVarBasedOnCIEnv('TEST_UID')
-    /* eslint-disable standard/computed-property-even-spacing */
-    fixtureData[
-      `${actionPrefix}At`
-    ] = fbInstance.firestore.FieldValue.serverTimestamp()
-    /* eslint-enable standard/computed-property-even-spacing */
   }
 
   try {
     // Call action with fixture data
-    await ref[action](fixtureData)
-    console.log(
-      `action "${action}" at path "${actionPath}" successful with fixture: "${fixturePath}"`
-    )
+    return ref[action](fixtureData).then(res => {
+      const dataArray = dataArrayFromSnap(res)
+
+      // Write results to stdout to be loaded in tests
+      if (action === 'get') {
+        process.stdout.write(JSON.stringify(dataArray))
+      }
+
+      return dataArray
+    })
   } catch (err) {
     console.log(`Error with ${action} at path "${actionPath}": `, err)
     throw err
@@ -101,30 +160,35 @@ const commands = [
       })
     },
     handler: argv => {
-      if (argv.verbose)
+      // Log if verbose option is passed
+      if (argv.verbose) {
         console.info(
           `firestore command on :${argv.action} at ${argv.actionPath}`
         )
-      return firestoreAction(argv)
+      }
+      return argv
     }
   }
 ]
-;(async function() {
-  const yargs = require('yargs')
+;(function runFirebaseExtra() {
+  // eslint-disable-line consistent-return
+  let currentArgs
   try {
     // TODO: Replace with commandDir when moving config to a directory
-    for (let command in commands) {
-      yargs.command(command)
+    for (const command in commands) {
+      // eslint-disable-line guard-for-in, no-restricted-syntax
+      currentArgs = yargs.command(command)
     }
     yargs.option('withMeta', {
       alias: 'm',
       default: false
     })
     /* eslint-disable no-unused-expressions */
-    yargs.option('verbose', {
+    const argv = currentArgs.option('verbose', {
       alias: 'v',
       default: false
     }).argv
+    return firestoreAction(...drop(argv._))
     /* eslint-enable no-unused-expressions */
   } catch (err) {
     /* eslint-disable no-console */

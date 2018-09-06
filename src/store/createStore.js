@@ -10,6 +10,8 @@ import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/firestore'
 import 'firebase/messaging'
+import { persistStore, persistReducer } from 'redux-persist'
+import localStorage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
 import { initializeMessaging } from 'utils/messaging'
 import { firebase as fbConfig, reduxFirebase as rrfConfig } from '../config'
 import { version } from '../../package.json'
@@ -66,12 +68,15 @@ export default (initialState = {}) => {
 
   // Initialize Firestore with settings
   firebase.firestore().settings({ timestampsInSnapshots: true })
-
+  const persistConfig = {
+    key: 'root',
+    storage: localStorage
+  }
   // ======================================================
   // Store Instantiation and HMR Setup
   // ======================================================
   const store = createStore(
-    makeRootReducer(),
+    persistReducer(persistConfig, makeRootReducer()),
     initialState,
     compose(
       applyMiddleware(...middleware),
@@ -92,5 +97,7 @@ export default (initialState = {}) => {
     })
   }
 
-  return store
+  const persistor = persistStore(store)
+
+  return { store, persistor }
 }

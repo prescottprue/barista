@@ -18,6 +18,7 @@ import { REQUESTS_PATH, RESPONSES_PATH, CALL_GOOGLE_API_PATH } from 'constants'
  */
 function createRunRequest({
   cloudZone = 'us-west1-b',
+  containerImage,
   commandArgsStr = '',
   instanceTemplateName,
   createdBy,
@@ -29,6 +30,7 @@ function createRunRequest({
   meta = null
 }) {
   const cloudProjectId = getFirebaseConfig('projectId')
+  const containerImageName = containerImage || `${baristaProject}-e2e`
   // NOTE: requestId can not be used in name since it does not conform to
   // name field standards with Compute's API. Instead the requestId is used
   // as a tag. Error caused looked like so:
@@ -46,7 +48,7 @@ function createRunRequest({
       items: [
         {
           key: 'gce-container-declaration',
-          value: `spec:\n  containers:\n    - name: test-${baristaProject}\n      image: gcr.io/${cloudProjectId}/test-${baristaProject}:${testCodeBranch}\n      env:\n        - name: JOB_RUN_KEY\n          value: ${baristaProject}/${jobRunKey}\n        - name: TEST_ARGS\n          value: "\\ ${commandArgsStr}"\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
+          value: `spec:\n  containers:\n    - name: ${containerImageName}\n      image: gcr.io/${cloudProjectId}/${containerImageName}:${testCodeBranch}\n      env:\n        - name: JOB_RUN_KEY\n          value: ${baristaProject}/${jobRunKey}\n        - name: TEST_ARGS\n          value: "\\ ${commandArgsStr}"\n      stdin: false\n      tty: false\n  restartPolicy: Never\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine.`
         }
       ]
     },

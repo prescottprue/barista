@@ -15,6 +15,7 @@
     "deploy": "firebase-ci deploy -s",
     "start": "cross-env NODE_ENV=development webpack-dashboard -p 1335 -c cyan -m -t barista -- node build/scripts/start",
     "start:simple": "cross-env NODE_ENV=development node build/scripts/start",
+    "start:dist": "npm run build && firebase serve --only hosting -p 3001",
     "lint": "eslint src functions server build test/e2e project.config.js",
     "lint:fix": "npm run lint -- --fix",
     "functions:start": "npm run start --prefix functions",
@@ -22,11 +23,11 @@
     "functions:build": "npm run build --prefix functions",
     "functions:test": "npm run test --prefix functions",
     "format": "prettier --single-quote --no-semi --trailing-comma none --write \"src/**/*.js\"",
-    "test": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3000 cypress run",
+    "test": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3001 cypress run",
     "test:stage": "npm run build:testConfig && cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com cypress run",
     "test:ui:stage": "npm run build:testConfig && cross-env CYPRESS_baseUrl=https://barista-stage.firebaseapp.com $(npm bin)/cypress open",
-    "test:ui": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3000 $(npm bin)/cypress open",
-    "test:ui:debug": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3000 DEBUG=cypress:* cypress open",
+    "test:ui": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3001 $(npm bin)/cypress open",
+    "test:ui:debug": "npm run build:testConfig && cross-env CYPRESS_baseUrl=http://localhost:3001 DEBUG=cypress:* cypress open",
     "prepush": "npm run lint"
   },
   "repository": {
@@ -62,6 +63,7 @@
     "redux-firestore": "^0.5.6",
     "redux-form": "^7.4.0",
     "redux-form-material-ui": "next",
+    "redux-persist": "^5.10.0",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
     "whatwg-fetch": "^2.0.3"
@@ -121,6 +123,7 @@
     "webpack-dashboard": "^0.4.0",
     "webpack-dev-middleware": "^1.11.0",
     "webpack-hot-middleware": "^2.13.2",
-    "yargs": "^8.0.1"
+    "yargs": "^8.0.1",
+    "yargs-promise": "^1.1.0"
   }
 }

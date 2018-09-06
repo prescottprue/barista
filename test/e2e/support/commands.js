@@ -149,6 +149,15 @@ Cypress.Commands.add(
       opts
     )
     cy.log(`Calling Firestore command:\n${firestoreCommand}`)
-    return cy.exec(firestoreCommand)
+    cy.exec(firestoreCommand, { timeout: 100000 }).then(res => {
+      if (res.stderr) {
+        return Promise.reject(res.stderr)
+      }
+      try {
+        return JSON.parse(res.stdout)
+      } catch (err) {
+        return res
+      }
+    })
   }
 )

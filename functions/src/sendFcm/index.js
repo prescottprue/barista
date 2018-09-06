@@ -5,6 +5,8 @@ import { to } from 'utils/async'
 import { getFirebaseConfig } from 'utils/firebaseFunctions'
 import { waitForValue } from '../utils/rtdb'
 
+const requestPath = 'sendFcm'
+
 /**
  * @param  {functions.Event} event - Function event
  * @param {functions.Context} context - Functions context
@@ -22,7 +24,7 @@ async function sendFcmEvent(snap, context) {
     throw new Error(missingUserIdErr)
   }
 
-  const responseRef = admin.database().ref(`responses/${pushId}`)
+  const responseRef = admin.database().ref(`responses/${requestPath}/${pushId}`)
   // Get user profile
   const [getProfileErr, userProfileSnap] = await to(
     admin
@@ -137,5 +139,5 @@ async function sendFcmEvent(snap, context) {
  * @type {functions.CloudFunction}
  */
 export default functions.database
-  .ref('/requests/sendFcm/{pushId}')
+  .ref(`/requests/${requestPath}/{pushId}`)
   .onCreate(sendFcmEvent)

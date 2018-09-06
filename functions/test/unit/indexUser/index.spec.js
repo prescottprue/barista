@@ -3,15 +3,15 @@ import * as admin from 'firebase-admin'
 describe('indexUser RTDB Cloud Function (onWrite)', () => {
   let adminInitStub
   let indexUser
-  let updateStub
+  let setStub
   let deleteStub
   let docStub
   let collectionStub
 
   beforeEach(() => {
-    updateStub = sinon.stub().returns(Promise.resolve({}))
+    setStub = sinon.stub().returns(Promise.resolve({}))
     deleteStub = sinon.stub().returns(Promise.resolve({}))
-    docStub = sinon.stub().returns({ update: updateStub, delete: deleteStub })
+    docStub = sinon.stub().returns({ set: setStub, delete: deleteStub })
     collectionStub = sinon
       .stub()
       .returns({ add: sinon.stub().returns(Promise.resolve({})), doc: docStub })
@@ -38,6 +38,32 @@ describe('indexUser RTDB Cloud Function (onWrite)', () => {
 
   it('removes user when user profile is being deleted', async () => {
     const res = await indexUser({ after: { exists: false } })
+    // Set is not called
+    expect(setStub).to.not.be.called
+    expect(res).to.equal(null)
+  })
+
+  it('updates user when displayName is removed', async () => {
+    const afterData = { other: 'param' }
+    const res = await indexUser({
+      after: { exists: true, data: () => afterData },
+      before: { exists: true, data: () => ({ displayName: 'asdf' }) }
+    })
+    // Set is not called
+    expect(setStub).to.not.be.called
+    // Result is returned
+    expect(res).to.equal(null)
+  })
+
+  it('exits when a non-indexed parameter is changed on profile', async () => {
+    const afterData = { other: 'param', displayName: 'asdf' }
+    const res = await indexUser({
+      after: { exists: true, data: () => afterData },
+      before: { exists: true, data: () => ({ displayName: 'asdf' }) }
+    })
+    // Set is not called
+    expect(setStub).to.not.be.called
+    // Result is returned
     expect(res).to.equal(null)
   })
 
@@ -55,6 +81,10 @@ describe('indexUser RTDB Cloud Function (onWrite)', () => {
       after: { exists: true, data: () => afterData },
       before: { exists: true, data: () => ({ displayName: 'asdf' }) }
     })
+    // Set is called with result data and merge: true (like update, but handles
+    // document not existing)
+    expect(setStub).to.be.calledWith(afterData, { merge: true })
+    // Result is returned
     expect(res).to.equal(afterData)
   })
 })

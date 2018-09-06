@@ -1,9 +1,8 @@
 import { createSelector } from '../utils'
 
 describe('Home Page', () => {
-  // Setup before tests including creating a server to listen for external requests
   before(() => {
-    // Go to projects page
+    // Go to home page
     cy.visit('/')
   })
 
