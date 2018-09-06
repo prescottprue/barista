@@ -1,6 +1,3 @@
-#!/usr/bin/env node
-/* eslint-disable no-console */
-
 const admin = require('firebase-admin') // eslint-disable-line import/no-extraneous-dependencies
 const isString = require('lodash/isString')
 const fs = require('fs')
@@ -34,6 +31,7 @@ function getEnvPrefix() {
 function envVarBasedOnCIEnv(varNameRoot) {
   const prefix = getEnvPrefix()
   const combined = `${prefix}${varNameRoot}`
+
   // Config file used for environment (local, containers)
   if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
     const localTestConfigPath = path.join(
@@ -44,6 +42,7 @@ function envVarBasedOnCIEnv(varNameRoot) {
     const configObj = require(localTestConfigPath) // eslint-disable-line global-require, import/no-dynamic-require
     return configObj[combined] || configObj[varNameRoot]
   }
+
   // CI Environment (environment variables loaded directly)
   return process.env[combined] || process.env[varNameRoot]
 }
@@ -62,9 +61,11 @@ function getParsedEnvVar(varNameRoot) {
   const prefix = getEnvPrefix()
   const combinedVar = `${prefix}${varNameRoot}`
   if (!val) {
+    /* eslint-disable no-console */
     console.error(
       `${combinedVar} not found, make sure it is set within environment vars`
     )
+    /* eslint-enable no-console */
   }
   try {
     if (isString(val)) {
@@ -72,7 +73,9 @@ function getParsedEnvVar(varNameRoot) {
     }
     return val
   } catch (err) {
+    /* eslint-disable no-console */
     console.error(`Error parsing ${combinedVar}`)
+    /* eslint-enable no-console */
     return val
   }
 }
@@ -122,9 +125,11 @@ function initializeFirebase() {
     }
     return adminInstance
   } catch (err) {
+    /* eslint-disable no-console */
     console.log(
       'Error initializing firebase-admin instance from service account.'
     )
+    /* eslint-enable no-console */
     throw err
   }
 }
@@ -147,13 +152,14 @@ function dataArrayFromSnap(snap) {
   return data
 }
 /**
- * Convert slash path to Firestore reference
+ * Convert slash path to Firestore reference and handle other query options
+ * such as limit
  * @param  {firestore.Firestore} firestoreInstance - Instance on which to
  * create ref
  * @param  {String} slashPath - Path to convert into firestore refernce
  * @return {firestore.CollectionReference|firestore.DocumentReference}
  */
-function slashPathToFirestoreRef(firestoreInstance, slashPath) {
+function slashPathToFirestoreRef(firestoreInstance, slashPath, options = {}) {
   let ref = firestoreInstance
   const srcPathArr = slashPath.split('/')
   srcPathArr.forEach(pathSegment => {
@@ -165,13 +171,19 @@ function slashPathToFirestoreRef(firestoreInstance, slashPath) {
       throw new Error(`Invalid slash path: ${slashPath}`)
     }
   })
+
+  // Apply limit to query if it exists
+  if (options.limit && typeof ref.limit === 'function') {
+    ref = ref.limit(options.limit)
+  }
+
   return ref
 }
 
 module.exports = {
   initializeFirebase,
-  getParsedEnvVar,
   dataArrayFromSnap,
   slashPathToFirestoreRef,
-  envVarBasedOnCIEnv
+  getParsedEnvVar,
+  getServiceAccount
 }
