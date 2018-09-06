@@ -5,11 +5,7 @@ import utils from '../lib/utils'
 import config from '../../project.config'
 
 const TEST_FOLDER_RELATIVE_PATH = path.join(config.e2eTestDir, 'integration')
-const TEST_FOLDER_PATH = path.join(
-  __dirname,
-  '../..',
-  TEST_FOLDER_RELATIVE_PATH
-)
+const TEST_FOLDER_PATH = path.join(config.basePath, TEST_FOLDER_RELATIVE_PATH)
 const CONTAINER_BUILDS_META_PATH = 'container_builds'
 
 if (!process.env.BUILD_ID) {

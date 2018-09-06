@@ -5,15 +5,14 @@ import fs from 'fs'
 import path from 'path'
 import config from '../../project.config'
 
-const testEnvFilePath = path.join(__dirname, '../..', 'cypress.env.json')
+const testEnvFilePath = path.join(config.basePath, 'cypress.env.json')
 
 const localTestConfigPath = path.join(
-  __dirname,
-  '../..',
+  config.basePath,
   config.e2eTestDir,
   'config.json'
 )
-const serviceAccountPath = path.join(__dirname, '../..', 'serviceAccount.json')
+const serviceAccountPath = path.join(config.basePath, 'serviceAccount.json')
 const prefixesByCiEnv = {
   staging: 'STAGE_',
   production: 'PROD_'
@@ -44,9 +43,9 @@ function envVarBasedOnCIEnv(varNameRoot) {
   if (fs.existsSync(localTestConfigPath)) {
     const configObj = require(localTestConfigPath)
     console.log(
-      `${
-        configObj[combined] ? combined : varNameRoot
-      } is being loaded from test/env/config.json`
+      `${configObj[combined] ? combined : varNameRoot} is being loaded from ${
+        config.e2eTestDir
+      }/config.json`
     )
     return configObj[combined] || configObj[varNameRoot]
   }

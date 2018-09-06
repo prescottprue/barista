@@ -18,8 +18,7 @@ function readJsonFixture(fixturePath) {
 function readFixture(fixturePath) {
   // Confirm fixture exists
   const pathToFixtureFile = path.join(
-    __dirname,
-    '..',
+    config.basePath,
     config.e2eTestDir,
     'fixtures',
     fixturePath

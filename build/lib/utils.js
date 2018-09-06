@@ -37,8 +37,7 @@ function envVarBasedOnCIEnv(varNameRoot) {
   // Config file used for environment (local, containers)
   if (!process.env.CI && !process.env.CI_ENVIRONMENT_SLUG) {
     const localTestConfigPath = path.join(
-      __dirname,
-      '..',
+      config.basePath,
       config.e2eTestDir,
       'config.json'
     )
@@ -83,7 +82,7 @@ function getParsedEnvVar(varNameRoot) {
  * @return {Object} Service account object
  */
 function getServiceAccount() {
-  const serviceAccountPath = path.join(__dirname, '..', `serviceAccount.json`)
+  const serviceAccountPath = path.join(config.basePath, 'serviceAccount.json')
   // Check for local service account file (Local dev)
   if (fs.existsSync(serviceAccountPath)) {
     return require(serviceAccountPath) // eslint-disable-line global-require, import/no-dynamic-require
