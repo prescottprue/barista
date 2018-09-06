@@ -30,7 +30,7 @@ ENV TERM xterm
 ### Files
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY package*.json cypress.json serviceAccount.json ./
+COPY package*.json cypress.json serviceAccount.json project.config.js ./
 
 ### Directories
 COPY build/ /build/
@@ -38,7 +38,7 @@ COPY bin/ /bin/
 COPY test/e2e/ /test/e2e/
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11 glob
+RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11 glob ip
 
 # Build Test Config
 RUN npm run build:testConfig
