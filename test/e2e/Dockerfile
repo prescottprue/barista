@@ -30,24 +30,21 @@ ENV TERM xterm
 ### Files
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY package*.json cypress.json serviceAccount.json ./
+COPY package*.json cypress.json serviceAccount.json project.config.js ./
 
 ### Directories
 COPY build/ /build/
 COPY bin/ /bin/
-COPY cypress/ /cypress/
-
-## Add executable permission to tests complete script
-RUN chmod +x bin/testsComplete.js
+COPY test/e2e/ /test/e2e/
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11 glob
+RUN CYPRESS_INSTALL_BINARY=0 npm install babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.0.11 glob ip
 
 # Build Test Config
 RUN npm run build:testConfig
 
-# Record test files to firestore
-RUN bin/recordTestFiles.js
+# Record test files to firestore under container_build document
+RUN npm run build:testFiles
 
 # Install Cypress
 # Set CI=true to prevent a large number of messages during install of
@@ -58,5 +55,5 @@ RUN CI=true npm install cypress
 RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above) reporting results using Barista Reporter.
-# Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY 
+# Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY
 ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter$TEST_ARGS; echo \"$?\" | bin/testsComplete.js
