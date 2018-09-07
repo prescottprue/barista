@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
+import { Typography, Button } from '@material-ui/core'
 
-export const RuntimeSummary = ({ classes, viewLogs }) => (
+export const RuntimeSummary = ({ classes, viewLogs, googleInstanceId }) => (
   <Paper className={classes.container} elevation={0}>
     <Typography className={classes.label} component="p">
       CI:
@@ -29,13 +29,13 @@ export const RuntimeSummary = ({ classes, viewLogs }) => (
     <Typography className={classes.value} variant="body2" component="p">
       v3.0.1
     </Typography>
-    <Typography
+    <Button
       onClick={viewLogs}
       className={classes.logs}
-      variant="body2"
-      component="p">
+      variant="text"
+      disabled={!googleInstanceId}>
       view logs
-    </Typography>
+    </Button>
   </Paper>
 )
 

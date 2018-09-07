@@ -77,7 +77,7 @@ export const RunSummary = ({
           runMeta={runMeta}
         />
         <TestRunStats projectId={projectId} runId={runId} />
-        <RuntimeSummary />
+        <RuntimeSummary projectId={projectId} runId={runId} />
       </ExpansionPanelDetails>
     </ExpansionPanel>
   </div>
