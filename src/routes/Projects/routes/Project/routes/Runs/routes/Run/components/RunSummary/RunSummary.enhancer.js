@@ -1,7 +1,6 @@
 import { compose } from 'redux'
 import PropTypes from 'prop-types'
-import { get } from 'lodash'
-import { withHandlers, setPropTypes, flattenProp, withProps } from 'recompose'
+import { withHandlers, setPropTypes } from 'recompose'
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { CONTAINER_BUILDS_META_PATH } from 'constants'
