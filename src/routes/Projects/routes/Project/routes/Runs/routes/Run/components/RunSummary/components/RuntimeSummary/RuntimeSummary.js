@@ -41,7 +41,8 @@ export const RuntimeSummary = ({ classes, viewLogs, googleInstanceId }) => (
 
 RuntimeSummary.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
-  viewLogs: PropTypes.func
+  viewLogs: PropTypes.func,
+  googleInstanceId: PropTypes.string
 }
 
 export default RuntimeSummary

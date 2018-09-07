@@ -12,12 +12,12 @@ export default compose(
   })),
   withHandlers({
     // someHandler: props => value => {}
-    viewLogs: ({ googleInstanceId }) => () => {
+    viewLogs: ({ googleInstanceId, projectName }) => () => {
       if (!googleInstanceId) {
         return noop()
       }
       const filter = `(resource.type = "gce_instance" AND resource.labels.instance_id = "${googleInstanceId}") OR(resource.type = "global" AND jsonPayload.instance.id = "${googleInstanceId}")`
-      const url = `https://console.cloud.google.com/logs/viewer?project=${props.projectName ||
+      const url = `https://console.cloud.google.com/logs/viewer?project=${projectName ||
         'barista-stage'}&advanceFilter=${encodeURIComponent(filter)}`
       window.open(url)
     }
