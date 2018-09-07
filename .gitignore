@@ -25,3 +25,4 @@ cypress.env.json
 cypress/config.json
 serviceAccount.*.json
 serviceAccount.json
+jsconfig.json
