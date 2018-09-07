@@ -6,8 +6,8 @@ import { setPropTypes } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import { getSuitesWithTests } from 'selectors'
 import { renderWhile } from 'utils/components'
-import TestResultsNotFound from './TestResultsNotFound'
-import styles from './TestResultsList.styles'
+import RunResultsNotFound from './RunResultsNotFound'
+import styles from './RunResultsList.styles'
 
 export default compose(
   // set prop-types used in enhancer
@@ -21,7 +21,7 @@ export default compose(
   // Show loading spinner while tests are running
   renderWhile(
     ({ runData }) => !size(runData),
-    withStyles(styles)(TestResultsNotFound)
+    withStyles(styles)(RunResultsNotFound)
   ),
   // add props.clases from RunPage.styles
   withStyles(styles)

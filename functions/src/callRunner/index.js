@@ -87,6 +87,7 @@ async function callRunnerEvent(snap, context) {
     throw runErr
   }
   const responseData = get(testRunResponseSnap.val(), 'responseData', {})
+  const googleInstanceId = get(responseData, 'targetId', '')
   const targetLink = get(responseData, 'targetLink', '')
   const resourceUrl = targetLink.replace(
     'https://www.googleapis.com/compute/v1/',
@@ -99,7 +100,8 @@ async function callRunnerEvent(snap, context) {
     id,
     targetLink,
     createdBy: responseData.user || null,
-    buildId
+    buildId,
+    googleInstanceId
   }
   const [writeErr] = await to(
     Promise.all([

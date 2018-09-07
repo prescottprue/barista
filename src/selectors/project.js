@@ -1,4 +1,4 @@
-import { get, pickBy } from 'lodash'
+import { get, pickBy, reduce } from 'lodash'
 import {
   flow,
   map as fpMap,
@@ -9,6 +9,11 @@ import {
 import { PROJECTS_DATA_PATH } from 'constants'
 import { createSelector } from 'reselect'
 import { getBuildStatuses } from './builds'
+import {
+  addDurationToNow,
+  strictDistanceInWords,
+  formatTimeInterval
+} from 'utils/formatters'
 
 /**
  * @param {Object} state - Redux state (from connect)
@@ -200,3 +205,34 @@ export const getProjectBranchNames = createSelector(
       : ['master']
   }
 )
+
+export const getRunBuildId = createSelector([getProjectRunMeta], runMeta =>
+  get(runMeta, 'instanceMeta.buildId', '')
+)
+
+/**
+ * Selector when there is only one build item that should be returned
+ * @export
+ * @param {Object} state - Redux state (from connect)
+ * @param {Object} props - Component props
+ */
+export function getRunBuildData(state, props) {
+  return reduce(
+    get(state, `firestore.data.buildId${props.runId}`, {}),
+    (acc, buildData, key) => ({ ...buildData, key }),
+    {}
+  )
+}
+
+export const getRunDurationWords = createSelector(
+  [getProjectRunMeta],
+  runMeta => {
+    const durationMilliseconds = get(runMeta, 'stats.duration', 0)
+    return strictDistanceInWords(addDurationToNow(durationMilliseconds))
+  }
+)
+
+export const getRunDuration = createSelector([getProjectRunMeta], runMeta => {
+  const durationMilliseconds = get(runMeta, 'stats.duration', 0)
+  return formatTimeInterval(durationMilliseconds, false)
+})
