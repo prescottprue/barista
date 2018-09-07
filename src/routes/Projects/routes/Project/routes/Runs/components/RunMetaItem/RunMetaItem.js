@@ -128,8 +128,6 @@ RunMetaItem.propTypes = {
   runDetailPath: PropTypes.string.isRequired, // from enhancer (withProps)
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
   reRunJob: PropTypes.func.isRequired, // from enhancer (withHandlers)
-  startedAtToolTip: PropTypes.string.isRequired, // from enhancer (withProps)
-  tests: PropTypes.number.isRequired, // from enhancer (flattenProp('stats'))
   createdAtTooltip: PropTypes.string.isRequired // from enhancer (withProps)
 }
 

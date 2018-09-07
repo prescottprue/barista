@@ -19,16 +19,17 @@ export const RunPage = ({
 }) => (
   <div className={classes.root}>
     <div className={classes.titleBar}>
-      <Typography variant="headline" component="h3">
-        Run {runId}
-      </Typography>
-    </div>
-    <div className={classes.buttons}>
       <Tooltip title="Back To Runs">
         <IconButton component={Link} to={runsPagePath}>
           <BackIcon />
         </IconButton>
       </Tooltip>
+      <Typography
+        variant="headline"
+        component="h3"
+        classes={{ root: classes.title }}>
+        Run {runId}
+      </Typography>
     </div>
     <RunSummary projectId={projectId} runId={runId} buildId={buildId} />
     <RunResultsList projectId={projectId} runId={runId} />
