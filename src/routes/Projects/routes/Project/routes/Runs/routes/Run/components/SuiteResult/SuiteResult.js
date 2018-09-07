@@ -55,7 +55,7 @@ SuiteResult.propTypes = {
   name: PropTypes.string.isRequired,
   classes: PropTypes.object, // from enhancer (withStyles)
   suiteData: PropTypes.object, // from enhancer (firestoreConnect + connect)
-  suiteDuration: PropTypes.string,
+  suiteDuration: PropTypes.number,
   suiteFailures: PropTypes.number
 }
 
