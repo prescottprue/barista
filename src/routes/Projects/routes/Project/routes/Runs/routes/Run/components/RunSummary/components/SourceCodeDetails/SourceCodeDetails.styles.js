@@ -26,6 +26,7 @@ export default theme => ({
   },
   link: {
     '&:hover': {
+      color: theme.palette.primary.light,
       textDecoration: 'underline',
       cursor: 'pointer'
     }

@@ -4,19 +4,19 @@ export default theme => ({
     top: '-2px'
   },
   fail: {
-    color: 'red'
+    color: theme.palette.error.main
   },
   pass: {
-    color: 'green'
+    color: theme.palette.success.main
   },
   pending: {
-    color: 'grey',
+    color: theme.palette.grey1,
     '-webkit-animation': 'spin 2s linear infinite',
     '-moz-animation': 'spin 2s linear infinite',
     animation: 'spin 2s linear infinite'
   },
   skip: {
-    color: 'grey'
+    color: theme.palette.grey1
   },
   '@keyframes spin': {
     '100%': {
