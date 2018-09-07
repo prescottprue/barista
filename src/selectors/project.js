@@ -6,10 +6,14 @@ import {
   uniq as fpUniq,
   sortBy as fpSortBy
 } from 'lodash/fp'
-import { PROJECTS_DATA_PATH, CONTAINER_BUILDS_STATUS_PATH } from 'constants'
+import { PROJECTS_DATA_PATH } from 'constants'
 import { createSelector } from 'reselect'
 import { getBuildStatuses } from './builds'
-import { addDurationToNow, strictDistanceInWords } from 'utils/formatters'
+import {
+  addDurationToNow,
+  strictDistanceInWords,
+  formatTimeInterval
+} from 'utils/formatters'
 
 /**
  * @param {Object} state - Redux state (from connect)
@@ -227,3 +231,8 @@ export const getRunDurationWords = createSelector(
     return strictDistanceInWords(addDurationToNow(durationMilliseconds))
   }
 )
+
+export const getRunDuration = createSelector([getProjectRunMeta], runMeta => {
+  const durationMilliseconds = get(runMeta, 'stats.duration', 0)
+  return formatTimeInterval(durationMilliseconds, false)
+})

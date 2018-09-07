@@ -1,5 +1,10 @@
 import { isDate, isObject, invoke } from 'lodash'
-import { format, distanceInWordsStrict, addMilliseconds } from 'date-fns'
+import {
+  format,
+  distanceInWordsStrict,
+  addMilliseconds,
+  differenceInMilliseconds
+} from 'date-fns'
 
 /**
  * Convert date string or object into date object
@@ -27,8 +32,11 @@ export function formatTime(dateValue) {
  * @param  {Object|Date} dateValue - Date value which to format
  * @return {String} Formatted time
  */
-export function formatTimeInterval(dateValue) {
-  return format(getDateObject(dateValue), 'mm:ss')
+export function formatTimeInterval(dateValue, includeMilliseconds = false) {
+  return format(
+    getDateObject(dateValue),
+    `mm:ss${includeMilliseconds ? ':SSS' : ''}`
+  )
 }
 
 /**
@@ -69,6 +77,10 @@ export function strictDistanceInWords(
     getDateObject(dateValue),
     getDateObject(compareToDateValue)
   )
+}
+
+export function getDifferenceInMilliseconds(later, earlier) {
+  return differenceInMilliseconds(later, earlier)
 }
 
 export function addDurationToNow(duration = 0, type = 'milli') {
