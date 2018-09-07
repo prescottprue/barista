@@ -1,35 +1,77 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Paper, Typography } from '@material-ui/core'
-import { HourglassEmpty } from '@material-ui/icons'
+import { Paper, Typography, Tooltip } from '@material-ui/core'
+import {
+  HourglassFullTwoTone as Hourglass,
+  Timelapse,
+  AccessTime as Clock
+} from '@material-ui/icons'
+import classnames from 'classnames'
 
-export const TestRunStats = ({ runMeta, durationInWords, classes }) => (
-  <Paper className={classes.repo} elevation={0}>
-    <Typography className={classes.label} component="p">
-      StartedAt
+export const TestRunStats = ({
+  requestedAt,
+  completedDate,
+  runDurationInWords,
+  runDuration,
+  requestDurationWords,
+  classes,
+  requestDuration
+}) => (
+  <Paper className={classes.container} elevation={0}>
+    <Typography
+      className={classnames(classes.label, classes.withIcon)}
+      component="p">
+      <Clock classes={{ root: classes.duration }} />
+      Requested:
     </Typography>
     <Typography className={classes.value} variant="body2" component="p">
-      {runMeta.stats.startedAt}
+      {requestedAt}
     </Typography>
-    <Typography className={classes.label} component="p">
-      EndedAt
-    </Typography>
-    <Typography className={classes.value} variant="body2" component="p">
-      {runMeta.stats.end}
-    </Typography>
-    <Typography className={classes.label} component="p">
-      Duration
+    <Typography
+      className={classnames(classes.label, classes.withIcon)}
+      component="p">
+      <Timelapse classes={{ root: classes.duration }} />
+      Completed:
     </Typography>
     <Typography className={classes.value} variant="body2" component="p">
-      <HourglassEmpty />
-      {durationInWords}
+      {completedDate}
     </Typography>
+    <Typography
+      className={classnames(classes.label, classes.withIcon)}
+      component="p">
+      <Hourglass classes={{ root: classes.duration }} />
+      Request Duration:
+    </Typography>
+    <Tooltip title={`~${requestDurationWords}`} placement="bottom">
+      <Typography className={classes.value} variant="body2" component="p">
+        {requestDuration}
+      </Typography>
+    </Tooltip>
+    <Typography
+      className={classnames(classes.label, classes.withIcon)}
+      component="p">
+      <Timelapse classes={{ root: classes.duration }} />
+      Test Duration:
+    </Typography>
+    <Tooltip title={`~${runDurationInWords}`} placement="bottom">
+      <Typography
+        className={classnames(classes.value, classes.withIcon)}
+        variant="body2"
+        component="p">
+        {runDuration}
+      </Typography>
+    </Tooltip>
   </Paper>
 )
 
 TestRunStats.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
-  testRunStats: PropTypes.object // from enhancer (firestoreConnect + connect)
+  requestedAt: PropTypes.string,
+  completedDate: PropTypes.string,
+  runDurationInWords: PropTypes.string,
+  runDuration: PropTypes.string,
+  requestDurationWords: PropTypes.string,
+  requestDuration: PropTypes.string
 }
 
 export default TestRunStats

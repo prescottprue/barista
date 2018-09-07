@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Tooltip from '@material-ui/core/Tooltip'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
+import { Typography, IconButton, Paper, Tooltip } from '@material-ui/core'
+import { FileCopy } from '@material-ui/icons'
 import classnames from 'classnames'
 
 export const SourceCodeDetails = ({
@@ -10,6 +9,13 @@ export const SourceCodeDetails = ({
   buildData,
   runMeta,
   openRepo,
+  goToCommit,
+  copyCommit,
+  copyBuildId,
+  goToBranch,
+  shortenedSha,
+  branchName,
+  commitSha,
   classes,
   buildId
 }) => (
@@ -34,52 +40,67 @@ export const SourceCodeDetails = ({
       Branch Name:
     </Typography>
     <Typography
-      onClick={() =>
-        window.open(
-          `https://github.com/reside-eng/${projectId}/tree/${
-            buildData.branchName
-          }`
-        )
-      }
+      onClick={goToBranch}
       className={classnames(classes.value, classes.link)}
       variant="body2"
       component="p">
-      {buildData.branchName}
+      {branchName}
     </Typography>
     <Typography className={classes.label} component="p">
       Commit SHA:
     </Typography>
-    <Tooltip title={buildData.commitSha || ''}>
-      <Typography
-        onClick={() =>
-          window.open(
-            `https://github.com/reside-eng/${projectId}/commit/${
-              buildData.commitSha
-            }`
-          )
-        }
-        className={classnames(classes.value, classes.link)}
-        variant="body2"
-        component="p">
-        {buildData.commitSha}
-      </Typography>
-    </Tooltip>
+    <div className={classes.value}>
+      <Tooltip title={commitSha}>
+        <Typography
+          onClick={goToCommit}
+          className={classes.link}
+          variant="body2"
+          component="p">
+          {shortenedSha}
+        </Typography>
+      </Tooltip>
+      <Tooltip title={'copy commit sha'}>
+        <IconButton
+          aria-label="Copy Sha"
+          onClick={copyCommit}
+          classes={{ root: classes.copyButton }}
+          disableRipple>
+          <FileCopy classes={{ root: classes.copyIcon }} />
+        </IconButton>
+      </Tooltip>
+    </div>
     <Typography className={classes.label} component="p">
       Build:
     </Typography>
     <Typography className={classes.value} variant="body2" component="p">
       {buildId}
+      <Tooltip title={'copy image build id'}>
+        <IconButton
+          aria-label="Copy Sha"
+          onClick={copyBuildId}
+          classes={{ root: classes.copyButton }}
+          disableRipple>
+          <FileCopy classes={{ root: classes.copyIcon }} />
+        </IconButton>
+      </Tooltip>
     </Typography>
   </Paper>
 )
 
 SourceCodeDetails.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
-  openRepo: PropTypes.func,
   projectId: PropTypes.string,
+  branchName: PropTypes.string,
+  commitSha: PropTypes.string,
   buildData: PropTypes.object,
   runMeta: PropTypes.object,
-  buildId: PropTypes.string
+  buildId: PropTypes.string,
+  openRepo: PropTypes.func,
+  goToCommit: PropTypes.func,
+  goToBranch: PropTypes.func,
+  copyCommit: PropTypes.func,
+  copyBuildId: PropTypes.func,
+  shortenedSha: PropTypes.string
 }
 
 export default SourceCodeDetails

@@ -9,7 +9,7 @@ const baseIcon = {
 export default theme => ({
   root: {
     width: '100%',
-    marginBottom: '1rem'
+    marginBottom: '3.5rem'
   },
   content: {
     display: 'grid',
@@ -44,6 +44,7 @@ export default theme => ({
     color: theme.palette.success.main,
     ...baseIcon
   },
+  baseIcon,
   skipIcon: baseIcon,
   iconData: {
     display: 'flex',

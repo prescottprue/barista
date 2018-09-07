@@ -1,10 +1,19 @@
+const baseIcon = {
+  height: '1rem',
+  width: '1rem',
+  marginRight: '.25rem',
+  position: 'relative',
+  top: '-1px'
+}
+
 export default theme => ({
   root: {
     // style code
   },
-  repo: {
+  container: {
     display: 'grid',
-    gridTemplateColumns: '112px 1fr',
+    gridTemplateColumns: '128px 1fr',
+    gridColumnGap: '.75rem',
     gridRowGap: '.75rem',
     padding: '32px',
     alignContent: 'start'
@@ -28,5 +37,10 @@ export default theme => ({
       textDecoration: 'underline',
       cursor: 'pointer'
     }
-  }
+  },
+  withIcon: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  duration: baseIcon
 })

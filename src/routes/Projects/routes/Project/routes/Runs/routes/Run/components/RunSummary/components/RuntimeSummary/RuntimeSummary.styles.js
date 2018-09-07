@@ -4,9 +4,10 @@ export default theme => ({
   },
   container: {
     display: 'grid',
-    gridTemplateColumns: '68px 1fr',
+    gridTemplateColumns: '64px 1fr',
     gridTemplateRows: 'auto',
     gridRowGap: '.75rem',
+    gridColumnGap: '.75rem',
     marginLeft: '1rem',
     padding: '32px'
   },
