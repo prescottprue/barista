@@ -1,80 +1,52 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { first, get, map } from 'lodash'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
+import {
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
+  Typography,
+  Tooltip,
+  Avatar
+} from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import Typography from '@material-ui/core/Typography'
-import Highlight from 'react-highlight'
-import IconFromStatus from 'components/IconFromStatus'
+import { formatTimeInterval } from 'utils/formatters'
+import TestList from './components/TestList'
+import { Timelapse } from '@material-ui/icons'
 
-export const SuiteResult = ({ suiteData, classes, name }) => (
+export const SuiteResult = ({
+  suiteData,
+  suiteDuration,
+  suiteFailures,
+  classes,
+  name
+}) => (
   <ExpansionPanel defaultExpanded>
-    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography variant="subheading">{name}</Typography>
+    <ExpansionPanelSummary
+      expandIcon={<ExpandMoreIcon />}
+      classes={{ content: classes.suiteSummary }}>
+      <Typography variant="subheading" classes={{ root: classes.suiteTitle }}>
+        {name}
+      </Typography>
+      {suiteFailures ? (
+        <Tooltip
+          title={`${suiteFailures} Suite Failure${
+            suiteFailures > 1 ? 's' : ''
+          }`}>
+          <Avatar classes={{ root: classes.failCount }}>{suiteFailures}</Avatar>
+        </Tooltip>
+      ) : null}
+      <Tooltip title={`Suite Duration`}>
+        <Typography variant="body2" classes={{ root: classes.suiteDuration }}>
+          <Timelapse classes={{ root: classes.baseIcon }} />
+          {formatTimeInterval(suiteDuration, true)}
+        </Typography>
+      </Tooltip>
     </ExpansionPanelSummary>
-    <ExpansionPanelDetails className={classes.root}>
-      <span>{get(first(suiteData), 'state')}</span>
-      <div className={classes.root}>
-        <Typography variant="body1">Specs:</Typography>
-        {/* body, duration, err{message, name, stack}, pending, state, timings{'before all'[0].afterFnDuration, lifecycle, test.afterFnDuration, title, type, wallClockStartedAt */}
-        {map(suiteData, (test, testId) => (
-          <ExpansionPanel
-            key={`Result-Spec-${testId}`}
-            className={classes.root}>
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMoreIcon />}
-              classes={{
-                root: classes.testSummaryPanel,
-                content: classes.content
-              }}>
-              <IconFromStatus status={test.state} context={'test'} />
-              <Typography className={classes.testTitle} variant="subheading">
-                {test.title}
-              </Typography>
-              <Typography className={classes.testTitle} variant="subheading">
-                {test.duration}
-              </Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails style={{ flexDirection: 'column' }}>
-              <Highlight
-                className="javascript atom-one-dark"
-                style={{ display: 'block' }}>
-                {test.body}
-              </Highlight>
-              <Highlight
-                className="javascript atom-one-dark"
-                style={{ display: 'block' }}>
-                {`${get(test, 'err.name', '')}: ${get(
-                  test,
-                  'err.message',
-                  ''
-                )}`}
-              </Highlight>
-              <Highlight className="bash github" style={{ display: 'block' }}>
-                {get(test, 'err.stack', '')}
-              </Highlight>
-            </ExpansionPanelDetails>
-
-            <CardContent>
-              {map(get(test, 'tests'), (test, testId) => (
-                <Card key={`Result-Spec-${testId}`}>
-                  <CardContent>
-                    <div>State: {get(test, 'state')}</div>
-                    <div>
-                      Duration: {get(test, 'duration', 0) / 1000} seconds
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              <div>Duration: {get(test, 'duration', 0) / 1000} seconds</div>
-            </CardContent>
-          </ExpansionPanel>
-        ))}
-      </div>
+    <ExpansionPanelDetails classes={{ root: classes.details }}>
+      <Typography variant="body1" component="h5" gutterBottom>
+        Specs:
+      </Typography>
+      <TestList testList={suiteData} />
     </ExpansionPanelDetails>
   </ExpansionPanel>
 )
@@ -82,7 +54,9 @@ export const SuiteResult = ({ suiteData, classes, name }) => (
 SuiteResult.propTypes = {
   name: PropTypes.string.isRequired,
   classes: PropTypes.object, // from enhancer (withStyles)
-  suiteData: PropTypes.object // from enhancer (firestoreConnect + connect)
+  suiteData: PropTypes.object, // from enhancer (firestoreConnect + connect)
+  suiteDuration: PropTypes.string,
+  suiteFailures: PropTypes.number
 }
 
 export default SuiteResult

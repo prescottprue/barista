@@ -5,30 +5,34 @@ export default theme => ({
   stacked: {
     flexDirection: 'column'
   },
-  content: {
+
+  suiteSummary: {
     display: 'grid',
     gridTemplateColumns:
-      '[statusIcon] 36px [testTitle] 1fr [testDuration] 56px',
-    gridTemplateRows: '100%',
-    gridRowGap: 0,
-    margin: 0,
-    marginRight: '1.5rem',
+      '[suiteTitle] 1fr [failCount] 32px [suiteDuration] 8rem'
+  },
+  failCount: {
+    gridArea: 'failCount',
+    height: '24px',
+    width: '24px',
+    fontSize: '12px',
+    alignSelf: 'center',
+    backgroundColor: theme.palette.error.main
+  },
+  suiteTitle: {
+    gridArea: 'suiteTitle'
+  },
+  suiteDuration: {
+    gridArea: 'suiteDuration',
+    justifySelf: 'end',
+    fontSize: '1rem',
+    display: 'flex',
     alignItems: 'center'
   },
-  testTitle: {
-    '&:first-letter': {
-      textTransform: 'capitalize'
-    }
-  },
-  testSummaryPanel: {
-    paddingLeft: 0,
-    margin: 0
-  },
-  spacer: {
-    height: '100%',
-    minWidth: '2px'
-  },
-  failed: {
-    backgroundColor: 'red'
+  baseIcon: theme.baseIcon,
+  details: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column'
   }
 })

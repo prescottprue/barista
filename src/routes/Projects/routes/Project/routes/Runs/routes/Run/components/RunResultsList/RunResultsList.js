@@ -9,11 +9,11 @@ export const RunResultsList = ({ runData, metaData, classes }) => (
     <Typography className={classes.title} variant="title" component="h3">
       Test Results
     </Typography>
-    {map(runData, (testResult, name) => (
+    {map(runData, (suite, name) => (
       <SuiteResult
-        key={testResult.title || name}
-        suiteData={testResult.tests}
-        name={testResult.title || name}
+        key={suite.title || name}
+        suiteData={suite.tests}
+        name={suite.title || name}
       />
     ))}
   </div>
