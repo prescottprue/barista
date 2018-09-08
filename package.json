@@ -1,6 +1,6 @@
 {
   "name": "barista",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Mocha test running/reporting UI and API.",
   "main": "index.js",
   "scripts": {
