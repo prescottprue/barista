@@ -4,7 +4,6 @@ import {
   formatDateTime,
   strictDistanceInWords,
   formatTimeInterval,
-  addDurationToNow,
   getDifferenceInMilliseconds
 } from 'utils/formatters'
 import { get } from 'lodash'
@@ -61,12 +60,6 @@ export const getRunRequestDuration = createSelector(
     if (!completed) {
       return '-'
     }
-    // if (started && !completed) {
-    //   return formatTimeInterval(
-    //     addDurationToNow(getDifferenceInMilliseconds(now, started)),
-    //     false
-    //   )
-    // }
     return formatTimeInterval(
       getDifferenceInMilliseconds(completed, started),
       false

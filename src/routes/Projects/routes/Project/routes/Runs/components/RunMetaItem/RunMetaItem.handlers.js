@@ -40,21 +40,12 @@ export function reRunJob({
         })
         .then(newRunKey => router.push(`${runsPagePath}/${newRunKey}`))
         .catch(err => {
+          // eslint-disable-next-line no-console
           console.log(
             'There was a problem creating the new run job',
             err.message || err
           )
         })
     }
-    // return firebase.ref().once('value').
-    //   .pushWithMeta(CALL_RUNNER_REQUEST_PATH, {
-    //     jobRunKey: pushKey,
-    //     environment,
-    //     testCodeBranch,
-    //     commandArgsStr,
-    //     baristaProject: projectId,
-    //     instanceTemplateName,
-    //     buildId
-    //   })
   }
 }
