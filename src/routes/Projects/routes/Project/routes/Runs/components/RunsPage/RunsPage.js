@@ -60,6 +60,7 @@ export const RunsPage = ({
           key={`${runData.key}-${runIndex}`}
           runId={runData.key}
           projectId={projectId}
+          router={router}
         />
       ))
     ) : (

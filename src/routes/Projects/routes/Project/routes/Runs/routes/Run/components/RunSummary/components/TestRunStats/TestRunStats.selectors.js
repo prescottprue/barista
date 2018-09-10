@@ -58,15 +58,15 @@ export const getRunRequestDuration = createSelector(
   (meta, now) => {
     const started = get(meta, 'createdAt', false)
     const completed = get(meta, 'stats.end', false)
-    if (!started && !completed) {
+    if (!completed) {
       return '-'
     }
-    if (started && !completed) {
-      return formatTimeInterval(
-        addDurationToNow(getDifferenceInMilliseconds(now, started)),
-        false
-      )
-    }
+    // if (started && !completed) {
+    //   return formatTimeInterval(
+    //     addDurationToNow(getDifferenceInMilliseconds(now, started)),
+    //     false
+    //   )
+    // }
     return formatTimeInterval(
       getDifferenceInMilliseconds(completed, started),
       false
