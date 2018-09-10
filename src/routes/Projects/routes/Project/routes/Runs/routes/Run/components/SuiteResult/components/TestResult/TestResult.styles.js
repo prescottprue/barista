@@ -36,5 +36,8 @@ export default theme => ({
   },
   passed: {
     backgroundColor: theme.palette.success.main
+  },
+  pending: {
+    backgroundColor: theme.palette.grey2
   }
 })

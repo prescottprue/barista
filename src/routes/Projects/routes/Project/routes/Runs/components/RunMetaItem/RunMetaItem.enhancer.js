@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { get } from 'lodash'
+import { withFirebase } from 'react-redux-firebase'
 import {
   withHandlers,
   flattenProp,
@@ -17,10 +18,12 @@ import * as handlers from './RunMetaItem.handlers'
 import styles from './RunMetaItem.styles'
 
 export default compose(
-  // set proptypes used in enhancer
+  withFirebase,
   setPropTypes({
     projectId: PropTypes.string.isRequired,
-    runId: PropTypes.string.isRequired
+    runId: PropTypes.string.isRequired,
+    firebase: PropTypes.object,
+    router: PropTypes.object
   }),
   defaultProps({
     totalTestCount: 0
