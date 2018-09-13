@@ -8,7 +8,7 @@ describe('Projects Page', () => {
     cy.visit('/projects')
   })
 
-  it('creates project when provided a valid name', () => {
+  it.skip('creates project when provided a valid name', () => {
     const newProjectTitle = 'Test project'
     cy.get(createSelector('new-project-tile')).click()
     // Type name of new project into input

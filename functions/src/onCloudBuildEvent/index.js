@@ -156,6 +156,13 @@ async function callCloudBuildApiEvent(message) {
     throw new Error(noRepoErr)
   }
 
+  // Handle branch name not existing
+  if (!branchName) {
+    const noBranchErr = 'No branchName found in message body'
+    console.error(noBranchErr, messageBody)
+    throw new Error(noBranchErr)
+  }
+
   // Strip prefixes from repoName to get projectId (handle multiple trigger types)
   const projectId = projectIdFromRepoName(repoName)
 
