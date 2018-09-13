@@ -47,7 +47,7 @@ export default compose(
     }) => ({
       testsPassed: get(stats, 'passes'),
       testsFailed: get(stats, 'failures'),
-      totalTests: get(stats, 'tests'),
+      totalTests: get(stats, 'failures', 0) + get(stats, 'passes', 0),
       runDetailPath: `${LIST_PATH}/${projectId}/${RUNS_PATH}/${runId}`,
       // Convert duration into seconds
       formattedDuration: get(stats, 'duration')
