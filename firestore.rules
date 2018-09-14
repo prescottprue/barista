@@ -1,8 +1,11 @@
 service cloud.firestore {
   match /databases/{database}/documents {
     // User is logged in and approved (has approved: true)
+    function isAuthed() {
+      return request.auth.uid != null;
+    }
     function isApprovedUser() {
-      return request.auth.uid != null
+      return isAuthed()
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true;
     }
     function isOwner(res) {
@@ -33,7 +36,7 @@ service cloud.firestore {
     // Container build info
     match /container_builds/{buildId} {
       // Only logged in users can read container builds (writing is done by onCloudBuildEvent function)
-      allow read: if isApprovedUser();
+      allow read, write: if isAuthed();
       // Rules apply to all child collections
       match /{allChildren=**} {
         allow read: if isApprovedUser();

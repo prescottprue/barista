@@ -40,6 +40,7 @@ export function initializeFirebase({ useStage }) {
       firebaseInstance = firebase.initializeApp(
         useStage ? stageFbConfig : prodFbConfig
       )
+      firebase.firestore().settings({ timestampsInSnapshots: true })
     }
     return firebaseInstance
   } catch (err) {
@@ -134,7 +135,9 @@ if (!process.env.BUILD_ID) {
       .catch(err => {
         /* eslint-disable no-console */
         console.error(
-          `Error writing files list to Firestore: ${err.message || ''}`,
+          `Error writing files list to Firestore at path "${CONTAINER_BUILDS_META_PATH}/${
+            process.env.BUILD_ID
+          }":\n ${err.message || ''}`,
           err
         )
         /* eslint-enable no-console */

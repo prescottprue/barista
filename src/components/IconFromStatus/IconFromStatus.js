@@ -43,7 +43,7 @@ export const IconFromStatus = ({ status, classes, context, runResult }) => {
 
 IconFromStatus.propTypes = {
   classes: PropTypes.object.isRequired, // from enhancer (withStyles)
-  status: PropTypes.string.isRequired,
+  status: PropTypes.string,
   context: PropTypes.string,
   runResult: PropTypes.string
 }
