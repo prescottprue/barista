@@ -30,6 +30,8 @@
     },
     "test_runs_data": {
       "$projectId": {
+        ".read": "auth !== null && auth.provider == 'google'",
+        ".write": "auth !== null",
         "$jobRunKey": {
           ".read": "auth !== null && auth.provider == 'google'",
           ".write": "auth !== null"
@@ -37,11 +39,10 @@
       }
     },
     "test_runs_meta": {
+      ".write": "auth !== null",
       "$projectId": {
-        "$jobRunKey": {
-          ".read": "auth !== null && auth.provider == 'google'",
-          ".write": "auth !== null"
-        }
+        ".read": "auth !== null && auth.provider == 'google'",
+        ".write": "auth !== null"
       }
     }
   }
