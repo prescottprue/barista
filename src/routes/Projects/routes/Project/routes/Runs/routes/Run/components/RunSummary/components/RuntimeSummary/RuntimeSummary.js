@@ -6,12 +6,6 @@ import { Typography, Button } from '@material-ui/core'
 export const RuntimeSummary = ({ classes, viewLogs, googleInstanceId }) => (
   <Paper className={classes.container} elevation={0}>
     <Typography className={classes.label} component="p">
-      CI:
-    </Typography>
-    <Typography className={classes.value} variant="body2" component="p">
-      Gitlab **placeholder**
-    </Typography>
-    <Typography className={classes.label} component="p">
       OS:
     </Typography>
     <Typography className={classes.value} variant="body2" component="p">
@@ -27,7 +21,7 @@ export const RuntimeSummary = ({ classes, viewLogs, googleInstanceId }) => (
       Cypress:
     </Typography>
     <Typography className={classes.value} variant="body2" component="p">
-      v3.0.1
+      v3.1.0
     </Typography>
     <Button
       onClick={viewLogs}

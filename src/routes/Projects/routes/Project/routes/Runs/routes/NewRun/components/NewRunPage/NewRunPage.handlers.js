@@ -20,7 +20,7 @@ function createCommandArgs({ testGroups, selectedTestGroupKeys }) {
   )
   // Create Test Command option and value for use in test command
   const finalCommand = `${fileNamesStr.length ? `-s ${fileNamesStr}` : ''}${
-    env !== 'production' ? ' --reporter-options "useStage=true"' : ''
+    env !== 'production' ? '--reporter-options \\"useStage=true\\"' : ''
   }`
   return finalCommand.length ? finalCommand : ''
 }
