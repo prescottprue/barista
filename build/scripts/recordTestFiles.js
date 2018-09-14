@@ -84,7 +84,7 @@ if (!process.env.BUILD_ID) {
   process.exit(1)
 } else {
   const useStage = process.env.PROJECT_ID === 'barista-stage'
-  console.log('Using stage: ', useStage) // eslint-disable-line no-console
+  console.log('Project Id ', { projectId: process.env.PROJECT_ID, useStage }) // eslint-disable-line no-console
   initializeFirebase({ useStage })
   authWithFirebase().then(() => {
     // Load all folders within dist directory (mirrors layout of src)

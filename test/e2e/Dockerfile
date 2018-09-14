@@ -14,6 +14,9 @@ ENV CYPRESS_baseUrl=$test_url
 # Arguments to add to the cypress run command
 ENV TEST_ARGS "${test_command_args}"
 
+# Barista project
+ENV PROJECT_ID "barista-836b4"
+
 # Token used to auth firebase-tools for use in seeding/checking Firebase (RTDB + Firestore)
 ENV FIREBASE_TOKEN $FIREBASE_TOKEN
 # Key used to specifiy job
