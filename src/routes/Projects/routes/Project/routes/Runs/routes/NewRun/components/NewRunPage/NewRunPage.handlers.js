@@ -1,5 +1,6 @@
 import { get, reduce, isArray, compact, trim, uniq } from 'lodash'
 import { TEST_RUNS_META_PATH, CALL_RUNNER_REQUEST_PATH } from 'constants'
+import { env } from 'config'
 
 function createCommandArgs({ testGroups, selectedTestGroupKeys }) {
   // Get list of file names as a string from all selected groups
@@ -18,7 +19,9 @@ function createCommandArgs({ testGroups, selectedTestGroupKeys }) {
     ''
   )
   // Create Test Command option and value for use in test command
-  const finalCommand = `${fileNamesStr.length ? `-s ${fileNamesStr}` : ''}`
+  const finalCommand = `${fileNamesStr.length ? `-s ${fileNamesStr}` : ''}${
+    env !== 'production' ? ' --reporter-options "useStage=true"' : ''
+  }`
   return finalCommand.length ? finalCommand : ''
 }
 
