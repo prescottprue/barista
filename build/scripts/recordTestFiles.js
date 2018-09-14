@@ -1,7 +1,6 @@
 import glob from 'glob'
 import path from 'path'
 import firebase from 'firebase'
-import { isString } from 'lodash'
 import config from '../../project.config'
 
 const TEST_FOLDER_RELATIVE_PATH = path.join(config.e2eTestDir, 'integration')
@@ -84,9 +83,8 @@ if (!process.env.BUILD_ID) {
   /* eslint-enable no-console */
   process.exit(1)
 } else {
-  const useStage =
-    isString(process.env.TEST_ARGS) &&
-    process.env.TEST_ARGS.includes('useStage=true')
+  const useStage = process.env.PROJECT_ID === 'barista-stage'
+  console.log('Using stage: ', useStage) // eslint-disable-line no-console
   initializeFirebase({ useStage })
   authWithFirebase().then(() => {
     // Load all folders within dist directory (mirrors layout of src)

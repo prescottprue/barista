@@ -19,7 +19,7 @@ function iconFromStatus(status) {
 
 export const ImageBuildStatus = ({ branchName, buildStatus, classes }) => (
   <div className={classes.root}>
-    <Typography>
+    <Typography component="div">
       Current Image Build Status: {iconFromStatus(get(buildStatus, 'status'))}
     </Typography>
     <Typography>
