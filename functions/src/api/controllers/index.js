@@ -1,8 +1,8 @@
 import express from 'express'
-import testsController from './tests'
+import runsController from './runs'
 
 const router = express.Router()
 
-router.use('/tests', testsController)
+router.use('/runs', runsController)
 
 export default router

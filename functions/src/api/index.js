@@ -62,7 +62,8 @@ function validateFirebaseIdToken(req, res, next) {
 
 app.use(cors({ origin: true }))
 app.use(cookieParser())
-app.use(validateFirebaseIdToken)
+// TODO: Uncomment this to apply the middleware for security
+// app.use(validateFirebaseIdToken)
 app.use(controllers)
 
 // Route not found handler

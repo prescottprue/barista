@@ -5,7 +5,7 @@ const isString = require('lodash/isString')
 const stdin = process.openStdin()
 
 let firebaseInstance
-export const stageFbConfig = {
+const stageFbConfig = {
   apiKey: 'AIzaSyD8UB1rOfw5oWzwyKrKvH0WLJ6wDPC94ac',
   authDomain: 'barista-stage.firebaseapp.com',
   databaseURL: 'https://barista-stage.firebaseio.com',
@@ -14,7 +14,7 @@ export const stageFbConfig = {
   messagingSenderId: '109344700598'
 }
 
-export const prodFbConfig = {
+const prodFbConfig = {
   apiKey: 'AIzaSyCiaUr9jIU_FdTKArOE0UsZq3K-ftChbLg',
   authDomain: 'barista-836b4.firebaseapp.com',
   databaseURL: 'https://barista-836b4.firebaseio.com',
@@ -30,7 +30,7 @@ export const prodFbConfig = {
  * @param {Boolean} reporterOptions.useStage - Whether or not to use Barista stage environment
  * @return {Firebase} Initialized Firebase instance
  */
-export function initializeFirebase({ useStage }) {
+function initializeFirebase({ useStage }) {
   try {
     if (!firebaseInstance) {
       firebaseInstance = firebase.initializeApp(
@@ -47,7 +47,7 @@ export function initializeFirebase({ useStage }) {
 /**
  * Authenticate anonymously with Firebase
  */
-export function authWithFirebase() {
+function authWithFirebase() {
   // Check to see if user is already authed
   if (firebase.auth().currentUser) {
     return Promise.resolve(firebase.auth().currentUser)
