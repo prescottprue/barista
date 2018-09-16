@@ -164,7 +164,7 @@ export const getMostRecentCommitSha = createSelector(
  */
 export const getProjectImageBuildStatus = createSelector(
   [getBuildStatuses, getProjectId],
-  (buildStatuses, projectId) => get(buildStatuses, `${projectId}`)
+  (buildStatuses, projectId) => get(buildStatuses, projectId)
 )
 
 /**

@@ -5,6 +5,7 @@ import SuccessIcon from '@material-ui/icons/CheckCircle'
 import ErrorIcon from '@material-ui/icons/Error'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
+import { formatDateTime } from 'utils/formatters'
 
 function iconFromStatus(status) {
   switch (status) {
@@ -26,7 +27,11 @@ export const ImageBuildStatus = ({ branchName, buildStatus, classes }) => (
       {get(buildStatus, 'status') === 'WORKING'
         ? 'Currently Building '
         : 'Most Recent Built '}{' '}
-      Branch: {get(buildStatus, 'branchName')}
+    </Typography>
+    <Typography>Branch: {get(buildStatus, 'branchName')}</Typography>
+    <Typography>BuildId: {get(buildStatus, 'buildId')}</Typography>
+    <Typography>
+      UpdatedAt: {formatDateTime(get(buildStatus, 'updatedAt'))}
     </Typography>
   </div>
 )

@@ -43,7 +43,7 @@ COPY bin/ /bin/
 COPY test/e2e/ /test/e2e/
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install glob ip babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.1.3
+RUN CYPRESS_INSTALL_BINARY=0 npm install glob ip babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.1.4
 
 # Build Test Config
 RUN npm run build:testConfig
