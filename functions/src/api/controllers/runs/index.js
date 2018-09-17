@@ -1,10 +1,8 @@
 import express from 'express'
-import { isBoolean, size } from 'lodash'
 import { callTestRunner } from 'utils/testRunner'
 import { rtdbRef } from 'utils/rtdb'
 import { hasAll } from 'utils'
 import { Promise } from 'bluebird'
-import { isArray } from 'util'
 
 const router = express.Router()
 
@@ -42,27 +40,18 @@ export async function handleReportRequest(req, res) {
       .status(400)
       .send(`Body containing keys ${requiredKeys.join(', ')} required`)
   }
-  const { jobRunKey, pending, stats, suites } = req.body
+  const { jobRunKey, suites } = req.body
   if (!jobRunKey) {
     return res.status(400).send('jobRunKey is required')
   }
   // const { uid: createdBy } = req.user
+  console.log('report request:', { jobRunKey, body: req.body })
   try {
-    console.log('report request:', { jobRunKey, body: req.body })
-    const metaRef = rtdbRef(`test_runs_meta/${jobRunKey}`)
     const dataRef = rtdbRef(`test_runs_data/${jobRunKey}`)
-    const metaUpdate = {}
-    if (isBoolean(pending)) {
-      metaUpdate.pending = pending
-    }
-    if (stats) {
-      metaUpdate.stats = stats
-    }
-    if (size(metaUpdate)) {
-      await metaRef.update(metaUpdate)
-    }
+    // TODO: Map tests data to be push keys instead of an array
+    // It may ta doing multiple empty .push() calls to get keys, mapping them, and doing one set
     if (suites) {
-      await Promise.all(suites.map(testData => dataRef.push(testData)))
+      await Promise.all(suites.map(suiteData => dataRef.push(suiteData)))
     }
     res.send(`Report received, thanks!`)
   } catch (err) {
