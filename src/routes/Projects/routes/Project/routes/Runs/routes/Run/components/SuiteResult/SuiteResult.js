@@ -54,7 +54,7 @@ export const SuiteResult = ({
 SuiteResult.propTypes = {
   name: PropTypes.string.isRequired,
   classes: PropTypes.object, // from enhancer (withStyles)
-  suiteData: PropTypes.object, // from enhancer (firestoreConnect + connect)
+  suiteData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]), // from enhancer (firestoreConnect + connect)
   suiteDuration: PropTypes.number,
   suiteFailures: PropTypes.number
 }

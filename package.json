@@ -11,7 +11,7 @@
     "build:functions": "npm run build --prefix functions",
     "build:config": "firebase-ci createConfig",
     "build:testConfig": "barista createTestEnvFile",
-    "build:testFiles": "barista recordTestFiles",
+    "build:testFiles": "barista sendTestFiles",
     "deploy": "firebase-ci deploy -s",
     "start": "cross-env NODE_ENV=development webpack-dashboard -p 1335 -c cyan -m -t barista -- node build/scripts/start",
     "start:simple": "cross-env NODE_ENV=development node build/scripts/start",

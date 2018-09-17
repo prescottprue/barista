@@ -32,12 +32,15 @@ export const RunSummary = ({
   <div className={classes.root}>
     <ExpansionPanel className={classes.root} defaultExpanded>
       <ExpansionPanelSummary classes={{ content: classes.content }}>
-        <IconFromStatus status={status} classes={{ root: classes.titleIcon }} />
+        <IconFromStatus
+          status={runMeta.status || status}
+          classes={{ root: classes.titleIcon }}
+        />
         <Typography
           className={classes.cardTitle}
           variant="title"
           component="h2">
-          {status}
+          {runMeta.status || status}
         </Typography>
         <Tooltip title="pending">
           <Typography

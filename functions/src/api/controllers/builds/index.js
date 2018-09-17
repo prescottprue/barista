@@ -1,6 +1,7 @@
 import express from 'express'
-import { hasAll } from 'utils'
 import * as admin from 'firebase-admin'
+import { hasAll } from 'utils'
+import { to } from 'utils/async'
 
 const router = express.Router()
 const CONTAINER_BUILDS_META_PATH = 'container_builds'
@@ -18,41 +19,65 @@ export async function handleFileUpdateRequest(req, res) {
       .send(`Body containing keys ${requiredKeys.join(', ')} required`)
   }
   const { buildId, files } = req.body
-  // const { uid: createdBy } = req.user
-  console.log('report request:', { buildId, files, body: req.body })
-  try {
-    const containerBuildRef = admin
-      .firestore()
-      .collection(CONTAINER_BUILDS_META_PATH)
-      .doc(process.env.BUILD_ID)
-    const containerBuildData = {
-      files,
-      filesAddedAt: admin.firestore.FieldValue.serverTimestamp()
-    }
+  console.log('file update request:', { buildId, files, body: req.body })
+  const containerBuildRef = admin
+    .firestore()
+    .collection(CONTAINER_BUILDS_META_PATH)
+    .doc(process.env.BUILD_ID)
+  const containerBuildData = {
+    files,
+    filesAddedAt: admin.firestore.FieldValue.serverTimestamp()
+  }
 
-    // Query for existing container build with matching build id
-    const snap = await containerBuildRef.get()
-    // Update existing container build doc if it exists
-    if (snap.exists) {
-      /* eslint-disable no-console */
-      console.log(
-        'Matching doc found for container image:',
-        process.env.BUILD_ID
+  // Query for existing container build with matching build id
+  const [getErr, snap] = await to(containerBuildRef.get())
+
+  // Handle errors getting container build doc
+  if (getErr) {
+    console.error(
+      `Error updating container build meta document: ${getErr.message ||
+        getErr}`
+    )
+    return res.status(400).send('Error saving to container build')
+  }
+
+  // Update existing container build doc if it exists
+  if (snap.exists) {
+    console.log('Matching doc found for container image:', process.env.BUILD_ID)
+
+    // Update matching doc with files
+    const [updateErr] = await to(containerBuildRef.update(containerBuildData))
+
+    // Handle errors updating existing container build meta doc
+    if (updateErr) {
+      console.error(
+        `Error updating container build meta document: ${updateErr.message ||
+          updateErr}`
       )
-      /* eslint-enable no-console */
-      // Update matching doc with files
-      return containerBuildRef.update(containerBuildData)
+      return res.status(400).send('Error saving to container build')
     }
-
+  } else {
     // Document does not exist, so create it  with buildId and files
     console.log('Creating new document for container build') // eslint-disable-line no-console
     containerBuildData.createdAt = admin.firestore.FieldValue.serverTimestamp()
-    await containerBuildRef.set(containerBuildData, { merge: true })
-    res.send(`Report received, thanks!`)
-  } catch (err) {
-    console.error(`Error in report request: ${err.message || ''}`, err)
-    res.end(`Error!`)
+
+    // Create new container build meta doc
+    const [createErr] = await to(
+      containerBuildRef.set(containerBuildData, { merge: true })
+    )
+
+    // Handle errors creating new container build meta doc
+    if (createErr) {
+      console.error(
+        `Error creating new container build meta document: ${createErr.message ||
+          createErr}`
+      )
+      return res.status(400).send('Error saving to container build')
+    }
   }
+
+  // Response with success message
+  return res.send('Report received, thanks!')
 }
 
 router.post('/updateFiles', handleFileUpdateRequest)
