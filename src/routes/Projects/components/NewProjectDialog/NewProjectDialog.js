@@ -33,6 +33,19 @@ export const NewProjectDialog = ({
           validate={[required]}
           data-test="new-project-name"
         />
+        <Field
+          name="computeProjectId"
+          component={TextField}
+          label="Compute Project Id"
+          validate={[required]}
+          data-test="compute-project-id"
+        />
+        <Field
+          name="dockerfilePath"
+          component={TextField}
+          label="Path To Dockerfile"
+          data-test="dockerfile-path"
+        />
       </form>
     </DialogContent>
     <DialogActions>

@@ -43,7 +43,7 @@ COPY bin/ /bin/
 COPY test/e2e/ /test/e2e/
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install mocha barista-reporter@0.2.0 barista-tools
+RUN CYPRESS_INSTALL_BINARY=0 npm install mocha lodash barista-reporter@0.2.0 barista-tools@0.0.5
 
 # Build Test Config File (cypress.env.json)
 RUN npm run build:testConfig

@@ -23,7 +23,7 @@ export async function handleFileUpdateRequest(req, res) {
   const containerBuildRef = admin
     .firestore()
     .collection(CONTAINER_BUILDS_META_PATH)
-    .doc(process.env.BUILD_ID)
+    .doc(buildId)
   const containerBuildData = {
     files,
     filesAddedAt: admin.firestore.FieldValue.serverTimestamp()
@@ -43,7 +43,7 @@ export async function handleFileUpdateRequest(req, res) {
 
   // Update existing container build doc if it exists
   if (snap.exists) {
-    console.log('Matching doc found for container image:', process.env.BUILD_ID)
+    console.log('Matching doc found for container image:', buildId)
 
     // Update matching doc with files
     const [updateErr] = await to(containerBuildRef.update(containerBuildData))
