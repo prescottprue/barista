@@ -43,13 +43,13 @@ COPY bin/ /bin/
 COPY test/e2e/ /test/e2e/
 
 # Install Dependencies (only those used to build config files)
-RUN CYPRESS_INSTALL_BINARY=0 npm install glob ip babel-core babel-cli babel-preset-env lodash firebase-admin mocha barista-reporter@0.2.0
+RUN CYPRESS_INSTALL_BINARY=0 npm install mocha barista-reporter@0.2.0 barista-tools
 
-# Build Test Config
-RUN npm run build:testConfig
+# Build Test Config File (cypress.env.json)
+RUN barista createTestEnvFile
 
 # Record test files to firestore under container_build document
-RUN npm run build:testFiles
+RUN barista sendTestFiles
 
 # Install Cypress
 # Set CI=true to prevent a large number of messages during install of
@@ -61,4 +61,4 @@ RUN $(npm bin)/cypress verify
 
 # Run Cypress tests (URL set by ENV above) reporting results using Barista Reporter.
 # Results are written to test_runs_data/$JOB_RUN_KEY and test_runs_meta/$JOB_RUN_KEY
-ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter$TEST_ARGS; echo \"$?\" | bin/testsComplete.js
+ENTRYPOINT $(npm bin)/cypress run --reporter barista-reporter$TEST_ARGS; echo \"$?\" | sendResultToBarista

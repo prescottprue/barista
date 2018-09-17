@@ -41,10 +41,6 @@ export async function handleReportRequest(req, res) {
       .send(`Body containing keys ${requiredKeys.join(', ')} required`)
   }
   const { jobRunKey, suites } = req.body
-  if (!jobRunKey) {
-    return res.status(400).send('jobRunKey is required')
-  }
-  // const { uid: createdBy } = req.user
   console.log('report request:', { jobRunKey, body: req.body })
   try {
     const dataRef = rtdbRef(`test_runs_data/${jobRunKey}`)
