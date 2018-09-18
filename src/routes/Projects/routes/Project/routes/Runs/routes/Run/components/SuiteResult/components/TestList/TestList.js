@@ -14,7 +14,7 @@ export const TestList = ({ testList, classes }) => (
 
 TestList.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
-  testList: PropTypes.object // from enhancer (firestoreConnect + connect)
+  testList: PropTypes.oneOfType([PropTypes.object, PropTypes.array]) // from enhancer (firestoreConnect + connect)
 }
 
 export default TestList

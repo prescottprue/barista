@@ -1,17 +1,49 @@
 {
   "rules": {
-    ".read": "auth !== null",
-    ".write":"auth !== null",
-    "users": {
-      "$uid": {
-        ".write": "auth !== null && $uid === auth.uid"
+    ".read": false,
+    ".write": false,
+    "container_build_statues": {
+      ".read": "auth !== null && auth.provider == 'google'",
+      ".write": false
+    },
+    "presence": {
+      "$userId": {
+        ".validate": "newData.isBoolean()",
+        ".write": "auth !== null && auth.provider == 'google' && $userId === auth.uid || (!newData.exists() && data.exists())"
       }
     },
-    "projects": {
-      ".indexOn": ["createdBy"]
+    "requests": {
+      "$requestGroup": {
+        "$requestId": {
+          ".read": "auth !== null && auth.provider == 'google' && data.child('createdBy').val() === auth.uid",
+          ".write": "auth !== null && auth.provider == 'google' && newData.child('createdBy').val() === auth.uid"
+        }
+      }
     },
-    "container_build_statues": {
-      ".write": false
+    "responses": {
+      "$responseGroup": {
+        "$responseId": {
+          ".read": "auth !== null && auth.provider == 'google' && root.child('requests').child($responseGroup).child($responseId).child('createdBy').val() == auth.uid",
+          ".write": "auth !== null && auth.provider == 'google' && root.child('requests').child($responseGroup).child($responseId).child('createdBy').val() == auth.uid"
+        }
+      }
+    },
+    "test_runs_data": {
+      "$projectId": {
+        ".read": "auth !== null && auth.provider == 'google'",
+        ".write": "auth !== null",
+        "$jobRunKey": {
+          ".read": "auth !== null && auth.provider == 'google'",
+          ".write": "auth !== null"
+        }
+      }
+    },
+    "test_runs_meta": {
+      ".write": "auth !== null",
+      "$projectId": {
+        ".read": "auth !== null && auth.provider == 'google'",
+        ".write": "auth !== null"
+      }
     }
   }
 }

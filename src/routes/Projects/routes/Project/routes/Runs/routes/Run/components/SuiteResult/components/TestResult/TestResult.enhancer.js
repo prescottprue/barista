@@ -12,8 +12,7 @@ import styles from './TestResult.styles'
 
 export default compose(
   setPropTypes({
-    test: PropTypes.object.isRequired,
-    testId: PropTypes.string.isRequired
+    test: PropTypes.object.isRequired
   }),
   branch(props => !props.test, renderNothing),
   flattenProp('test'),

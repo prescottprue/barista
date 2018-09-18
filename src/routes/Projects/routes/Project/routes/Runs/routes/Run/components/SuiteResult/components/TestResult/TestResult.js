@@ -65,7 +65,7 @@ TestResult.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
   title: PropTypes.string, // from enhancer flattenProp('test')
   state: PropTypes.string, // from enhancer flattenProp('test')
-  testId: PropTypes.string, // from enhancer flattenProp('test')
+  testId: PropTypes.number, // from enhancer flattenProp('test')
   duration: PropTypes.number, // from enhancer flattenProp('test')
   error: PropTypes.object, // from enhancer flattenProp('test')
   body: PropTypes.string // from enhancer flattenProp('test')

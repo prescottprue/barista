@@ -25,6 +25,7 @@ export const RunSummary = ({
   classes,
   buildData,
   runMeta,
+  status,
   startedAt,
   durationInWords
 }) => (
@@ -32,14 +33,14 @@ export const RunSummary = ({
     <ExpansionPanel className={classes.root} defaultExpanded>
       <ExpansionPanelSummary classes={{ content: classes.content }}>
         <IconFromStatus
-          status={runMeta.status}
+          status={runMeta.status || status}
           classes={{ root: classes.titleIcon }}
         />
         <Typography
           className={classes.cardTitle}
           variant="title"
           component="h2">
-          {runMeta.status}
+          {runMeta.status || status}
         </Typography>
         <Tooltip title="pending">
           <Typography
@@ -87,6 +88,7 @@ RunSummary.propTypes = {
   classes: PropTypes.object, // from enhancer (withStyles)
   buildId: PropTypes.string, // from enhancer (firestoreConnect + connect)
   projectId: PropTypes.string,
+  status: PropTypes.string,
   runId: PropTypes.string,
   buildData: PropTypes.object,
   runMeta: PropTypes.object,

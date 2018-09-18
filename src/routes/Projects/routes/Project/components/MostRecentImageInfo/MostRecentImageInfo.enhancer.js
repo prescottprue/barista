@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
+import { get } from 'lodash'
 import { withStyles } from '@material-ui/core/styles'
 import {
   CONTAINER_BUILDS_META_PATH,
@@ -12,7 +13,8 @@ import styles from './MostRecentImageInfo.styles'
 import {
   getMostRecentCommitSha,
   getMostRecentBranchName,
-  getMostRecentBuildId
+  getMostRecentBuildId,
+  getMostRecentBuild
 } from 'selectors'
 
 export default compose(
@@ -37,7 +39,8 @@ export default compose(
   connect((state, props) => ({
     branchName: getMostRecentBranchName(state, props),
     commitSha: getMostRecentCommitSha(state, props),
-    buildId: getMostRecentBuildId(state, props)
+    buildId: getMostRecentBuildId(state, props),
+    updatedAt: get(getMostRecentBuild(state, props), 'updatedAt')
   })),
   withStyles(styles)
 )
