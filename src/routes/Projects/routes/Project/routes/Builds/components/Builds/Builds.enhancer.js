@@ -4,12 +4,10 @@ import { setPropTypes, mapProps } from 'recompose'
 import { connect } from 'react-redux'
 import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
 import { withStyles } from '@material-ui/core/styles'
-import {
-  CONTAINER_BUILDS_META_PATH,
-  CONTAINER_BUILDS_STATUS_PATH
-} from 'constants'
+import { CONTAINER_BUILDS_STATUS_PATH } from 'constants'
 import styles from './Builds.styles'
 import { getBuildStatuses, getOrderedBuilds } from 'selectors'
+import { containerBuildsMetaQuery } from 'queryConfigs'
 
 export default compose(
   // set proptypes used in handlers
@@ -19,14 +17,12 @@ export default compose(
     })
   }),
   mapProps(({ params: { projectId } }) => ({ projectId })),
-  // create listener for builds, results go into redux
+  // Listeners for Firestore data, results go into redux
   firestoreConnect(({ projectId }) => [
-    {
-      collection: CONTAINER_BUILDS_META_PATH,
-      orderBy: ['finishTime', 'desc'],
-      where: ['projectId', '==', projectId]
-    }
+    // create listener for builds
+    containerBuildsMetaQuery({ projectId })
   ]),
+  // Listeners for RTDB data, results go into redux
   firebaseConnect([
     {
       path: CONTAINER_BUILDS_STATUS_PATH

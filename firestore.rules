@@ -1,22 +1,23 @@
 service cloud.firestore {
   match /databases/{database}/documents {
-    // User is logged in and approved (has approved: true)
     function isAuthed() {
-      return request.auth.uid != null;
-    }
-    function isApprovedUser() {
-      return isAuthed()
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true;
+      return request.auth.uid != null
     }
     function isOwner(res) {
       return res.data.createdBy == request.auth.uid
     }
-    function isOwnerOrPublic(res) {
-      return isOwner(res) || res.data.public == true
+    function isPublic(res) {
+      return res.data.public == true
+    }
+    function isCollaborator(res) {
+      return res.data.collaborators[request.auth.uid] == true
+    }
+    function hasProjectAccess(res) {
+      return isPublic(res) || isOwner(res) || isCollaborator(res)
     }
     // Private user profiles
     match /users/{userId} {
-      allow read, write: if request.auth.uid == userId && isApprovedUser();
+      allow read, write: if request.auth.uid == userId;
     }
     // Public user profiles
     match /users_public/{userId} {
@@ -26,38 +27,38 @@ service cloud.firestore {
     // Projects
     match /projects/{projectId} {
       // Only projects you own can be viewed
-      allow create: if isApprovedUser() && isOwner(request.resource);
-      allow read, write: if isApprovedUser() && isOwnerOrPublic(resource);
+      allow create: if isOwner(request.resource);
+      allow read, write: if hasProjectAccess(resource);
       // Rules apply to all child collections
       match /{allChildren=**} {
-        allow read, write: if isApprovedUser() && isOwnerOrPublic(get(/databases/$(database)/documents/projects/$(projectId)));
+        allow read, write: if hasProjectAccess(get(/databases/$(database)/documents/projects/$(projectId)));
       }
     }
     // Container build info
     match /container_builds/{buildId} {
       // Only logged in users can read container builds (writing is done by onCloudBuildEvent function)
-      allow read, write: if isAuthed();
+      allow read: if isAuthed();
       // Rules apply to all child collections
       match /{allChildren=**} {
-        allow read: if isApprovedUser();
+        allow read: if isAuthed();
       }
     }
     // Test Group Tags
     match /tags/{tagId} {
       // Only logged in users can view/edit tags
-      allow read, write: if isApprovedUser();
+      allow read, write: if isAuthed();
       // Rules apply to all child collections
       match /{allChildren=**} {
-        allow read, write: if isApprovedUser();
+        allow read, write: if isAuthed();
       }
     }
     // Test Groups
     match /test_groups/{tagGroupId} {
       // Only logged in users can view/edit tags groups
-      allow read, write: if isApprovedUser();
+      allow read, write: if isAuthed();
       // Rules apply to all child collections
       match /{allChildren=**} {
-        allow read, write: if isApprovedUser();
+        allow read, write: if isAuthed();
       }
     }
   }

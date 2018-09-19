@@ -3,37 +3,24 @@ import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { get } from 'lodash'
 import { withStyles } from '@material-ui/core/styles'
-import {
-  CONTAINER_BUILDS_META_PATH,
-  CONTAINER_BUILDS_STATUS_PATH
-} from 'constants'
 import { setPropTypes } from 'recompose'
-import { firestoreConnect, firebaseConnect } from 'react-redux-firebase'
-import styles from './MostRecentImageInfo.styles'
+import { firestoreConnect } from 'react-redux-firebase'
 import {
   getMostRecentCommitSha,
   getMostRecentBranchName,
   getMostRecentBuildId,
   getMostRecentBuild
 } from 'selectors'
+import { mostRecentContainerBuildMetaQuery } from 'queryConfigs'
+import styles from './MostRecentImageInfo.styles'
 
 export default compose(
   setPropTypes({
     projectId: PropTypes.string.isRequired
   }),
+  // Listeners for Firestore data, results go into redux
   firestoreConnect(({ projectId }) => [
-    {
-      collection: CONTAINER_BUILDS_META_PATH,
-      orderBy: ['finishTime', 'desc'],
-      where: ['projectId', '==', projectId],
-      limit: 1,
-      storeAs: `mostRecentBuild-${projectId}`
-    }
-  ]),
-  firebaseConnect([
-    {
-      path: CONTAINER_BUILDS_STATUS_PATH
-    }
+    mostRecentContainerBuildMetaQuery({ projectId })
   ]),
   // map redux state to props
   connect((state, props) => ({
