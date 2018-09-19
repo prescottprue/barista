@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-import { forEach, reduce } from 'lodash'
+import { reduce } from 'lodash'
 import { to } from 'utils/async'
 import { rtdbRef } from '../utils/rtdb'
 
@@ -26,40 +26,51 @@ async function updateMetaWithTotalsEvent(change, context) {
 
   // Get test run meta data (event is on the level of status)
   const testRunMetaRef = after.ref.parent
+  const testRunDataPath = `test_runs_data/${projectId}/${jobRunKey}`
+  const testRunDataRef = rtdbRef(testRunDataPath)
 
   // Get Runs Data
-  const [getRunsData, runsDataSnap] = await to(
-    rtdbRef(`test_runs_data/${projectId}/${jobRunKey}`).once('value')
-  )
+  const [getRunsDataErr, runsDataSnap] = await to(testRunDataRef.once('value'))
 
-  if (getRunsData) {
+  if (getRunsDataErr) {
     console.error(
-      `Error getting runner request: ${getRunsData.message || ''}`,
-      getRunsData
+      `Error getting runs data: ${getRunsDataErr.message || ''}`,
+      getRunsDataErr
     )
-    throw getRunsData
+    throw getRunsDataErr
   }
 
   const runsData = runsDataSnap.val()
 
   // Handle runs data not existing
   if (!runsData) {
-    const missingRunsDataErrMsg = 'No Runs Data Found'
-    console.error(missingRunsDataErrMsg)
-    throw new Error(missingRunsDataErrMsg)
+    const missingRunsDataErrMsg = `No Runs Data Found at path: "${testRunDataPath}"`
+    console.warn(missingRunsDataErrMsg)
+    return null
   }
 
   const combinedStats = reduce(
     runsData,
     (acc, runData, runKey) => {
       if (runData.stats) {
-        forEach(runData.stats, (statValue, statKey) => {
-          if (statKey === 'start' && !acc[statKey]) {
-            acc[statKey] = statValue
-          } else if (acc[statKey]) {
-            acc[statKey] = acc[statKey] + statValue
-          }
-        })
+        return reduce(
+          runData.stats,
+          (acc2, statValue, statKey) => {
+            if (statKey === 'start' && !typeof acc2[statKey] !== 'undefined') {
+              return {
+                ...acc2,
+                [statKey]: statValue
+              }
+            } else if (typeof acc2[statKey] !== 'undefined') {
+              return {
+                ...acc2,
+                [statKey]: acc2[statKey] + statValue
+              }
+            }
+            return acc2
+          },
+          acc
+        )
       }
       return acc
     },
