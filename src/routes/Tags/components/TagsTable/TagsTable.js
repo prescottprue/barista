@@ -1,13 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router'
+import { get } from 'lodash'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
-import { get } from 'lodash'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
+import Button from '@material-ui/core/Button'
+import Tooltip from '@material-ui/core/Tooltip'
+import ArrowForward from '@material-ui/icons/ArrowForward'
 import { formatDateTime } from 'utils/formatters'
+import { TAGS_PATH } from 'constants'
 
 // Column cofiguration
 const tagsTableColumns = [
@@ -36,6 +41,7 @@ export const TagsTable = ({ tags, classes }) => (
               {column.label || column.value}
             </TableCell>
           ))}
+          <TableCell component="th">Edit</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -52,6 +58,19 @@ export const TagsTable = ({ tags, classes }) => (
                     : get(row, column.value, '-')}
                 </TableCell>
               ))}
+              <TableCell scope="row">
+                <Tooltip title="View Details">
+                  <Button
+                    variant="fab"
+                    color="primary"
+                    aria-label="go-to-details"
+                    component={Link}
+                    to={`${TAGS_PATH}/${row.id}`}
+                    mini>
+                    <ArrowForward />
+                  </Button>
+                </Tooltip>
+              </TableCell>
             </TableRow>
           )
         })}

@@ -26,9 +26,10 @@ export default store => ({
       /*  Webpack - use require callback to define
           dependencies for bundling   */
       const NewTag = require('./routes/NewTag').default
+      const Tag = require('./routes/Tag').default
 
       /*  Return getComponent   */
-      cb(null, [NewTag(store)])
+      cb(null, [NewTag(store), Tag(store)])
     })
   }
 })
