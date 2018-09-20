@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import { Field, FieldArray } from 'redux-form'
+import { map } from 'lodash'
 import { TextField, Checkbox } from 'redux-form-material-ui'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -13,6 +14,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import SelectField from 'components/SelectField'
 import { TEST_GROUPS_PATH, TAGS_PATH } from 'constants'
 import TestGroupFilePaths from 'routes/TestGroups/components/TestGroupFilePaths'
 
@@ -20,7 +22,7 @@ export const NewTestGroupForm = ({
   classes,
   handleSubmit,
   tags,
-  testFiles,
+  testFilesByProject,
   projects,
   pristine,
   array,
@@ -64,22 +66,25 @@ export const NewTestGroupForm = ({
           </List>
         </div>
         <FieldArray name="filePaths" component={TestGroupFilePaths} />
-        {testFiles && testFiles.map ? (
-          <div>
+        {testFilesByProject ? (
+          <div className="flex-column">
             <Typography variant="subheading">File Suggestions</Typography>
-            <Typography component="p">Barista</Typography>
-            <List>
-              {testFiles.map(({ name = '', id }) => (
-                <ListItem
-                  key={name}
-                  dense
-                  button
-                  className={classes.listItem}
-                  onClick={() => array.push('filePaths', name)}>
-                  <ListItemText primary={name} />
-                </ListItem>
+            <div className="flex-row">
+              {map(testFilesByProject, (testFiles, projectId) => (
+                <div key={`Suggestions-${projectId}`}>
+                  <Typography component="p">{projectId}</Typography>
+                  <SelectField
+                    name="filePaths"
+                    placeholder="Select Tag Group(s)"
+                    renderValue={selected => (
+                      <div className={classes.chips}>{null}</div>
+                    )}
+                    options={testFiles}
+                    multiple
+                  />
+                </div>
               ))}
-            </List>
+            </div>
           </div>
         ) : null}
         {tags && tags.map ? (
@@ -121,7 +126,7 @@ NewTestGroupForm.propTypes = {
   array: PropTypes.object.isRequired, // from enhancer (reduxForm)
   tags: PropTypes.array, // from enhancer (connect)
   projects: PropTypes.array, // from enhancer (connect)
-  testFiles: PropTypes.array, // from enhancer (connect)
+  testFilesByProject: PropTypes.object, // from enhancer (connect)
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)
   pristine: PropTypes.bool.isRequired, // from enhancer (reduxForm)
   submitting: PropTypes.bool.isRequired // from enhancer (reduxForm)

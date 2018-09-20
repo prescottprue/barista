@@ -11,7 +11,14 @@ import { CONTAINER_BUILDS_META_PATH } from './constants'
  *   containerBuildsMetaQuery({ projectId })
  * ]),
  */
-export function containerBuildsMetaQuery({ projectId }) {
+export function containerBuildsMetaQuery(opts) {
+  const { projectId } = opts || {}
+  if (!projectId) {
+    return {
+      collection: CONTAINER_BUILDS_META_PATH,
+      orderBy: ['finishTime', 'desc']
+    }
+  }
   return {
     collection: CONTAINER_BUILDS_META_PATH,
     orderBy: ['finishTime', 'desc'],
