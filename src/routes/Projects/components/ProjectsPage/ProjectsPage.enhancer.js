@@ -17,12 +17,18 @@ export default compose(
   // Wait for uid to exist before going further
   spinnerWhileLoading(['uid']),
   withChildren,
-  // Create listeners for data from firestore
+  // Create listeners for data from Firestore results go into redux state
   firestoreConnect(({ params, uid }) => [
-    // Listener for public projects (results go into redux state)
+    // Listener for projects created by the current user
     {
       collection: PROJECTS_DATA_PATH,
-      where: ['public', '==', true]
+      where: ['createdBy', '==', uid],
+      storeAs: 'myProjects'
+    },
+    // Listener for projects the current user is a collaborator on
+    {
+      collection: PROJECTS_DATA_PATH,
+      where: [`collaborators.${uid}`, '==', true]
     }
   ]),
   // Map projects from state to props
