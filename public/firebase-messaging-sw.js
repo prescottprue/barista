@@ -24,7 +24,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
     payload
   )
 
-  const notificationTitle = 'Fireadmin'
+  const notificationTitle = 'Barista'
   const notificationOptions = {
     body: 'Background Message body.',
     icon: '/firebase-logo.png'
