@@ -24,7 +24,7 @@ export const TestResult = ({
   state,
   testId,
   duration,
-  error,
+  err,
   body,
   classes
 }) => (
@@ -52,7 +52,7 @@ export const TestResult = ({
       </ExpansionPanelSummary>
       <ExpansionPanelDetails style={{ flexDirection: 'column' }}>
         <TestCode testCode={body} />
-        <TestError error={error} />
+        <TestError error={err} />
         <Typography variant="subheading" component="p">
           {`Duration: ${duration / 1000} seconds`}
         </Typography>
@@ -67,7 +67,7 @@ TestResult.propTypes = {
   state: PropTypes.string, // from enhancer flattenProp('test')
   testId: PropTypes.number, // from enhancer flattenProp('test')
   duration: PropTypes.number, // from enhancer flattenProp('test')
-  error: PropTypes.object, // from enhancer flattenProp('test')
+  err: PropTypes.object, // from enhancer flattenProp('test')
   body: PropTypes.string // from enhancer flattenProp('test')
 }
 
